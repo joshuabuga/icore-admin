@@ -1,9 +1,9 @@
-import { ProcessingResult, CreditRequest, SMSRequest } from '@/types';
+import { ProcessingResult, CreditRequest, SMSRequest } from '@/types/crediting';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { paymentProcessor } from '@/lib/services/paymentProcessor';
 import { getAuth } from '@clerk/nextjs/server';
 import { hasPermission, PERMISSIONS } from '@/lib/permissions';
+import {paymentProcessor} from "@/lib/admin-console/paymentProcessor";
 
 export async function POST(req: NextRequest) {
     try {
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        const userPerms = user.permissions.map(p => p.permission);
+        const userPerms = user.permissions.map((p: { permission: string; }) => p.permission);
 
         if (!hasPermission(user.role, userPerms, PERMISSIONS.BATCHES_APPROVE)) {
             return NextResponse.json(

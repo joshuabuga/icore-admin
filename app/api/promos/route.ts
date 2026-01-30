@@ -34,7 +34,7 @@ export async function POST(request: Request) {
             );
         }
 
-        const userPerms = user.permissions.map(p => p.permission);
+        const userPerms = user.permissions.map((p: { permission: string; }) => p.permission);
 
         if (!hasPermission(user.role, userPerms, PERMISSIONS.PROMOS_WRITE)) {
             return NextResponse.json(
