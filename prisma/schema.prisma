@@ -1,0 +1,114 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "./db/generated/client"
+  binaryTargets = ["native", "debian-openssl-3.0.x", "rhel-openssl-3.0.x", "darwin"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String        @id
+  name        String
+  email       String        @unique
+  role        UserRole      @default(user)
+  permissions Permissions[]
+
+  batchesApproved Batch[] @relation("UserApprovedBatches")
+  batchesRejected Batch[] @relation("UserRejectedBatches")
+  promoUploaded   Promo[] @relation("UserUploadedPromos")
+}
+
+model Customer {
+  id          String @id @default(uuid())
+  name        String
+  phoneNumber String
+  amount      Int
+
+  // Relation to Batch with cascade delete
+  batchId String
+  batch   Batch  @relation(fields: [batchId], references: [id], onDelete: Cascade)
+}
+
+model ProcessingLog {
+  id             String           @id @default(uuid())
+  batchId        String
+  msisdn         String
+  amount         Int
+  status         ProcessingStatus
+  creditResponse Json?
+  smsStatus      String?
+  errorMessage   String?
+  processedAt    DateTime         @default(now())
+
+  batch Batch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+}
+
+model Batch {
+  id             String          @id @default(uuid())
+  batch_no       String          @unique
+  particulars    String
+  status         BatchStatus     @default(PENDING)
+  csv            String
+  recipients     Customer[]
+  processingLogs ProcessingLog[]
+  total_amount   Int
+  date_initiated DateTime
+  date_approved  DateTime?
+
+  // Relation to User (who approved) with set null on delete
+  approvedById String?
+  approvedBy   User?   @relation("UserApprovedBatches", fields: [approvedById], references: [id], onDelete: SetNull)
+  rejectedById String?
+  rejectedBy   User?   @relation("UserRejectedBatches", fields: [rejectedById], references: [id], onDelete: SetNull)
+}
+
+model Promo {
+  id                  String    @id @default(uuid())
+  title               String
+  description         String
+  info                Json
+  carousel_image      String
+  image               String
+  start               DateTime
+  end                 DateTime?
+  term_and_conditions String?
+  amount              Int?
+  is_active           Boolean
+  uploaded_by_id      String? // Made optional to handle existing data
+  uploaded_by         User?     @relation("UserUploadedPromos", fields: [uploaded_by_id], references: [id], onDelete: SetNull)
+}
+
+model Permissions {
+  id         String @id @default(uuid())
+  user_id    String
+  user       User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  permission String
+}
+
+enum UserRole {
+  user
+  cs
+  marketing
+  finance
+  admin
+  super_admin
+}
+
+enum BatchStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  PROCESSING
+  COMPLETED
+  FAILED
+  PARTIALLY_COMPLETED
+}
+
+enum ProcessingStatus {
+  PENDING
+  CREDITED
+  FAILED
+}

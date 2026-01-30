@@ -11,6 +11,7 @@ export interface FetchParams {
   page_size?: number;
   page?: number;
   sortBy?: string;
+  wallet_id?: string;
   sortDesc?: boolean;
 }
 
@@ -25,6 +26,7 @@ class AdminConsole {
     const searchParams = new URLSearchParams();
 
     if (params.search) searchParams.set('search', params.search);
+    if (params.wallet_id) searchParams.set('wallet_id', params.wallet_id);
     if (params.page_size) searchParams.set('page_size', params.page_size.toString());
     if (params.page) searchParams.set('page', params.page.toString());
     if (params.sortBy) searchParams.set('sortBy', params.sortBy);
@@ -95,7 +97,28 @@ class AdminConsole {
       throw error;
     }
   }
-  
+
+  async fetchUserTransactions(params: FetchParams):Promise<Payin[]> {
+    try {
+      const accessToken = await this.getAccessToken();
+      const queryString = this.buildQueryString(params);
+      const response = await fetch(`${this.baseURL}/api/v1/console/wallets/transactions/${queryString}`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken.data.accessToken}`,
+        },
+        method: 'GET'
+      });
+      if (!response.ok) {
+        throw new Error(`Failed to fetch transactions: ${response.statusText}`);
+      }
+
+      return response.json();
+    }catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
   async fetchSummary():Promise<Summary> {
     try {
       const accessToken = await this.getAccessToken();
