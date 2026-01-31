@@ -33,6 +33,7 @@ export interface UserDetail {
   bonus: string;
   is_active: boolean;
   is_verified: boolean;
+  is_payout_locked: boolean;
   wallet_id: number;
   created_at: string;
   platform: string;
