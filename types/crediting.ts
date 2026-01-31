@@ -49,6 +49,14 @@ export interface Campaign {
 }
 
 //Payments
+export interface PaymentRecipient {
+    name: string;
+    phoneNumber: string;
+    amount: number;
+    httpStatus?: number; // HTTP status code from payment API (e.g., 200, 400, 404, 500)
+    errorMessage?: string;
+}
+
 export interface Payments {
     id: string;
     batch_no: string;
@@ -63,11 +71,7 @@ export interface Payments {
         | 'FAILED'
         | 'PARTIALLY_COMPLETED';
     csv: string;
-    recipients: {
-        name: string;
-        phoneNumber: string;
-        amount: number;
-    }[];
+    recipients: PaymentRecipient[];
     date_initiated: Date;
     date_approved: Date | null;
     approved_by: {
