@@ -25,8 +25,10 @@ class AdminConsole {
   private getHeaders(accessToken?: string): HeadersInit {
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Accept': 'application/json, text/plain, */*',
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15',
+      'Origin': 'https://x.tucheze.com',
+      'Referer': 'https://x.tucheze.com/',
     };
     if (accessToken) {
       headers['Authorization'] = `Bearer ${accessToken}`;
@@ -74,14 +76,15 @@ class AdminConsole {
       const queryString = this.buildQueryString(params);
       const response = await fetch(`${this.baseURL}/api/v1/console/users/${queryString}`, {
         method: 'GET',
-        headers: this.getHeaders(accessToken.data.accessToken),
+        headers: this.getHeaders(accessToken.data.access),
       });
 
       if (!response.ok) {
         throw new Error(`Failed to fetchUsers: ${response.statusText}`);
       }
 
-      return response.json();
+      const result = await response.json();
+      return result.data;
     } catch (error) {
       console.error(error);
       throw error;
@@ -93,14 +96,15 @@ class AdminConsole {
       const accessToken = await this.getAccessToken();
       const response = await fetch(`${this.baseURL}/api/v1/console/users/${id}/`, {
         method: 'GET',
-        headers: this.getHeaders(accessToken.data.accessToken),
+        headers: this.getHeaders(accessToken.data.access),
       });
-      
+
       if (!response.ok) {
         throw new Error(`Failed to fetchUser: ${response.statusText}`);
       }
-      
-      return response.json();
+
+      const result = await response.json();
+      return result.data;
     } catch (error) {
       console.error(error);
       throw error;
@@ -113,14 +117,15 @@ class AdminConsole {
       const queryString = this.buildQueryString(params);
       const response = await fetch(`${this.baseURL}/api/v1/console/wallets/transactions/${queryString}`, {
         method: 'GET',
-        headers: this.getHeaders(accessToken.data.accessToken),
+        headers: this.getHeaders(accessToken.data.access),
       });
       if (!response.ok) {
         throw new Error(`Failed to fetch transactions: ${response.statusText}`);
       }
 
-      return response.json();
-    }catch (error) {
+      const result = await response.json();
+      return result.data;
+    } catch (error) {
       console.error(error);
       throw error;
     }
@@ -131,54 +136,57 @@ class AdminConsole {
       const accessToken = await this.getAccessToken();
       const response = await fetch(`${this.baseURL}/api/v1/console/summary/`, {
         method: 'GET',
-        headers: this.getHeaders(accessToken.data.accessToken),
+        headers: this.getHeaders(accessToken.data.access),
       });
-      
+
       if (!response.ok) {
         throw new Error(`Failed to fetchSummary: ${response.statusText}`);
       }
-      
-      return response.json();
+
+      const result = await response.json();
+      return result.data;
     } catch (error) {
       console.error(error);
       throw error;
     }
   }
-  
+
   async fetchDeposits(params: FetchParams = {}): Promise<Payin[]> {
     try {
       const accessToken = await this.getAccessToken();
       const queryString = this.buildQueryString(params);
       const response = await fetch(`${this.baseURL}/api/v1/console/payments/payins/${queryString}`, {
         method: 'GET',
-        headers: this.getHeaders(accessToken.data.accessToken),
+        headers: this.getHeaders(accessToken.data.access),
       });
 
       if (!response.ok) {
         throw new Error(`Failed to fetchDeposits: ${response.statusText}`);
       }
 
-      return response.json();
+      const result = await response.json();
+      return result.data;
     } catch (error) {
       console.error(error);
       throw error;
     }
   }
-  
+
   async fetchWithdrawals(params: FetchParams = {}): Promise<Payout[]> {
     try {
       const accessToken = await this.getAccessToken();
       const queryString = this.buildQueryString(params);
       const response = await fetch(`${this.baseURL}/api/v1/console/payments/payouts/${queryString}`, {
         method: 'GET',
-        headers: this.getHeaders(accessToken.data.accessToken),
+        headers: this.getHeaders(accessToken.data.access),
       });
 
       if (!response.ok) {
         throw new Error(`Failed to fetchWithdrawals: ${response.statusText}`);
       }
 
-      return response.json();
+      const result = await response.json();
+      return result.data;
     } catch (error) {
       console.error(error);
       throw error;
@@ -191,55 +199,58 @@ class AdminConsole {
       const queryString = this.buildQueryString(params);
       const response = await fetch(`${this.baseURL}/api/v1/console/games/${queryString}`, {
         method: 'GET',
-        headers: this.getHeaders(accessToken.data.accessToken),
+        headers: this.getHeaders(accessToken.data.access),
       });
 
       if (!response.ok) {
         throw new Error(`Failed to fetchGames: ${response.statusText}`);
       }
 
-      return response.json();
+      const result = await response.json();
+      return result.data;
     } catch (error) {
       console.error(error);
       throw error;
     }
   }
-  
+
   /*** Update Functions ***/
   async updateUser(id:string, data:UserDetail):Promise<UserDetail> {
     try {
       const accessToken = await this.getAccessToken();
       const response = await fetch(`${this.baseURL}/api/v1/console/users/${id}/`, {
         method: 'PUT',
-        headers: this.getHeaders(accessToken.data.accessToken),
+        headers: this.getHeaders(accessToken.data.access),
         body: JSON.stringify(data),
       });
-      
+
       if (!response.ok) {
         throw new Error(`Failed to updateUser: ${response.statusText}`);
       }
-      
-      return response.json();
+
+      const result = await response.json();
+      return result.data;
     } catch (error) {
       console.error(error);
       throw error;
     }
   }
-  
+
   async updateGame(id:string, data:GameDetail):Promise<GameDetail> {
     try {
       const accessToken = await this.getAccessToken();
       const response = await fetch(`${this.baseURL}/api/v1/console/games/${id}/`, {
         method: 'PUT',
-        headers: this.getHeaders(accessToken.data.accessToken),
+        headers: this.getHeaders(accessToken.data.access),
         body: JSON.stringify(data),
       });
-      
+
       if (!response.ok) {
         throw new Error(`Failed to updateGame: ${response.statusText}`);
       }
-      
-      return response.json();
+
+      const result = await response.json();
+      return result.data;
     } catch (error) {
       console.error(error);
       throw error;
@@ -252,7 +263,7 @@ class AdminConsole {
       const accessToken = await this.getAccessToken();
       const response = await fetch(`${this.baseURL}/api/v1/console/users/${id}/`, {
         method: 'DELETE',
-        headers: this.getHeaders(accessToken.data.accessToken),
+        headers: this.getHeaders(accessToken.data.access),
       });
       
       if (!response.ok) {
