@@ -12,8 +12,9 @@ import {
   UserCog,
   LayoutDashboard,
   Gift,
-  ChevronRight,
+  ChevronRight, Plus, Edit,
 } from "lucide-react"
+import Image from "next/image"
 
 import {
   Sidebar,
@@ -55,12 +56,17 @@ const navigationItems = [
     items: [
       { title: "Deposits", url: "/cashflow/deposits", icon: ArrowDownToLine },
       { title: "Withdrawals", url: "/cashflow/withdrawals", icon: ArrowUpFromLine },
+      { title: "Credit", url:"/payments/crediting",icon:Plus },
+      { title: "Payments", url:"/payments/batch",icon:ArrowUpFromLine },
     ],
   },
   {
     title: "Promos",
-    url: "/promos",
     icon: Megaphone,
+    items: [
+      { title: "New Promo", url: "/promos", icon: Plus },
+      { title: "Saved Promos", url: "/promos/saved", icon: Edit },
+    ],
   },
   {
     title: "Bonus Engine",
@@ -93,8 +99,8 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link href="/summary">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  T
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg  text-sidebar-primary-foreground">
+                  <Image src="/logo.png" alt="Tucheze Logo" width={24} height={24} />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">Tucheze</span>

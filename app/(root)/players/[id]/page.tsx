@@ -1,6 +1,6 @@
 "use client";
 
-import { use } from "react";
+import { use, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Phone, Calendar, Wallet, Shield } from "lucide-react";
 
@@ -20,8 +20,18 @@ interface PageProps {
 export default function PlayerDetailPage({ params }: PageProps) {
   const { id } = use(params);
   const { player, isLoading: playerLoading, error: playerError } = usePlayer(id);
-  const { transactions, isLoading: transactionsLoading } = usePlayerTransactions({
+
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const { transactions, totalRows, isLoading: transactionsLoading } = usePlayerTransactions({
     wallet_id: player?.wallet_id ? String(player.wallet_id) : undefined,
+    search: search || undefined,
+    page,
+    page_size: pageSize,
+    sortBy: "id",
+    sortDesc: true,
   });
 
   if (playerError) {
@@ -192,10 +202,22 @@ export default function PlayerDetailPage({ params }: PageProps) {
           data={transactions}
           isLoading={transactionsLoading || playerLoading}
           searchPlaceholder="Search transactions..."
-          dateColumn="created_at"
-          showDateFilter={true}
+          showDateFilter={false}
           mobileHiddenColumns={["initial_balance", "final_balance", "details"]}
           tabletHiddenColumns={["details"]}
+          serverSide={true}
+          totalRows={totalRows}
+          page={page}
+          pageSize={pageSize}
+          onSearchChange={(value) => {
+            setSearch(value);
+            setPage(1);
+          }}
+          onPageChange={setPage}
+          onPageSizeChange={(value) => {
+            setPageSize(value);
+            setPage(1);
+          }}
         />
       </div>
     </div>

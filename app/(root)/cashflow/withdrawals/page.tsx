@@ -1,11 +1,22 @@
 "use client";
 
+import { useState } from "react";
 import { useWithdrawals } from "@/hooks/use-cashflow";
 import { DataTable } from "@/components/shared/data-table";
 import { withdrawalsColumns } from "@/components/cashflow/withdrawals-columns";
 
 export default function WithdrawalsPage() {
-  const { withdrawals, isLoading, error, refetch } = useWithdrawals();
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const { withdrawals, totalRows, isLoading, error, refetch } = useWithdrawals({
+    search: search || undefined,
+    page,
+    page_size: pageSize,
+    sortBy: "id",
+    sortDesc: true,
+  });
 
   if (error) {
     return (
@@ -42,10 +53,22 @@ export default function WithdrawalsPage() {
         data={withdrawals}
         isLoading={isLoading}
         searchPlaceholder="Search by name, phone, or M-Pesa ID..."
-        dateColumn="created_at"
-        showDateFilter={true}
+        showDateFilter={false}
         mobileHiddenColumns={["mpesa_transaction_id", "method", "details"]}
         tabletHiddenColumns={["details"]}
+        serverSide={true}
+        totalRows={totalRows}
+        page={page}
+        pageSize={pageSize}
+        onSearchChange={(value) => {
+          setSearch(value);
+          setPage(1);
+        }}
+        onPageChange={setPage}
+        onPageSizeChange={(value) => {
+          setPageSize(value);
+          setPage(1);
+        }}
       />
     </div>
   );

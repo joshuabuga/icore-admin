@@ -2,7 +2,7 @@
 
 import useSWR from 'swr';
 import useSWRMutation from 'swr/mutation';
-import { fetcher, fetcherWithParams, mutationFetcher } from '@/lib/fetcher';
+import { fetcher } from '@/lib/fetcher';
 import { UserListItem, UserDetail, Transaction } from '@/types/users';
 
 export interface PlayersParams {
@@ -17,16 +17,23 @@ export interface TransactionsParams extends PlayersParams {
     wallet_id?: string;
 }
 
-export function usePlayers(params?: PlayersParams) {
-    const queryString = params
-        ? '?' + new URLSearchParams(
-            Object.entries(params)
-                .filter(([, v]) => v !== undefined)
-                .map(([k, v]) => [k, String(v)])
-        ).toString()
-        : '';
+interface PlayersResponse {
+    data: UserListItem[];
+    totalRows: number;
+}
 
-    const { data, error, isLoading, mutate } = useSWR<UserListItem[]>(
+export function usePlayers(params: PlayersParams = {}) {
+    // Build query string with defaults
+    const searchParams = new URLSearchParams();
+    if (params.search) searchParams.set('search', params.search);
+    searchParams.set('page_size', (params.page_size ?? 10).toString());
+    searchParams.set('page', (params.page ?? 1).toString());
+    searchParams.set('sortBy', params.sortBy ?? 'id');
+    searchParams.set('sortDesc', (params.sortDesc ?? true).toString());
+
+    const queryString = `?${searchParams.toString()}`;
+
+    const { data, error, isLoading, mutate } = useSWR<PlayersResponse>(
         `/api/players${queryString}`,
         fetcher,
         {
@@ -35,7 +42,8 @@ export function usePlayers(params?: PlayersParams) {
     );
 
     return {
-        players: data || [],
+        players: data?.data || [],
+        totalRows: data?.totalRows || 0,
         isLoading,
         error,
         refetch: mutate,
@@ -59,15 +67,24 @@ export function usePlayer(id: string | null) {
     };
 }
 
-export function usePlayerTransactions(params: TransactionsParams) {
-    const queryString = '?' + new URLSearchParams(
-        Object.entries({ ...params, type: 'transactions' })
-            .filter(([, v]) => v !== undefined)
-            .map(([k, v]) => [k, String(v)])
-    ).toString();
+interface TransactionsResponse {
+    data: Transaction[];
+    totalRows: number;
+}
 
-    const { data, error, isLoading, mutate } = useSWR<{ type: string; data: Transaction[] }>(
-        `/api/cashflow${queryString}`,
+export function usePlayerTransactions(params: TransactionsParams) {
+    const searchParams = new URLSearchParams({ type: 'transactions' });
+    if (params.wallet_id) searchParams.set('wallet_id', params.wallet_id);
+    if (params.search) searchParams.set('search', params.search);
+    searchParams.set('page_size', (params.page_size ?? 10).toString());
+    searchParams.set('page', (params.page ?? 1).toString());
+    searchParams.set('sortBy', params.sortBy ?? 'id');
+    searchParams.set('sortDesc', (params.sortDesc ?? true).toString());
+
+    const queryString = `?${searchParams.toString()}`;
+
+    const { data, error, isLoading, mutate } = useSWR<TransactionsResponse>(
+        params.wallet_id ? `/api/cashflow${queryString}` : null,
         fetcher,
         {
             revalidateOnFocus: false,
@@ -76,6 +93,7 @@ export function usePlayerTransactions(params: TransactionsParams) {
 
     return {
         transactions: data?.data || [],
+        totalRows: data?.totalRows || 0,
         isLoading,
         error,
         refetch: mutate,

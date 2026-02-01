@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useState } from "react";
 import { toast } from "sonner";
 
 import { usePlayers, usePlayerMutations } from "@/hooks/use-players";
@@ -12,7 +12,18 @@ import {
 import { UserListItem } from "@/types/users";
 
 export default function PlayersPage() {
-  const { players, isLoading, error, refetch } = usePlayers();
+  // Server-side pagination state
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const { players, totalRows, isLoading, error, refetch } = usePlayers({
+    search: search || undefined,
+    page,
+    page_size: pageSize,
+    sortBy: "id",
+    sortDesc: true,
+  });
   const { updatePlayer, isUpdating } = usePlayerMutations();
 
   // Action handlers
@@ -109,10 +120,23 @@ export default function PlayersPage() {
         data={players}
         isLoading={isLoading}
         searchPlaceholder="Search players by name, phone, or ID..."
-        dateColumn="created_at"
-        showDateFilter={true}
+        showDateFilter={false}
         mobileHiddenColumns={["mno", "platform", "bonus", "last_login"]}
         tabletHiddenColumns={["bets", "is_payout_locked"]}
+        // Server-side pagination
+        serverSide={true}
+        totalRows={totalRows}
+        page={page}
+        pageSize={pageSize}
+        onSearchChange={(value) => {
+          setSearch(value);
+          setPage(1); // Reset to first page on search
+        }}
+        onPageChange={setPage}
+        onPageSizeChange={(value) => {
+          setPageSize(value);
+          setPage(1); // Reset to first page on page size change
+        }}
       />
     </div>
   );

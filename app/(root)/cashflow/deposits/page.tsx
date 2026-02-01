@@ -1,11 +1,22 @@
 "use client";
 
+import { useState } from "react";
 import { useDeposits } from "@/hooks/use-cashflow";
 import { DataTable } from "@/components/shared/data-table";
 import { depositsColumns } from "@/components/cashflow/deposits-columns";
 
 export default function DepositsPage() {
-  const { deposits, isLoading, error, refetch } = useDeposits();
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const { deposits, totalRows, isLoading, error, refetch } = useDeposits({
+    search: search || undefined,
+    page,
+    page_size: pageSize,
+    sortBy: "id",
+    sortDesc: true,
+  });
 
   if (error) {
     return (
@@ -42,10 +53,22 @@ export default function DepositsPage() {
         data={deposits}
         isLoading={isLoading}
         searchPlaceholder="Search by name, phone, or transaction ID..."
-        dateColumn="created_at"
-        showDateFilter={true}
+        showDateFilter={false}
         mobileHiddenColumns={["transaction_ref", "short_code", "method"]}
         tabletHiddenColumns={["short_code"]}
+        serverSide={true}
+        totalRows={totalRows}
+        page={page}
+        pageSize={pageSize}
+        onSearchChange={(value) => {
+          setSearch(value);
+          setPage(1);
+        }}
+        onPageChange={setPage}
+        onPageSizeChange={(value) => {
+          setPageSize(value);
+          setPage(1);
+        }}
       />
     </div>
   );

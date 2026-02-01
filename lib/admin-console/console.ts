@@ -15,6 +15,11 @@ export interface FetchParams {
   sortDesc?: boolean;
 }
 
+export interface PaginatedResponse<T> {
+  data: T[];
+  totalRows: number;
+}
+
 class AdminConsole {
   private baseURL;
 
@@ -70,7 +75,7 @@ class AdminConsole {
   }
   
   /** Perform Fetch functions **/
-  async fetchUsers(params: FetchParams = {}): Promise<UserListItem[]> {
+  async fetchUsers(params: FetchParams = {}): Promise<PaginatedResponse<UserListItem>> {
     try {
       const accessToken = await this.getAccessToken();
       const queryString = this.buildQueryString(params);
@@ -84,7 +89,10 @@ class AdminConsole {
       }
 
       const result = await response.json();
-      return result.data;
+      return {
+        data: result.data,
+        totalRows: result.paginator?.length || 0,
+      };
     } catch (error) {
       console.error(error);
       throw error;
@@ -111,7 +119,7 @@ class AdminConsole {
     }
   }
 
-  async fetchUserTransactions(params: FetchParams):Promise<Payin[]> {
+  async fetchUserTransactions(params: FetchParams):Promise<PaginatedResponse<Payin>> {
     try {
       const accessToken = await this.getAccessToken();
       const queryString = this.buildQueryString(params);
@@ -124,7 +132,10 @@ class AdminConsole {
       }
 
       const result = await response.json();
-      return result.data;
+      return {
+        data: result.data,
+        totalRows: result.paginator?.length || 0,
+      };
     } catch (error) {
       console.error(error);
       throw error;
@@ -151,7 +162,7 @@ class AdminConsole {
     }
   }
 
-  async fetchDeposits(params: FetchParams = {}): Promise<Payin[]> {
+  async fetchDeposits(params: FetchParams = {}): Promise<PaginatedResponse<Payin>> {
     try {
       const accessToken = await this.getAccessToken();
       const queryString = this.buildQueryString(params);
@@ -165,14 +176,17 @@ class AdminConsole {
       }
 
       const result = await response.json();
-      return result.data;
+      return {
+        data: result.data,
+        totalRows: result.paginator?.length || 0,
+      };
     } catch (error) {
       console.error(error);
       throw error;
     }
   }
 
-  async fetchWithdrawals(params: FetchParams = {}): Promise<Payout[]> {
+  async fetchWithdrawals(params: FetchParams = {}): Promise<PaginatedResponse<Payout>> {
     try {
       const accessToken = await this.getAccessToken();
       const queryString = this.buildQueryString(params);
@@ -186,14 +200,17 @@ class AdminConsole {
       }
 
       const result = await response.json();
-      return result.data;
+      return {
+        data: result.data,
+        totalRows: result.paginator?.length || 0,
+      };
     } catch (error) {
       console.error(error);
       throw error;
     }
   }
-  
-  async fetchGames(params: FetchParams = {}): Promise<Game[]> {
+
+  async fetchGames(params: FetchParams = {}): Promise<PaginatedResponse<Game>> {
     try {
       const accessToken = await this.getAccessToken();
       const queryString = this.buildQueryString(params);
@@ -207,7 +224,10 @@ class AdminConsole {
       }
 
       const result = await response.json();
-      return result.data;
+      return {
+        data: result.data,
+        totalRows: result.paginator?.length || 0,
+      };
     } catch (error) {
       console.error(error);
       throw error;

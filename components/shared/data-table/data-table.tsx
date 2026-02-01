@@ -47,6 +47,14 @@ interface DataTableProps<TData, TValue> {
   mobileHiddenColumns?: string[];
   // Columns to hide on tablet (< 1024px)
   tabletHiddenColumns?: string[];
+  // Server-side pagination props
+  serverSide?: boolean;
+  totalRows?: number;
+  page?: number;
+  pageSize?: number;
+  onSearchChange?: (search: string) => void;
+  onPageChange?: (page: number) => void;
+  onPageSizeChange?: (pageSize: number) => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -59,6 +67,14 @@ export function DataTable<TData, TValue>({
   isLoading = false,
   mobileHiddenColumns = [],
   tabletHiddenColumns = [],
+  // Server-side props
+  serverSide = false,
+  totalRows = 0,
+  page = 1,
+  pageSize: serverPageSize = 10,
+  onSearchChange,
+  onPageChange,
+  onPageSizeChange,
 }: DataTableProps<TData, TValue>) {
   const [globalFilter, setGlobalFilter] = useState("");
   const [dateRange, setDateRange] = useState<DateRange>({
@@ -66,6 +82,17 @@ export function DataTable<TData, TValue>({
     to: undefined,
   });
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [localPageSize, setLocalPageSize] = useState(serverPageSize);
+  const [localPageIndex, setLocalPageIndex] = useState(0);
+
+  // Debounced search for server-side
+  useEffect(() => {
+    if (!serverSide || !onSearchChange) return;
+    const timer = setTimeout(() => {
+      onSearchChange(globalFilter);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [globalFilter, serverSide, onSearchChange]);
 
   // Handle responsive column visibility
   useEffect(() => {
@@ -103,26 +130,47 @@ export function DataTable<TData, TValue>({
     return filterByDateRange(data, dateColumn, dateRange);
   }, [data, dateColumn, dateRange]);
 
+  // Reset page index when data changes (client-side only)
+  useEffect(() => {
+    if (!serverSide) {
+      setLocalPageIndex(0);
+    }
+  }, [filteredData.length, serverSide]);
+
+  // Calculate server-side pagination values
+  const serverPageCount = serverSide ? Math.ceil(totalRows / localPageSize) : undefined;
+
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: filteredData,
     columns: columns as ColumnDef<TData, unknown>[],
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: serverSide ? undefined : getPaginationRowModel(),
+    getFilteredRowModel: serverSide ? undefined : getFilteredRowModel(),
     // Using "includes" preset for global filtering across all columns
-    globalFilterFn: "includesString",
+    globalFilterFn: serverSide ? undefined : "includesString",
     onGlobalFilterChange: setGlobalFilter,
     onColumnVisibilityChange: setColumnVisibility,
+    manualPagination: serverSide,
+    manualFiltering: serverSide,
+    pageCount: serverPageCount,
     state: {
-      globalFilter,
+      globalFilter: serverSide ? undefined : globalFilter,
       columnVisibility,
+      pagination: serverSide
+        ? { pageIndex: page - 1, pageSize: localPageSize }
+        : { pageIndex: localPageIndex, pageSize: localPageSize },
     },
-    initialState: {
-      pagination: {
-        pageSize: 10,
-      },
-    },
+    onPaginationChange: serverSide
+      ? undefined
+      : (updater) => {
+          const newState =
+            typeof updater === "function"
+              ? updater({ pageIndex: localPageIndex, pageSize: localPageSize })
+              : updater;
+          setLocalPageIndex(newState.pageIndex);
+          setLocalPageSize(newState.pageSize);
+        },
   });
 
   return (
@@ -147,7 +195,7 @@ export function DataTable<TData, TValue>({
             )}
           </div>
           <div className="text-sm text-muted-foreground">
-            {table.getFilteredRowModel().rows.length} result(s)
+            {serverSide ? totalRows : table.getFilteredRowModel().rows.length} result(s)
           </div>
         </div>
       )}
@@ -217,8 +265,8 @@ export function DataTable<TData, TValue>({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         {/* Page info - hidden on mobile */}
         <div className="hidden text-sm text-muted-foreground sm:block">
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount() || 1}
+          Page {serverSide ? page : table.getState().pagination.pageIndex + 1} of{" "}
+          {serverSide ? (serverPageCount || 1) : (table.getPageCount() || 1)}
         </div>
 
         {/* Pagination buttons */}
@@ -228,20 +276,33 @@ export function DataTable<TData, TValue>({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
+              onClick={() => {
+                if (serverSide && onPageChange) {
+                  onPageChange(page - 1);
+                } else {
+                  table.previousPage();
+                }
+              }}
+              disabled={serverSide ? page <= 1 : !table.getCanPreviousPage()}
             >
               <ChevronLeft className="h-4 w-4" />
               Prev
             </Button>
             <span className="px-2 text-sm text-muted-foreground">
-              {table.getState().pagination.pageIndex + 1}/{table.getPageCount() || 1}
+              {serverSide ? page : table.getState().pagination.pageIndex + 1}/
+              {serverSide ? (serverPageCount || 1) : (table.getPageCount() || 1)}
             </span>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
+              onClick={() => {
+                if (serverSide && onPageChange) {
+                  onPageChange(page + 1);
+                } else {
+                  table.nextPage();
+                }
+              }}
+              disabled={serverSide ? page >= (serverPageCount || 1) : !table.getCanNextPage()}
             >
               Next
               <ChevronRight className="h-4 w-4" />
@@ -253,15 +314,21 @@ export function DataTable<TData, TValue>({
             <div className="flex items-center gap-2">
               <span className="text-sm">Rows per page</span>
               <select
-                value={table.getState().pagination.pageSize}
+                value={serverSide ? localPageSize : table.getState().pagination.pageSize}
                 onChange={(e) => {
-                  table.setPageSize(Number(e.target.value));
+                  const newSize = Number(e.target.value);
+                  setLocalPageSize(newSize);
+                  if (serverSide && onPageSizeChange) {
+                    onPageSizeChange(newSize);
+                  } else {
+                    table.setPageSize(newSize);
+                  }
                 }}
                 className="h-8 w-[70px] rounded border border-input bg-background px-2 text-sm"
               >
-                {[10, 20, 30, 40, 50].map((pageSize) => (
-                  <option key={pageSize} value={pageSize}>
-                    {pageSize}
+                {[10, 20, 30, 40, 50].map((ps) => (
+                  <option key={ps} value={ps}>
+                    {ps}
                   </option>
                 ))}
               </select>
@@ -272,8 +339,14 @@ export function DataTable<TData, TValue>({
                 variant="outline"
                 size="icon"
                 className="h-8 w-8"
-                onClick={() => table.setPageIndex(0)}
-                disabled={!table.getCanPreviousPage()}
+                onClick={() => {
+                  if (serverSide && onPageChange) {
+                    onPageChange(1);
+                  } else {
+                    table.setPageIndex(0);
+                  }
+                }}
+                disabled={serverSide ? page <= 1 : !table.getCanPreviousPage()}
               >
                 <span className="sr-only">Go to first page</span>
                 <ChevronsLeft className="h-4 w-4" />
@@ -282,8 +355,14 @@ export function DataTable<TData, TValue>({
                 variant="outline"
                 size="icon"
                 className="h-8 w-8"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
+                onClick={() => {
+                  if (serverSide && onPageChange) {
+                    onPageChange(page - 1);
+                  } else {
+                    table.previousPage();
+                  }
+                }}
+                disabled={serverSide ? page <= 1 : !table.getCanPreviousPage()}
               >
                 <span className="sr-only">Go to previous page</span>
                 <ChevronLeft className="h-4 w-4" />
@@ -292,8 +371,14 @@ export function DataTable<TData, TValue>({
                 variant="outline"
                 size="icon"
                 className="h-8 w-8"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
+                onClick={() => {
+                  if (serverSide && onPageChange) {
+                    onPageChange(page + 1);
+                  } else {
+                    table.nextPage();
+                  }
+                }}
+                disabled={serverSide ? page >= (serverPageCount || 1) : !table.getCanNextPage()}
               >
                 <span className="sr-only">Go to next page</span>
                 <ChevronRight className="h-4 w-4" />
@@ -302,8 +387,14 @@ export function DataTable<TData, TValue>({
                 variant="outline"
                 size="icon"
                 className="h-8 w-8"
-                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                disabled={!table.getCanNextPage()}
+                onClick={() => {
+                  if (serverSide && onPageChange) {
+                    onPageChange(serverPageCount || 1);
+                  } else {
+                    table.setPageIndex(table.getPageCount() - 1);
+                  }
+                }}
+                disabled={serverSide ? page >= (serverPageCount || 1) : !table.getCanNextPage()}
               >
                 <span className="sr-only">Go to last page</span>
                 <ChevronsRight className="h-4 w-4" />

@@ -13,16 +13,26 @@ export interface GamesParams {
     sortDesc?: boolean;
 }
 
-export function useGames(params?: GamesParams) {
-    const queryString = params
-        ? '?' + new URLSearchParams(
-            Object.entries(params)
-                .filter(([, v]) => v !== undefined)
-                .map(([k, v]) => [k, String(v)])
-        ).toString()
-        : '';
+interface GamesResponse {
+    data: Game[];
+    totalRows: number;
+}
 
-    const { data, error, isLoading, mutate } = useSWR<Game[]>(
+function isSuccessStatus(status: number): boolean {
+    return status >= 200 && status < 300;
+}
+
+export function useGames(params: GamesParams = {}) {
+    const searchParams = new URLSearchParams();
+    if (params.search) searchParams.set('search', params.search);
+    searchParams.set('page_size', (params.page_size ?? 10).toString());
+    searchParams.set('page', (params.page ?? 1).toString());
+    searchParams.set('sortBy', params.sortBy ?? 'id');
+    searchParams.set('sortDesc', (params.sortDesc ?? true).toString());
+
+    const queryString = `?${searchParams.toString()}`;
+
+    const { data, error, isLoading, mutate } = useSWR<GamesResponse>(
         `/api/games${queryString}`,
         fetcher,
         {
@@ -31,7 +41,8 @@ export function useGames(params?: GamesParams) {
     );
 
     return {
-        games: data || [],
+        games: data?.data || [],
+        totalRows: data?.totalRows || 0,
         isLoading,
         error,
         refetch: mutate,
@@ -47,9 +58,9 @@ export function useGameMutations() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(arg.data),
             });
-            if (!res.ok) {
-                const error = await res.json();
-                throw new Error(error.error || 'Failed to update game');
+            if (!isSuccessStatus(res.status)) {
+                const error = await res.json().catch(() => ({}));
+                throw new Error(error.error || `Failed to update game (${res.status})`);
             }
             return res.json();
         }

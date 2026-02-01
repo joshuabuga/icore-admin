@@ -53,14 +53,14 @@ export async function GET(request: Request) {
         };
 
         if (type === 'withdrawals') {
-            const withdrawals = await adminConsole.fetchWithdrawals(params);
-            return NextResponse.json({ type: 'withdrawals', data: withdrawals });
+            const result = await adminConsole.fetchWithdrawals(params);
+            return NextResponse.json(result);
         } else if (type === 'transactions') {
-            const transactions = await adminConsole.fetchUserTransactions(params);
-            return NextResponse.json({ type: 'transactions', data: transactions });
+            const result = await adminConsole.fetchUserTransactions(params);
+            return NextResponse.json(result);
         } else {
-            const deposits = await adminConsole.fetchDeposits(params);
-            return NextResponse.json({ type: 'deposits', data: deposits });
+            const result = await adminConsole.fetchDeposits(params);
+            return NextResponse.json(result);
         }
     } catch (error) {
         console.error('Error fetching cashflow:', error);

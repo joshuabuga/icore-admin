@@ -49,8 +49,8 @@ export async function GET(request: Request) {
             sortDesc: searchParams.get('sortDesc') === 'true' ? true : searchParams.get('sortDesc') === 'false' ? false : undefined,
         };
 
-        const players = await adminConsole.fetchUsers(params);
-        return NextResponse.json(players);
+        const result = await adminConsole.fetchUsers(params);
+        return NextResponse.json(result);
     } catch (error) {
         console.error('Error fetching players:', error);
         return NextResponse.json(
