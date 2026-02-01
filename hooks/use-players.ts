@@ -82,6 +82,10 @@ export function usePlayerTransactions(params: TransactionsParams) {
     };
 }
 
+function isSuccessStatus(status: number): boolean {
+    return status >= 200 && status < 300;
+}
+
 export function usePlayerMutations() {
     const { trigger: updatePlayer, isMutating: isUpdating } = useSWRMutation(
         '/api/players',
@@ -91,9 +95,9 @@ export function usePlayerMutations() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(arg.data),
             });
-            if (!res.ok) {
-                const error = await res.json();
-                throw new Error(error.error || 'Failed to update player');
+            if (!isSuccessStatus(res.status)) {
+                const error = await res.json().catch(() => ({}));
+                throw new Error(error.error || `Failed to update player (${res.status})`);
             }
             return res.json();
         }
@@ -105,9 +109,9 @@ export function usePlayerMutations() {
             const res = await fetch(`${url}/${arg.id}`, {
                 method: 'DELETE',
             });
-            if (!res.ok) {
-                const error = await res.json();
-                throw new Error(error.error || 'Failed to delete player');
+            if (!isSuccessStatus(res.status)) {
+                const error = await res.json().catch(() => ({}));
+                throw new Error(error.error || `Failed to delete player (${res.status})`);
             }
             return res.json();
         }

@@ -10,13 +10,17 @@ export class FetchError extends Error {
     }
 }
 
+function isSuccessStatus(status: number): boolean {
+    return status >= 200 && status < 300;
+}
+
 export const fetcher = async <T>(url: string): Promise<T> => {
     const res = await fetch(url);
 
-    if (!res.ok) {
+    if (!isSuccessStatus(res.status)) {
         const info = await res.json().catch(() => ({}));
         throw new FetchError(
-            info.error || `An error occurred while fetching the data.`,
+            info.error || `An error occurred while fetching the data (${res.status}).`,
             res.status,
             info
         );
@@ -57,10 +61,10 @@ export const mutationFetcher = async <T, D = unknown>(
         body: arg.data ? JSON.stringify(arg.data) : undefined,
     });
 
-    if (!res.ok) {
+    if (!isSuccessStatus(res.status)) {
         const info = await res.json().catch(() => ({}));
         throw new FetchError(
-            info.error || `An error occurred while mutating the data.`,
+            info.error || `An error occurred while mutating the data (${res.status}).`,
             res.status,
             info
         );

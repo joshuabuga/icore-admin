@@ -22,29 +22,42 @@ class AdminConsole {
     this.baseURL = process.env.TUCHEZE_ADMIN_API;
   }
 
+  private getHeaders(accessToken?: string): HeadersInit {
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    };
+    if (accessToken) {
+      headers['Authorization'] = `Bearer ${accessToken}`;
+    }
+    return headers;
+  }
+
   private buildQueryString(params: FetchParams): string {
     const searchParams = new URLSearchParams();
 
+    // Default params - always included
+    searchParams.set('search',params.search ?? '');
+    searchParams.set('page_size', (params.page_size ?? 10).toString());
+    searchParams.set('page', (params.page ?? 1).toString());
+    searchParams.set('sortBy', params.sortBy ?? 'id');
+    searchParams.set('sortDesc', (params.sortDesc ?? true).toString());
+
+    // Optional params
     if (params.search) searchParams.set('search', params.search);
     if (params.wallet_id) searchParams.set('wallet_id', params.wallet_id);
-    if (params.page_size) searchParams.set('page_size', params.page_size.toString());
-    if (params.page) searchParams.set('page', params.page.toString());
-    if (params.sortBy) searchParams.set('sortBy', params.sortBy);
-    if (params.sortDesc !== undefined) searchParams.set('sortDesc', params.sortDesc.toString());
 
-    const queryString = searchParams.toString();
-    return queryString ? `?${queryString}` : '';
+    return `?${searchParams.toString()}`;
   }
 
   private async getAccessToken(): Promise<AccessTokenResponse> {
-    const username = process.env.TUCHEZE_ADMIN_USERNAME;
+    const email = process.env.TUCHEZE_ADMIN_USERNAME;
     const password = process.env.TUCHEZE_ADMIN_PASSWORD;
     const response = await fetch(`${this.baseURL}/api/v1/console/auth/token/`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password }),
+      headers: this.getHeaders(),
+      body: JSON.stringify({ email, password }),
     });
     
     if (!response.ok) {
@@ -60,10 +73,8 @@ class AdminConsole {
       const accessToken = await this.getAccessToken();
       const queryString = this.buildQueryString(params);
       const response = await fetch(`${this.baseURL}/api/v1/console/users/${queryString}`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken.data.accessToken}`,
-        },
-        method: 'GET'
+        method: 'GET',
+        headers: this.getHeaders(accessToken.data.accessToken),
       });
 
       if (!response.ok) {
@@ -81,10 +92,8 @@ class AdminConsole {
     try {
       const accessToken = await this.getAccessToken();
       const response = await fetch(`${this.baseURL}/api/v1/console/users/${id}/`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken.data.accessToken}`,
-        },
-        method: 'GET'
+        method: 'GET',
+        headers: this.getHeaders(accessToken.data.accessToken),
       });
       
       if (!response.ok) {
@@ -103,10 +112,8 @@ class AdminConsole {
       const accessToken = await this.getAccessToken();
       const queryString = this.buildQueryString(params);
       const response = await fetch(`${this.baseURL}/api/v1/console/wallets/transactions/${queryString}`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken.data.accessToken}`,
-        },
-        method: 'GET'
+        method: 'GET',
+        headers: this.getHeaders(accessToken.data.accessToken),
       });
       if (!response.ok) {
         throw new Error(`Failed to fetch transactions: ${response.statusText}`);
@@ -123,10 +130,8 @@ class AdminConsole {
     try {
       const accessToken = await this.getAccessToken();
       const response = await fetch(`${this.baseURL}/api/v1/console/summary/`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken.data.accessToken}`,
-        },
-         method: 'GET'
+        method: 'GET',
+        headers: this.getHeaders(accessToken.data.accessToken),
       });
       
       if (!response.ok) {
@@ -145,10 +150,8 @@ class AdminConsole {
       const accessToken = await this.getAccessToken();
       const queryString = this.buildQueryString(params);
       const response = await fetch(`${this.baseURL}/api/v1/console/payments/payins/${queryString}`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken.data.accessToken}`,
-        },
-        method: 'GET'
+        method: 'GET',
+        headers: this.getHeaders(accessToken.data.accessToken),
       });
 
       if (!response.ok) {
@@ -167,10 +170,8 @@ class AdminConsole {
       const accessToken = await this.getAccessToken();
       const queryString = this.buildQueryString(params);
       const response = await fetch(`${this.baseURL}/api/v1/console/payments/payouts/${queryString}`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken.data.accessToken}`,
-        },
-        method: 'GET'
+        method: 'GET',
+        headers: this.getHeaders(accessToken.data.accessToken),
       });
 
       if (!response.ok) {
@@ -189,10 +190,8 @@ class AdminConsole {
       const accessToken = await this.getAccessToken();
       const queryString = this.buildQueryString(params);
       const response = await fetch(`${this.baseURL}/api/v1/console/games/${queryString}`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken.data.accessToken}`,
-        },
-        method: 'GET'
+        method: 'GET',
+        headers: this.getHeaders(accessToken.data.accessToken),
       });
 
       if (!response.ok) {
@@ -211,11 +210,9 @@ class AdminConsole {
     try {
       const accessToken = await this.getAccessToken();
       const response = await fetch(`${this.baseURL}/api/v1/console/users/${id}/`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken.data.accessToken}`,
-        },
         method: 'PUT',
-        body: JSON.stringify(data)
+        headers: this.getHeaders(accessToken.data.accessToken),
+        body: JSON.stringify(data),
       });
       
       if (!response.ok) {
@@ -233,11 +230,9 @@ class AdminConsole {
     try {
       const accessToken = await this.getAccessToken();
       const response = await fetch(`${this.baseURL}/api/v1/console/games/${id}/`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken.data.accessToken}`,
-        },
         method: 'PUT',
-        body: JSON.stringify(data)
+        headers: this.getHeaders(accessToken.data.accessToken),
+        body: JSON.stringify(data),
       });
       
       if (!response.ok) {
@@ -256,10 +251,8 @@ class AdminConsole {
     try {
       const accessToken = await this.getAccessToken();
       const response = await fetch(`${this.baseURL}/api/v1/console/users/${id}/`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken.data.accessToken}`,
-        },
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: this.getHeaders(accessToken.data.accessToken),
       });
       
       if (!response.ok) {
