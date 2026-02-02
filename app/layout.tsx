@@ -19,6 +19,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Tucheze - BO ",
   description: "Tucheze Internal Backoffice for admin management of platform and players",
+  icons: {
+    icon: '/logo.png',
+  },
 };
 
 export default function RootLayout({
