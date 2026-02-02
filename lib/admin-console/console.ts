@@ -151,7 +151,7 @@ class AdminConsole {
   async fetchSummary():Promise<Summary> {
     try {
       const accessToken = await this.getAccessToken();
-      const response = await fetch(`${this.baseURL}/api/v1/console/summary/`, {
+      const response = await fetch(`${this.baseURL}/api/v1/console/stats/summary/`, {
         method: 'GET',
         headers: this.getHeaders(accessToken.data.access),
       });
