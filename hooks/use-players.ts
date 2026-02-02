@@ -11,6 +11,8 @@ export interface PlayersParams {
     page?: number;
     sortBy?: string;
     sortDesc?: boolean;
+    date_after?: string;   // ISO date string (start date)
+    date_before?: string;  // ISO date string (end date)
 }
 
 export interface TransactionsParams extends PlayersParams {
@@ -30,6 +32,8 @@ export function usePlayers(params: PlayersParams = {}) {
     searchParams.set('page', (params.page ?? 1).toString());
     searchParams.set('sortBy', params.sortBy ?? 'id');
     searchParams.set('sortDesc', (params.sortDesc ?? true).toString());
+    if (params.date_after) searchParams.set('date_after', params.date_after);
+    if (params.date_before) searchParams.set('date_before', params.date_before);
 
     const queryString = `?${searchParams.toString()}`;
 
@@ -80,6 +84,8 @@ export function usePlayerTransactions(params: TransactionsParams) {
     searchParams.set('page', (params.page ?? 1).toString());
     searchParams.set('sortBy', params.sortBy ?? 'id');
     searchParams.set('sortDesc', (params.sortDesc ?? true).toString());
+    if (params.date_after) searchParams.set('date_after', params.date_after);
+    if (params.date_before) searchParams.set('date_before', params.date_before);
 
     const queryString = `?${searchParams.toString()}`;
 

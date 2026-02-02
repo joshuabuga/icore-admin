@@ -24,6 +24,14 @@ export default function PlayerDetailPage({ params }: PageProps) {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
+    from: undefined,
+    to: undefined,
+  });
+
+  // Convert dates to ISO datetime strings for API (IsoDateTimeFromToRangeFilter expects datetime format)
+  const dateAfter = dateRange.from ? `${dateRange.from.toISOString().split('T')[0]}T00:00:00Z` : undefined;
+  const dateBefore = dateRange.to ? `${dateRange.to.toISOString().split('T')[0]}T23:59:59Z` : undefined;
 
   const { transactions, totalRows, isLoading: transactionsLoading } = usePlayerTransactions({
     wallet_id: player?.wallet_id ? String(player.wallet_id) : undefined,
@@ -32,6 +40,8 @@ export default function PlayerDetailPage({ params }: PageProps) {
     page_size: pageSize,
     sortBy: "id",
     sortDesc: true,
+    date_after: dateAfter,
+    date_before: dateBefore,
   });
 
   if (playerError) {
@@ -202,7 +212,7 @@ export default function PlayerDetailPage({ params }: PageProps) {
           data={transactions}
           isLoading={transactionsLoading || playerLoading}
           searchPlaceholder="Search transactions..."
-          showDateFilter={false}
+          showDateFilter={true}
           mobileHiddenColumns={["initial_balance", "final_balance", "details"]}
           tabletHiddenColumns={["details"]}
           serverSide={true}
@@ -216,6 +226,11 @@ export default function PlayerDetailPage({ params }: PageProps) {
           onPageChange={setPage}
           onPageSizeChange={(value) => {
             setPageSize(value);
+            setPage(1);
+          }}
+          dateRange={dateRange}
+          onDateRangeChange={(range) => {
+            setDateRange(range);
             setPage(1);
           }}
         />

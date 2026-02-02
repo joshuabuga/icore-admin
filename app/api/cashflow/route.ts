@@ -50,6 +50,8 @@ export async function GET(request: Request) {
             sortBy: searchParams.get('sortBy') || undefined,
             sortDesc: searchParams.get('sortDesc') === 'true' ? true : searchParams.get('sortDesc') === 'false' ? false : undefined,
             wallet_id: searchParams.get('wallet_id') || undefined,
+            date_after: searchParams.get('date_after') || undefined,
+            date_before: searchParams.get('date_before') || undefined,
         };
 
         if (type === 'withdrawals') {

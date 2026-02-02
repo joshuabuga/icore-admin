@@ -55,6 +55,9 @@ interface DataTableProps<TData, TValue> {
   onSearchChange?: (search: string) => void;
   onPageChange?: (page: number) => void;
   onPageSizeChange?: (pageSize: number) => void;
+  // Server-side date filtering props
+  dateRange?: DateRange;
+  onDateRangeChange?: (dateRange: DateRange) => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -75,15 +78,23 @@ export function DataTable<TData, TValue>({
   onSearchChange,
   onPageChange,
   onPageSizeChange,
+  // Server-side date filtering props
+  dateRange: controlledDateRange,
+  onDateRangeChange,
 }: DataTableProps<TData, TValue>) {
   const [globalFilter, setGlobalFilter] = useState("");
-  const [dateRange, setDateRange] = useState<DateRange>({
+  const [localDateRange, setLocalDateRange] = useState<DateRange>({
     from: undefined,
     to: undefined,
   });
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [localPageSize, setLocalPageSize] = useState(serverPageSize);
   const [localPageIndex, setLocalPageIndex] = useState(0);
+
+  // Use controlled date range if provided (server-side mode), otherwise use local state
+  const isServerSideDateFilter = serverSide && !!onDateRangeChange;
+  const dateRange = isServerSideDateFilter && controlledDateRange ? controlledDateRange : localDateRange;
+  const setDateRange = isServerSideDateFilter ? onDateRangeChange! : setLocalDateRange;
 
   // Debounced search for server-side
   useEffect(() => {
@@ -122,13 +133,18 @@ export function DataTable<TData, TValue>({
     return () => window.removeEventListener("resize", updateVisibility);
   }, [mobileHiddenColumns, tabletHiddenColumns]);
 
-  // Filter data by date range
+  // Filter data by date range (only for client-side filtering)
+  // Skip filtering when in server-side mode as the API handles filtering
   const filteredData = useMemo(() => {
+    // In server-side mode with date range callback, API handles filtering
+    if (isServerSideDateFilter) {
+      return data;
+    }
     if (!dateColumn || (!dateRange.from && !dateRange.to)) {
       return data;
     }
     return filterByDateRange(data, dateColumn, dateRange);
-  }, [data, dateColumn, dateRange]);
+  }, [data, dateColumn, dateRange, isServerSideDateFilter]);
 
   // Reset page index when data changes (client-side only)
   useEffect(() => {
@@ -186,7 +202,7 @@ export function DataTable<TData, TValue>({
                 placeholder={searchPlaceholder}
               />
             )}
-            {showDateFilter && dateColumn && (
+            {showDateFilter && (dateColumn || isServerSideDateFilter) && (
               <DataTableDateFilter
                 value={dateRange}
                 onChange={setDateRange}

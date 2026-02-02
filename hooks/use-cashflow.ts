@@ -11,6 +11,8 @@ export interface CashflowParams {
     page?: number;
     sortBy?: string;
     sortDesc?: boolean;
+    date_after?: string;   // ISO date string (start date)
+    date_before?: string;  // ISO date string (end date)
 }
 
 interface DepositsResponse {
@@ -30,6 +32,8 @@ export function useDeposits(params: CashflowParams = {}) {
     searchParams.set('page', (params.page ?? 1).toString());
     searchParams.set('sortBy', params.sortBy ?? 'id');
     searchParams.set('sortDesc', (params.sortDesc ?? true).toString());
+    if (params.date_after) searchParams.set('date_after', params.date_after);
+    if (params.date_before) searchParams.set('date_before', params.date_before);
 
     const queryString = `?${searchParams.toString()}`;
 
@@ -57,6 +61,8 @@ export function useWithdrawals(params: CashflowParams = {}) {
     searchParams.set('page', (params.page ?? 1).toString());
     searchParams.set('sortBy', params.sortBy ?? 'id');
     searchParams.set('sortDesc', (params.sortDesc ?? true).toString());
+    if (params.date_after) searchParams.set('date_after', params.date_after);
+    if (params.date_before) searchParams.set('date_before', params.date_before);
 
     const queryString = `?${searchParams.toString()}`;
 

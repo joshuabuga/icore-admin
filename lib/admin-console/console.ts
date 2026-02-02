@@ -13,6 +13,8 @@ export interface FetchParams {
   sortBy?: string;
   wallet_id?: string;
   sortDesc?: boolean;
+  date_after?: string;   // ISO date string (start date)
+  date_before?: string;  // ISO date string (end date)
 }
 
 export interface PaginatedResponse<T> {
@@ -41,7 +43,7 @@ class AdminConsole {
     return headers;
   }
 
-  private buildQueryString(params: FetchParams): string {
+  private buildQueryString(params: FetchParams, dateFieldPrefix: 'date' | 'created_at' = 'date'): string {
     const searchParams = new URLSearchParams();
 
     // Default params - always included
@@ -54,6 +56,10 @@ class AdminConsole {
     // Optional params
     if (params.search) searchParams.set('search', params.search);
     if (params.wallet_id) searchParams.set('wallet_id', params.wallet_id);
+
+    // Date range params - use appropriate field name based on endpoint
+    if (params.date_after) searchParams.set(`${dateFieldPrefix}_after`, params.date_after);
+    if (params.date_before) searchParams.set(`${dateFieldPrefix}_before`, params.date_before);
 
     return `?${searchParams.toString()}`;
   }
@@ -165,7 +171,7 @@ class AdminConsole {
   async fetchDeposits(params: FetchParams = {}): Promise<PaginatedResponse<Payin>> {
     try {
       const accessToken = await this.getAccessToken();
-      const queryString = this.buildQueryString(params);
+      const queryString = this.buildQueryString(params, 'created_at');
       const response = await fetch(`${this.baseURL}/api/v1/console/payments/payins/${queryString}`, {
         method: 'GET',
         headers: this.getHeaders(accessToken.data.access),
@@ -189,7 +195,7 @@ class AdminConsole {
   async fetchWithdrawals(params: FetchParams = {}): Promise<PaginatedResponse<Payout>> {
     try {
       const accessToken = await this.getAccessToken();
-      const queryString = this.buildQueryString(params);
+      const queryString = this.buildQueryString(params, 'created_at');
       const response = await fetch(`${this.baseURL}/api/v1/console/payments/payouts/${queryString}`, {
         method: 'GET',
         headers: this.getHeaders(accessToken.data.access),

@@ -47,6 +47,8 @@ export async function GET(request: Request) {
             page: searchParams.get('page') ? parseInt(searchParams.get('page')!) : undefined,
             sortBy: searchParams.get('sortBy') || undefined,
             sortDesc: searchParams.get('sortDesc') === 'true' ? true : searchParams.get('sortDesc') === 'false' ? false : undefined,
+            date_after: searchParams.get('date_after') || undefined,
+            date_before: searchParams.get('date_before') || undefined,
         };
 
         const result = await adminConsole.fetchUsers(params);
