@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { UserButton } from "@clerk/nextjs"
+import { UserButton, useUser } from "@clerk/nextjs"
 import {
   Users,
   Wallet,
@@ -13,8 +13,11 @@ import {
   LayoutDashboard,
   Gift,
   Gamepad,
-    DatabaseBackup,
-  ChevronRight, Plus, Edit,
+  DatabaseBackup,
+  ChevronRight,
+  Plus,
+  Edit,
+  LogIn,
 } from "lucide-react"
 import Image from "next/image"
 
@@ -92,6 +95,7 @@ const navigationItems = [
 
 export function AppSidebar() {
   const pathname = usePathname()
+  const { isSignedIn, user } = useUser()
 
   const isActive = (url: string) => {
     if (url === "/") return pathname === url
@@ -184,24 +188,50 @@ export function AppSidebar() {
 
       <SidebarFooter>
         <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" className="cursor-default hover:bg-transparent">
-              <UserButton
-                afterSignOutUrl="/sign-in"
-                appearance={{
-                  elements: {
-                    avatarBox: "size-8",
-                  },
-                }}
-              />
-              <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
-                <span className="truncate font-semibold">Account</span>
-                <span className="truncate text-xs text-muted-foreground">
-                  Manage profile
-                </span>
-              </div>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          {isSignedIn ? (
+            // Authenticated user - show UserButton
+            <SidebarMenuItem>
+              <SidebarMenuButton size="lg" className="cursor-default hover:bg-transparent">
+                <UserButton
+                  afterSignOutUrl="/sign-in"
+                  appearance={{
+                    elements: {
+                      avatarBox: "size-8",
+                    },
+                  }}
+                />
+                <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
+                  <span className="truncate font-semibold">
+                    {user?.firstName || "User"}
+                  </span>
+                  <span className="truncate text-xs text-muted-foreground">
+                    Manage profile
+                  </span>
+                </div>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ) : (
+            // Unauthenticated user - show Login button
+            <SidebarMenuItem>
+              <SidebarMenuButton size="lg" asChild>
+                <Link
+                  href="/sign-in"
+                  className="flex items-center gap-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                >
+                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                    <LogIn className="size-4" />
+                  </div>
+                  <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
+                    <span className="truncate font-semibold">Sign In</span>
+                    <span className="truncate text-xs text-muted-foreground">
+                      Access your account
+                    </span>
+                  </div>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
+
           <SidebarMenuItem>
             <SidebarMenuButton asChild tooltip="Toggle theme">
               <div className="flex items-center gap-2">

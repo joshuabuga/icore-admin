@@ -36,12 +36,23 @@ export default clerkMiddleware(async (auth, req) => {
         return new Response(null, { status: 204, headers });
     }
 
-    // Protect routes with Clerk
+    // Protect routes with Clerk and redirect to sign-in if not authenticated
     if (isProtectedRoute(req)) {
         const isGetToPromos =
             req.method === 'GET' &&
             req.nextUrl.pathname.startsWith('/api/promos');
+
         if (!isGetToPromos) {
+            const { userId } = await auth();
+
+            // If user is not authenticated, redirect to sign-in
+            if (!userId) {
+                const signInUrl = new URL('/sign-in', req.url);
+                signInUrl.searchParams.set('redirect_url', req.url);
+                return NextResponse.redirect(signInUrl);
+            }
+
+            // If authenticated, continue with protection
             await auth.protect();
         }
     }
