@@ -7,6 +7,18 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "totviuabxrsosfakcowo.supabase.co",
       },
+      {
+        protocol: "https",
+        hostname: "storage.googleapis.com",
+      },
+      {
+        protocol: "https",
+        hostname: "media.ttfileserver.com",
+      },
+      {
+        protocol: "https",
+        hostname: "ccg-api.sportstats.eu",
+      }
     ],
   },
   /* config options here */

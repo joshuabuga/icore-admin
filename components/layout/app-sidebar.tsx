@@ -12,6 +12,8 @@ import {
   UserCog,
   LayoutDashboard,
   Gift,
+  Gamepad,
+    DatabaseBackup,
   ChevronRight, Plus, Edit,
 } from "lucide-react"
 import Image from "next/image"
@@ -42,8 +44,11 @@ import ThemeToggle from "@/components/providers/ThemeToggle"
 const navigationItems = [
   {
     title: "Summary",
-    url: "/summary",
     icon: LayoutDashboard,
+    items : [
+      { title: "Summary Metabase", url: "/summary", icon: LayoutDashboard },
+      { title: "Legacy Dashboard", url: "/summary/legacy", icon: DatabaseBackup },
+    ]
   },
   {
     title: "Players",
@@ -72,6 +77,11 @@ const navigationItems = [
     title: "Bonus Engine",
     url: "/bonus-engine",
     icon: Gift,
+  },
+  {
+    title: "Games",
+    url: "/games",
+    icon: Gamepad,
   },
   {
     title: "Staff",
