@@ -21,6 +21,15 @@ const nextConfig: NextConfig = {
       }
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/summary",
+        permanent: false,
+      },
+    ];
+  },
   /* config options here */
   reactCompiler: true,
 };
