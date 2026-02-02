@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency, formatDate, formatPhone } from "@/lib/utils/table-utils";
+import SMSDialog from "@/components/sms/sms-dialog";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -75,7 +76,7 @@ export default function PlayerDetailPage({ params }: PageProps) {
               <span className="sr-only">Back to players</span>
             </Link>
           </Button>
-          <div>
+          <div className="space-y-1">
             <h1 className="text-2xl font-bold tracking-tight">
               {playerLoading ? (
                 <Skeleton className="h-8 w-48" />
@@ -85,6 +86,9 @@ export default function PlayerDetailPage({ params }: PageProps) {
             </h1>
             <p className="text-muted-foreground">Player account details</p>
           </div>
+          {player?.msisdn && (
+            <SMSDialog msisdn={player.msisdn}/>
+          )}
         </div>
         {player && (
           <div className="flex gap-2">

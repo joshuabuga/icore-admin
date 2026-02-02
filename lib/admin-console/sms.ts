@@ -1,30 +1,49 @@
-
-
-
-
-export default class SMS {
+class SMS {
   private smsBaseUrl;
   constructor() {
-      this.smsBaseUrl = process.env.SMS_BASE_URL;
+      this.smsBaseUrl = process.env.NEXT_PUBLIC_SMS_API_URL!;
+  }
+
+  private normalizePhoneNumber(phone: string): string {
+    // Remove any non-digit characters
+    const cleanPhone = phone.replace(/\D/g, '');
+
+    // Handle different formats
+    if (cleanPhone.startsWith('254')) {
+      // Already in correct format
+      return cleanPhone;
+    } else if (cleanPhone.startsWith('0')) {
+      // Remove leading 0 and add 254
+      return '254' + cleanPhone.substring(1);
+    } else if (cleanPhone.length === 9) {
+      // Just the 9 digits, add 254
+      return '254' + cleanPhone;
+    } else {
+      // Return as is if we can't determine the format
+      return cleanPhone;
+    }
   }
 
   async sendSMS(phone:string, message:string) {
+      // Normalize phone number to 254xxxxxxxxx format
+      const phoneNumber = this.normalizePhoneNumber(phone);
       const smsData = {
           "MessageParameters":[
               {
                   "Text":message,
-                  "Number":phone,
+                  "Number":phoneNumber,
               }
           ],
-          "ApiKey": process.env.SMS_API_KEY,
-          "SenderId": process.env.SMS_SENDER_ID,
-          "ClientId": process.env.SMS_CLIENT_ID,
+          "ApiKey": process.env.NEXT_PUBLIC_SMS_API_KEY!,
+          "SenderId": process.env.NEXT_PUBLIC_SMS_SHORTCODE!,
+          "ClientId": process.env.NEXT_PUBLIC_SMS_CLIENT_ID!,
       };
 
       console.log('SMS API Request:', {
           url: this.smsBaseUrl,
-          mobile: phone,
-          shortcode: process.env.SMS_SENDER_ID,
+          original: phone,
+          normalized: phoneNumber,
+          shortcode: process.env.NEXT_PUBLIC_SMS_SHORTCODE!,
       });
 
       try {
@@ -47,12 +66,12 @@ export default class SMS {
                   );
               } else {
                   const text = await response.text();
-                  console.log('SMS API returned non-JSON success:', text);
+                  console.log('SMS API returned non-JSON success:',text.substring(0,10));
                   return 'SMS sent';
               }
           } else {
               // Get error details
-              let errorBody = '';
+              let errorBody;
               if (contentType && contentType.includes('application/json')) {
                   const errorJson = await response.json();
                   errorBody = JSON.stringify(errorJson);
@@ -92,11 +111,12 @@ export default class SMS {
 
     const sendOne = async (phone: string): Promise<{ phone: string; status: number; error?: string }> => {
       try {
+        const normalizedPhone = this.normalizePhoneNumber(phone);
         const smsData = {
-          "MessageParameters": [{ "Text": message, "Number": phone }],
-          "ApiKey": process.env.SMS_API_KEY,
-          "SenderId": process.env.SMS_SENDER_ID,
-          "ClientId": process.env.SMS_CLIENT_ID,
+          "MessageParameters": [{ "Text": message, "Number": normalizedPhone }],
+          "ApiKey": process.env.SMS_API_KEY!,
+          "SenderId": process.env.SMS_SHORTCODE!,
+          "ClientId": process.env.SMS_CLIENT_ID!,
         };
 
         const response = await fetch(this.smsBaseUrl!, {
@@ -136,3 +156,5 @@ export default class SMS {
     return { successful, failed };
   }
 }
+
+export const sms = new SMS();
