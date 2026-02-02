@@ -14,6 +14,7 @@ const isProtectedRoute = createRouteMatcher([
     '/promos/(.*)',
     '/players/(.*)',
     '/cashflow/(.*)',
+    '/summary/(.*)',
     '/staff/(.*)',
     '/payments/(.*)',
 ]);
