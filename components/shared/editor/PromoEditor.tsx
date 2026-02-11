@@ -197,7 +197,7 @@ export default function PromoEditor({ task, itemId }: PromoEditorProps) {
             console.log('Promo form submitted:', { task, data });
             if (
                 currentUser?.role === 'marketing' ||
-                currentUser?.role === 'admin'
+                currentUser?.role === 'admin' || 'super_admin'
             ) {
                 console.log('User is authorized to create/edit promos');
             } else {
