@@ -4,7 +4,9 @@ export {
     uploadPromoImage,
     deleteImage,
     getSignedImageUrl,
+    generateSignedUploadUrl,
     type UploadResult,
+    type SignedUploadResult,
 } from './images';
 
 // File upload functions

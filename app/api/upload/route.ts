@@ -1,6 +1,54 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import { uploadFile, uploadImage, uploadCSV, uploadPromoImage } from '@/lib/storage';
+import {uploadFile, uploadImage, uploadCSV, uploadPromoImage, generateSignedUploadUrl} from '@/lib/storage';
+
+
+export async function GET(request: NextRequest) {
+    try {
+        const { userId } = await auth();
+        if (!userId) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const { searchParams } = new URL(request.url);
+        const fileName = searchParams.get('fileName');
+        const contentType = searchParams.get('contentType');
+        const type = searchParams.get('type'); // 'promo-main', 'promo-carousel', etc.
+        const promoId = searchParams.get('promoId');
+        const folder = searchParams.get('folder');
+
+        if (!fileName || !contentType) {
+            return NextResponse.json(
+                { error: 'fileName and contentType are required' },
+                { status: 400 }
+            );
+        }
+
+        let uploadFolder: string;
+        switch (type) {
+            case 'promo-main':
+                uploadFolder = promoId ? `promos/${promoId}/main` : 'promos/main';
+                break;
+            case 'promo-carousel':
+                uploadFolder = promoId ? `promos/${promoId}/carousel` : 'promos/carousel';
+                break;
+            default:
+                uploadFolder = folder || 'images';
+                break;
+        }
+
+        const result = await generateSignedUploadUrl(uploadFolder, fileName, contentType);
+
+        if (!result) {
+            return NextResponse.json({ error: 'Failed to generate upload URL' }, { status: 500 });
+        }
+
+        return NextResponse.json(result);
+    } catch (error) {
+        console.error('Upload URL API error:', error);
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    }
+}
 
 export async function POST(request: NextRequest) {
     try {

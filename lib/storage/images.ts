@@ -111,6 +111,45 @@ export async function deleteImage(fileUrl: string): Promise<boolean> {
     }
 }
 
+export interface SignedUploadResult {
+    signedUrl: string;
+    publicUrl: string;
+    fileName: string;
+}
+
+/**
+ * Generates a signed URL for direct client-side upload to GCS.
+ * Bypasses the serverless function body size limit (4.5MB on Vercel).
+ */
+export async function generateSignedUploadUrl(
+    folder: string,
+    originalFileName: string,
+    contentType: string
+): Promise<SignedUploadResult | null> {
+    try {
+        const timestamp = Date.now();
+        const randomString = Math.random().toString(36).substring(2, 8);
+        const extension = originalFileName.split('.').pop() || 'jpg';
+        const fileName = `${timestamp}-${randomString}.${extension}`;
+        const filePath = `${folder}/${fileName}`;
+        const blob = bucket.file(filePath);
+
+        const [signedUrl] = await blob.getSignedUrl({
+            version: 'v4',
+            action: 'write',
+            expires: Date.now() + 15 * 60 * 1000, // 15 minutes
+            contentType,
+        });
+
+        const publicUrl = `https://storage.googleapis.com/${BUCKET_NAME}/${filePath}`;
+
+        return { signedUrl, publicUrl, fileName };
+    } catch (error) {
+        console.error('Error generating signed upload URL:', error);
+        return null;
+    }
+}
+
 /**
  * Gets a signed URL for temporary access to a private image
  * @param filePath - The file path in the bucket

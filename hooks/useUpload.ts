@@ -28,25 +28,46 @@ export function useUpload(options?: UseUploadOptions) {
         setError(null);
 
         try {
-            const formData = new FormData();
-            formData.set('file', file);
-            formData.set('type', type);
-            if (folder) formData.set('folder', folder);
-            if (promoId) formData.set('promoId', promoId);
-
-            const response = await fetch('/api/upload', {
-                method: 'POST',
-                body: formData,
+            // Step 1: Get a signed upload URL from our API
+            const params = new URLSearchParams({
+                fileName: file.name,
+                contentType: file.type || 'application/octet-stream',
+                type,
             });
+            if (folder) params.set('folder', folder);
+            if (promoId) params.set('promoId', promoId);
 
-            const result = await response.json();
+            const urlResponse = await fetch(`/api/upload?${params.toString()}`);
+            const urlResult = await urlResponse.json();
 
-            if (!response.ok || !result.success) {
-                const errorMessage = result.error || 'Upload failed';
+            if (!urlResponse.ok || !urlResult.signedUrl) {
+                const errorMessage = urlResult.error || 'Failed to get upload URL';
                 setError(errorMessage);
                 options?.onError?.(errorMessage);
                 return { success: false, error: errorMessage };
             }
+
+            // Step 2: Upload the file directly to GCS using the signed URL
+            const uploadResponse = await fetch(urlResult.signedUrl, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': file.type || 'application/octet-stream',
+                },
+                body: file,
+            });
+
+            if (!uploadResponse.ok) {
+                const errorMessage = `Upload failed with status ${uploadResponse.status}`;
+                setError(errorMessage);
+                options?.onError?.(errorMessage);
+                return { success: false, error: errorMessage };
+            }
+
+            const result: UploadResponse = {
+                success: true,
+                publicUrl: urlResult.publicUrl,
+                fileName: urlResult.fileName,
+            };
 
             options?.onSuccess?.(result);
             return result;
