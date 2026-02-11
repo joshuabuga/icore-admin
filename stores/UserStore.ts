@@ -7,6 +7,7 @@ interface DatabaseUser {
     email: string;
     name: string;
     role: string;
+    permissions?: { id: string; permission: string }[];
     createdAt?: Date;
     updatedAt?: Date;
 }

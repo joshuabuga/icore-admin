@@ -4,7 +4,7 @@ const storage = new Storage({
     credentials: JSON.parse(process.env.GCP_JSON_KEY || '{}'),
 });
 
-const BUCKET_NAME = process.env.GCS_BUCKET_NAME || 'tucheze-admin-uploads';
+const BUCKET_NAME = process.env.GCS_BUCKET_NAME || 'gonga-frontend';
 const bucket = storage.bucket(BUCKET_NAME);
 
 export interface UploadResult {
@@ -53,10 +53,10 @@ export async function uploadImage(
                 contentType,
                 cacheControl: 'public, max-age=31536000',
             },
+            // With uniform bucket-level access, public visibility is controlled
+            // by the bucket's IAM policy, not per-object ACLs
+            predefinedAcl: undefined,
         });
-
-        // Make the file publicly accessible
-        await blob.makePublic();
 
         const publicUrl = `https://storage.googleapis.com/${BUCKET_NAME}/${filePath}`;
 

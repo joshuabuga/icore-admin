@@ -17,18 +17,18 @@ export const promoInfoSchema = z.object({
   action: z.string().optional(), // e.g., "deposit", "play"
   url: z.string().optional(), // promo URL
   content: z.string().optional(), // Rich HTML content
-  qualificationCriteria: z.array(z.string()).optional(),
+  qualificationCriteria: z.array(z.string()),
   prizes: z.object({
     maxAmount: z.number().optional(),
     maxWinnings: z.number().optional(),
     dailyWinners: z.number().optional()
-  }).optional(),
-  gameTypes: z.array(z.string()).optional(), // e.g., ["crash", "sports", "virtual"]
+  }),
+  gameTypes: z.array(z.string()), // e.g., ["crash", "sports", "virtual"]
   minimumOdds: z.number().optional(),
   timeRestrictions: z.object({
     startTime: z.date().optional(), // e.g., "07:00"
     endTime: z.date().optional(), // e.g., "11:00"
-  }).optional()
+  })
 });
 
 // Enhanced promo form schema
@@ -42,7 +42,7 @@ export const promoSchema = z.object({
   terms_and_conditions: z.string().optional(), // Made optional to match Prisma schema
   amount: z.number().min(0, "Amount must be positive").optional().or(z.literal(undefined)),
   is_active: z.boolean(),
-  info: promoInfoSchema.optional() // Add the info field
+  info: promoInfoSchema
 });
 
 export type CampaignFormData = z.infer<typeof campaignSchema>

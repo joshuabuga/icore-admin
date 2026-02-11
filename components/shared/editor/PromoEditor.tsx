@@ -6,6 +6,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon, Upload, X, Save, Plus } from 'lucide-react';
 import { useUserStore } from '@/stores/UserStore';
+import { hasPermission, PERMISSIONS } from '@/lib/permissions';
+import type { UserRole } from '@/prisma/db/generated/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -195,12 +197,8 @@ export default function PromoEditor({ task, itemId }: PromoEditorProps) {
     const onSubmit = async (data: PromoFormData) => {
         try {
             console.log('Promo form submitted:', { task, data });
-            if (
-                currentUser?.role === 'marketing' ||
-                currentUser?.role === 'admin' || 'super_admin'
-            ) {
-                console.log('User is authorized to create/edit promos');
-            } else {
+            const userPerms = currentUser?.permissions?.map(p => p.permission) ?? [];
+            if (!hasPermission(currentUser?.role as UserRole, userPerms, PERMISSIONS.PROMOS_WRITE)) {
                 toast.error(
                     'You do not have permission to perform this action.'
                 );
