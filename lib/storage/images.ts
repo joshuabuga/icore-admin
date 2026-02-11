@@ -49,13 +49,11 @@ export async function uploadImage(
         const blob = bucket.file(filePath);
 
         await blob.save(buffer, {
+            resumable: false,
             metadata: {
                 contentType,
                 cacheControl: 'public, max-age=31536000',
             },
-            // With uniform bucket-level access, public visibility is controlled
-            // by the bucket's IAM policy, not per-object ACLs
-            predefinedAcl: undefined,
         });
 
         const publicUrl = `https://storage.googleapis.com/${BUCKET_NAME}/${filePath}`;

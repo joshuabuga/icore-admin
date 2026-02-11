@@ -46,6 +46,7 @@ export function ImageUploadCard({
                                         height={300}
                                         alt="Main image preview"
                                         className="w-full h-40 object-cover rounded-lg"
+                                        unoptimized
                                     />
                                     <Button
                                         type="button"
@@ -100,6 +101,7 @@ export function ImageUploadCard({
                                         height={300}
                                         alt="Carousel image preview"
                                         className="w-full h-40 object-cover rounded-lg"
+                                        unoptimized
                                     />
                                     <Button
                                         type="button"

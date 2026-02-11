@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
-import { Calendar as CalendarIcon, Upload, X, Save, Plus } from 'lucide-react';
+import { Calendar as CalendarIcon, Upload, X, Save, Plus, Loader2 } from 'lucide-react';
 import { useUserStore } from '@/stores/UserStore';
 import { hasPermission, PERMISSIONS } from '@/lib/permissions';
 import type { UserRole } from '@/prisma/db/generated/client';
@@ -602,6 +602,7 @@ export default function PromoEditor({ task, itemId }: PromoEditorProps) {
                                                         height={300}
                                                         alt="Main image preview"
                                                         className="w-full h-40 object-cover rounded-lg"
+                                                        unoptimized
                                                     />
                                                     <Button
                                                         type="button"
@@ -664,6 +665,7 @@ export default function PromoEditor({ task, itemId }: PromoEditorProps) {
                                                         height={300}
                                                         alt="Carousel image preview"
                                                         className="w-full h-40 object-cover rounded-lg"
+                                                        unoptimized
                                                     />
                                                     <Button
                                                         type="button"
@@ -723,13 +725,20 @@ export default function PromoEditor({ task, itemId }: PromoEditorProps) {
                             <Button
                                 type="submit"
                                 className="gap-2"
-                                disabled={loading || imageUploading}>
-                                {isEdit ? (
+                                disabled={loading || imageUploading || form.formState.isSubmitting}>
+                                {form.formState.isSubmitting ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : isEdit ? (
                                     <Save className="h-4 w-4" />
                                 ) : (
                                     <Plus className="h-4 w-4" />
                                 )}
-                                {imageUploading ? 'Uploading...' : isEdit ? 'Update' : 'Create'} Promo
+                                {imageUploading
+                                    ? 'Uploading...'
+                                    : form.formState.isSubmitting
+                                      ? (isEdit ? 'Updating...' : 'Creating...')
+                                      : (isEdit ? 'Update' : 'Create')}{' '}
+                                Promo
                             </Button>
                         </div>
                     </form>
