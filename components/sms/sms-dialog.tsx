@@ -1,5 +1,3 @@
-
-import {sms} from "@/lib/admin-console/sms";
 import {
     Dialog,
     DialogClose,
@@ -42,14 +40,20 @@ export default function SMSDialog({ msisdn, trigger }: SMSDialogProps) {
             setIsLoading(true);
             setError(null);
 
-            const result = await sms.sendSMS(msisdn!, message.trim());
+            const response = await fetch('/api/send-sms', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone: msisdn, message: message.trim() }),
+            });
 
-            if (result === 'SMS sent') {
+            const data = await response.json();
+
+            if (response.ok && data.success) {
                 toast.success('SMS sent successfully');
                 setMessage('');
                 setShowDialog(false);
             } else {
-                throw new Error('Failed to send SMS');
+                throw new Error(data.message || 'Failed to send SMS');
             }
         } catch (err) {
             console.error(err);
