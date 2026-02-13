@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sms } from '@/lib/admin-console/sms';
-import { getAuth } from '@clerk/nextjs/server';
+import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
 import { hasPermission, PERMISSIONS } from '@/lib/permissions';
 
 export async function POST(request: NextRequest) {
     try {
-        const { userId } = getAuth(request);
+        const { userId } = await auth();
 
         if (!userId) {
             return NextResponse.json(

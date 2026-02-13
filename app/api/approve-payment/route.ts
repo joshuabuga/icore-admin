@@ -1,13 +1,13 @@
 import { ProcessingResult, CreditRequest, SMSRequest } from '@/types/crediting';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { getAuth } from '@clerk/nextjs/server';
+import { auth } from '@clerk/nextjs/server';
 import { hasPermission, PERMISSIONS } from '@/lib/permissions';
 import {paymentProcessor} from "@/lib/admin-console/paymentProcessor";
 
 export async function POST(req: NextRequest) {
     try {
-        const { userId } = getAuth(req);
+        const { userId } = await auth();
 
         if (!userId) {
             return NextResponse.json(

@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Payments } from '@/types/crediting';
 import prisma from '@/lib/prisma';
-import { getAuth } from '@clerk/nextjs/server';
+import { auth } from '@clerk/nextjs/server';
 import { hasPermission, PERMISSIONS } from '@/lib/permissions';
 
 export async function POST(request: NextRequest) {
     try {
-        const { userId } = getAuth(request);
+        const { userId } = await auth();
 
         if (!userId) {
             return NextResponse.json(
@@ -137,7 +137,7 @@ export async function POST(request: NextRequest) {
 //  Get all batch payments
 export async function GET(request: NextRequest) {
     try {
-        const { userId } = getAuth(request);
+        const { userId } = await auth();
 
         if (!userId) {
             return NextResponse.json(
