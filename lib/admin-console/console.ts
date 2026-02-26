@@ -29,18 +29,32 @@ class AdminConsole {
     this.baseURL = process.env.TUCHEZE_ADMIN_API;
   }
 
-  private getHeaders(accessToken?: string): HeadersInit {
+  private getHeaders(accessToken?: string, { omitContentType = false } = {}): HeadersInit {
     const headers: HeadersInit = {
-      'Content-Type': 'application/json',
       'Accept': 'application/json, text/plain, */*',
       'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15',
       'Origin': 'https://x.tucheze.com',
       'Referer': 'https://x.tucheze.com/',
     };
+    if (!omitContentType) {
+      headers['Content-Type'] = 'application/json';
+    }
     if (accessToken) {
       headers['Authorization'] = `Bearer ${accessToken}`;
     }
     return headers;
+  }
+
+  private toFormData(data: Record<string, unknown>): FormData {
+    const formData = new FormData();
+    for (const [key, value] of Object.entries(data)) {
+      if (value !== undefined && value !== null) {
+        formData.append(key, String(value));
+      } else {
+        formData.append(key, '');
+      }
+    }
+    return formData;
   }
 
   private buildQueryString(params: FetchParams, dateFieldPrefix: 'date' | 'created_at' = 'date'): string {
@@ -265,10 +279,11 @@ class AdminConsole {
   async updateGame(id:string, data:GameDetail):Promise<GameDetail> {
     try {
       const accessToken = await this.getAccessToken();
+      const formData = this.toFormData(data as unknown as Record<string, unknown>);
       const response = await fetch(`${this.baseURL}/api/v1/console/games/${id}/`, {
         method: 'PUT',
-        headers: this.getHeaders(accessToken.data.access),
-        body: JSON.stringify(data),
+        headers: this.getHeaders(accessToken.data.access, { omitContentType: true }),
+        body: formData,
       });
 
       if (!response.ok) {
