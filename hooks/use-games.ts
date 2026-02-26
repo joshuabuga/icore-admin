@@ -66,8 +66,23 @@ export function useGameMutations() {
         }
     );
 
+    const uploadThumbnail = async (id: string, file: File) => {
+        const formData = new FormData();
+        formData.append('thumbnail', file);
+        const res = await fetch(`/api/games/${id}/thumbnail`, {
+            method: 'POST',
+            body: formData,
+        });
+        if (!isSuccessStatus(res.status)) {
+            const error = await res.json().catch(() => ({}));
+            throw new Error(error.error || `Failed to upload thumbnail (${res.status})`);
+        }
+        return res.json();
+    };
+
     return {
         updateGame,
+        uploadThumbnail,
         isUpdating,
     };
 }

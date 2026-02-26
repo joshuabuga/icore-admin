@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { Game, GameCategory, GameDetail } from '@/types/games';
-import { Gamepad2, Minus, Plus } from 'lucide-react';
+import { Gamepad2, ImagePlus, Minus, Plus } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -30,7 +30,7 @@ interface EditGameDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   game: Game | null;
-  onSave: (id: string, data: Partial<GameDetail>) => Promise<void>;
+  onSave: (id: string, data: Partial<GameDetail>, thumbnailFile?: File) => Promise<void>;
   isLoading?: boolean;
 }
 
@@ -42,7 +42,7 @@ function EditGameForm({
   isLoading,
 }: {
   game: Game;
-  onSave: (id: string, data: Partial<GameDetail>) => Promise<void>;
+  onSave: (id: string, data: Partial<GameDetail>, thumbnailFile?: File) => Promise<void>;
   onCancel: () => void;
   isLoading: boolean;
 }) {
@@ -50,14 +50,31 @@ function EditGameForm({
   const [tags, setTags] = useState(game.tags || '');
   const [isOffered, setIsOffered] = useState(game.is_offered);
   const [category, setCategory] = useState<GameCategory>(game.category);
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setThumbnailFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setThumbnailPreview(reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSave = async () => {
-    await onSave(game.id.toString(), {
-      priority,
-      tags,
-      is_offered: isOffered,
-      category,
-    });
+    await onSave(
+      game.id.toString(),
+      {
+        priority,
+        tags,
+        is_offered: isOffered,
+        category,
+      },
+      thumbnailFile || undefined,
+    );
   };
 
   const incrementPriority = () => setPriority((p) => p + 1);
@@ -75,10 +92,10 @@ function EditGameForm({
       <div className="space-y-6 py-4">
         {/* Game Preview Card */}
         <div className="rounded-lg border overflow-hidden">
-          <div className="aspect-video relative bg-muted">
-            {game.thumbnail ? (
+          <div className="aspect-video relative bg-muted group">
+            {thumbnailPreview || game.thumbnail ? (
               <Image
-                src={game.thumbnail}
+                src={thumbnailPreview || game.thumbnail}
                 alt={game.name}
                 fill
                 className="object-cover"
@@ -89,6 +106,24 @@ function EditGameForm({
                 <Gamepad2 className="h-16 w-16 text-muted-foreground" />
               </div>
             )}
+            {/* Thumbnail upload overlay */}
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+            >
+              <div className="flex flex-col items-center gap-1 text-white">
+                <ImagePlus className="h-8 w-8" />
+                <span className="text-sm font-medium">Change Thumbnail</span>
+              </div>
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleThumbnailChange}
+              className="hidden"
+            />
           </div>
           <div className="p-4 space-y-2">
             <h3 className="font-semibold text-lg">{game.name}</h3>

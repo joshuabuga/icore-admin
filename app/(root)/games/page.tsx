@@ -38,7 +38,7 @@ export default function GamesPage() {
     sortDesc: true,
   });
 
-  const { updateGame, isUpdating } = useGameMutations();
+  const { updateGame, uploadThumbnail, isUpdating } = useGameMutations();
 
   // Calculate pagination values
   const pageCount = Math.ceil(totalRows / pageSize);
@@ -72,9 +72,12 @@ export default function GamesPage() {
 
   // Handle save edit
   const handleSaveEdit = useCallback(
-    async (id: string, data: Partial<GameDetail>) => {
+    async (id: string, data: Partial<GameDetail>, thumbnailFile?: File) => {
       try {
         await updateGame({ id, data });
+        if (thumbnailFile) {
+          await uploadThumbnail(id, thumbnailFile);
+        }
         toast.success('Game updated successfully');
         setEditDialogOpen(false);
         setEditingGame(null);
@@ -83,7 +86,7 @@ export default function GamesPage() {
         toast.error(err instanceof Error ? err.message : 'Failed to update game');
       }
     },
-    [updateGame, refetch]
+    [updateGame, uploadThumbnail, refetch]
   );
 
   // Action handlers for table view

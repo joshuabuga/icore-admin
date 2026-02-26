@@ -45,7 +45,8 @@ export async function PATCH(
 
         const { id } = await params;
         const body = await request.json();
-        const updatedGame = await adminConsole.updateGame(id, body);
+        // The external API requires the id field in the FormData body
+        const updatedGame = await adminConsole.updateGame(id, { id: parseInt(id), ...body });
         return NextResponse.json(updatedGame);
     } catch (error) {
         console.error('Error updating game:', error);

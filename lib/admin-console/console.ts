@@ -276,7 +276,7 @@ class AdminConsole {
     }
   }
 
-  async updateGame(id:string, data:GameDetail):Promise<GameDetail> {
+  async updateGame(id:string, data:Partial<GameDetail>):Promise<GameDetail> {
     try {
       const accessToken = await this.getAccessToken();
       const formData = this.toFormData(data as unknown as Record<string, unknown>);
@@ -287,6 +287,8 @@ class AdminConsole {
       });
 
       if (!response.ok) {
+        const errorBody = await response.text().catch(() => '');
+        console.error('updateGame error response:', response.status, errorBody);
         throw new Error(`Failed to updateGame: ${response.statusText}`);
       }
 
@@ -297,7 +299,39 @@ class AdminConsole {
       throw error;
     }
   }
-  
+
+  async updateGameThumbnail(id:string, thumbnailFile: File):Promise<GameDetail> {
+    try {
+      const accessToken = await this.getAccessToken();
+      // The external API expects thumbnail as a base64 string
+      const arrayBuffer = await thumbnailFile.arrayBuffer();
+      const base64 = Buffer.from(arrayBuffer).toString('base64');
+      const dataUri = `data:${thumbnailFile.type || 'image/png'};base64,${base64}`;
+
+      const formData = new FormData();
+      formData.append('id', id);
+      formData.append('thumbnail', dataUri);
+
+      const response = await fetch(`${this.baseURL}/api/v1/console/games/${id}/`, {
+        method: 'PUT',
+        headers: this.getHeaders(accessToken.data.access, { omitContentType: true }),
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.text().catch(() => '');
+        console.error('updateGameThumbnail error response:', response.status, errorBody);
+        throw new Error(`Failed to updateGameThumbnail: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      return result.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
   /*** Delete Functions ***/
   async deleteUser(id:string):Promise<void> {
     try {
