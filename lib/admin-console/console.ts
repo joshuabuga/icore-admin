@@ -1,4 +1,5 @@
 import { AccessTokenResponse } from "@/types/accessToken";
+import { PayinsGraphResponse, UsersGraphResponse } from "@/types/analytics";
 import { Payin } from "@/types/payins";
 import { Payout } from "@/types/payouts";
 import { UserDetail, UserListItem } from "@/types/users";
@@ -345,6 +346,59 @@ class AdminConsole {
         throw new Error(`Failed to deleteUser: ${response.statusText}`);
       }
       
+      return response.json();
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  /** Analytics methods */
+  async fetchPayinsPerDay(createdAtAfter: string, createdAtBefore: string): Promise<PayinsGraphResponse> {
+    try {
+      const accessToken = await this.getAccessToken();
+      const params = new URLSearchParams({
+        created_at_after: createdAtAfter,
+        created_at_before: createdAtBefore,
+      });
+      const response = await fetch(
+        `${this.baseURL}/api/v1/console/stats/series/payins-per-month/?${params.toString()}`,
+        {
+          method: 'GET',
+          headers: this.getHeaders(accessToken.data.access),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetchPayinsPerDay: ${response.statusText}`);
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async fetchUsersPerDay(createdAtAfter: string, createdAtBefore: string): Promise<UsersGraphResponse> {
+    try {
+      const accessToken = await this.getAccessToken();
+      const params = new URLSearchParams({
+        created_at_after: createdAtAfter,
+        created_at_before: createdAtBefore,
+      });
+      const response = await fetch(
+        `${this.baseURL}/api/v1/console/stats/series/users-per-month/?${params.toString()}`,
+        {
+          method: 'GET',
+          headers: this.getHeaders(accessToken.data.access),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetchUsersPerDay: ${response.statusText}`);
+      }
+
       return response.json();
     } catch (error) {
       console.error(error);

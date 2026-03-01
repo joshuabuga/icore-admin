@@ -13,6 +13,7 @@ import {
   LayoutDashboard,
   Gift,
   Gamepad,
+  BarChart3,
   DatabaseBackup,
   ChevronRight,
   Plus,
@@ -80,6 +81,11 @@ const navigationItems = [
     title: "Bonus Engine",
     url: "/bonus-engine",
     icon: Gift,
+  },
+  {
+    title: "Analytics",
+    url: "/analytics",
+    icon: BarChart3,
   },
   {
     title: "Games",
