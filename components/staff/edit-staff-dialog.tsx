@@ -99,6 +99,12 @@ const PERMISSION_GROUPS = [
       { value: PERMISSIONS.SUMMARY_READ, label: "View Summary" },
     ],
   },
+  {
+    label: "Analytics",
+    permissions: [
+      { value: PERMISSIONS.ANALYTICS_READ, label: "View Analytics" },
+    ],
+  },
 ];
 
 export function EditStaffDialog({

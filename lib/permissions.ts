@@ -29,6 +29,9 @@ export const PERMISSIONS = {
     // Dashboard/Summary
     SUMMARY_READ: 'summary:read',
 
+    // Analytics
+    ANALYTICS_READ: 'analytics:read',
+
     // Bonus Engine
     BONUS_READ: 'bonus:read',
     BONUS_WRITE: 'bonus:write',
@@ -43,6 +46,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
         PERMISSIONS.PLAYERS_READ,
         PERMISSIONS.PLAYERS_WRITE,
         PERMISSIONS.SUMMARY_READ,
+        PERMISSIONS.ANALYTICS_READ,
         PERMISSIONS.CASHFLOW_READ,
     ],
 
@@ -52,6 +56,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
         PERMISSIONS.BONUS_READ,
         PERMISSIONS.BONUS_WRITE,
         PERMISSIONS.SUMMARY_READ,
+        PERMISSIONS.ANALYTICS_READ,
         PERMISSIONS.PLAYERS_READ,
     ],
 
@@ -62,6 +67,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
         PERMISSIONS.BATCHES_APPROVE,
         PERMISSIONS.BATCHES_PROCESS,
         PERMISSIONS.SUMMARY_READ,
+        PERMISSIONS.ANALYTICS_READ,
         PERMISSIONS.PLAYERS_READ,
     ],
 

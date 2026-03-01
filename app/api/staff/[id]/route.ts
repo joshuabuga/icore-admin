@@ -98,41 +98,38 @@ export async function PATCH(
         const body = await request.json();
         const { name, email, role, permissions } = body;
 
-        // Update user in a transaction
-        const updatedUser = await prisma.$transaction(async (tx) => {
-            // Update basic user info
-            const user = await tx.user.update({
-                where: { id },
-                data: {
-                    ...(name && { name }),
-                    ...(email && { email }),
-                    ...(role && { role }),
-                },
+        // Update basic user info
+        await prisma.user.update({
+            where: { id },
+            data: {
+                ...(name && { name }),
+                ...(email && { email }),
+                ...(role && { role }),
+            },
+        });
+
+        // If permissions are provided, replace all permissions
+        if (permissions !== undefined) {
+            // Delete existing permissions
+            await prisma.permissions.deleteMany({
+                where: { user_id: id },
             });
 
-            // If permissions are provided, replace all permissions
-            if (permissions !== undefined) {
-                // Delete existing permissions
-                await tx.permissions.deleteMany({
-                    where: { user_id: id },
+            // Create new permissions
+            if (permissions.length > 0) {
+                await prisma.permissions.createMany({
+                    data: permissions.map((permission: string) => ({
+                        user_id: id,
+                        permission,
+                    })),
                 });
-
-                // Create new permissions
-                if (permissions.length > 0) {
-                    await tx.permissions.createMany({
-                        data: permissions.map((permission: string) => ({
-                            user_id: id,
-                            permission,
-                        })),
-                    });
-                }
             }
+        }
 
-            // Return user with updated permissions
-            return tx.user.findUnique({
-                where: { id },
-                include: { permissions: true },
-            });
+        // Return user with updated permissions
+        const updatedUser = await prisma.user.findUnique({
+            where: { id },
+            include: { permissions: true },
         });
 
         return NextResponse.json(updatedUser);

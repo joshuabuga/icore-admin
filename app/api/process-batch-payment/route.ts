@@ -171,12 +171,23 @@ export async function GET(request: NextRequest) {
         const batches = await prisma.batch.findMany({
             include: {
                 recipients: true,
+                approvedBy: {
+                    select: { name: true, email: true, role: true },
+                },
             },
             orderBy: {
                 date_initiated: 'desc',
             },
         });
-        return NextResponse.json(batches);
+
+        const mapped = batches.map(batch => ({
+            ...batch,
+            approved_by: batch.approvedBy
+                ? { name: batch.approvedBy.name || batch.approvedBy.email, role: batch.approvedBy.role }
+                : null,
+        }));
+
+        return NextResponse.json(mapped);
     } catch (error) {
         console.error('Error fetching batch payments:', error);
         return NextResponse.json(
