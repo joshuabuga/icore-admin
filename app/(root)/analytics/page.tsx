@@ -140,7 +140,7 @@ export default function AnalyticsPage() {
             <div>
                 <h1 className="text-2xl font-bold tracking-tight">Analytics</h1>
                 <p className="text-muted-foreground">
-                    Daily payins and user registration trends
+                    Daily deposits and user registration trends
                 </p>
             </div>
 
@@ -159,14 +159,14 @@ export default function AnalyticsPage() {
             {/* Payins Per Day */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Payins Per Day</CardTitle>
+                    <CardTitle>Deposits Per Day</CardTitle>
                 </CardHeader>
                 <CardContent>
                     {payinsLoading ? (
                         <Skeleton className="h-[350px] w-full" />
                     ) : payinsError ? (
                         <div className="rounded-md border border-destructive p-8 text-center text-destructive">
-                            Failed to load payins data. Please try again.
+                            Failed to load deposits data. Please try again.
                         </div>
                     ) : (
                         <ChartContainer config={payinsChartConfig} className="h-[350px] w-full">
