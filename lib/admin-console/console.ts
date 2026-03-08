@@ -1,5 +1,5 @@
 import { AccessTokenResponse } from "@/types/accessToken";
-import { PayinsGraphResponse, UsersGraphResponse } from "@/types/analytics";
+import { DailyFlowEntry, PayinsGraphResponse, UsersGraphResponse } from "@/types/analytics";
 import { Payin } from "@/types/payins";
 import { Payout } from "@/types/payouts";
 import { UserDetail, UserListItem } from "@/types/users";
@@ -163,16 +163,46 @@ class AdminConsole {
     }
   }
 
-  async fetchSummary():Promise<Summary> {
+  async fetchSummary(date?: string):Promise<Summary> {
     try {
       const accessToken = await this.getAccessToken();
-      const response = await fetch(`${this.baseURL}/api/v1/console/stats/summary/`, {
+      const url = date
+        ? `${this.baseURL}/api/v1/console/stats/summary/?date=${date}`
+        : `${this.baseURL}/api/v1/console/stats/summary/`;
+      const response = await fetch(url, {
         method: 'GET',
         headers: this.getHeaders(accessToken.data.access),
       });
 
       if (!response.ok) {
         throw new Error(`Failed to fetchSummary: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      return result.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async fetchDailyFlow(startDate: string, endDate: string): Promise<DailyFlowEntry[]> {
+    try {
+      const accessToken = await this.getAccessToken();
+      const params = new URLSearchParams({
+        start_date: startDate,
+        end_date: endDate,
+      });
+      const response = await fetch(
+        `${this.baseURL}/api/v1/console/stats/daily-flow/?${params.toString()}`,
+        {
+          method: 'GET',
+          headers: this.getHeaders(accessToken.data.access),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetchDailyFlow: ${response.statusText}`);
       }
 
       const result = await response.json();

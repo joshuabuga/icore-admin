@@ -11,3 +11,12 @@ export interface UsersGraphResponse {
     user_labels: string[];  // YYYY-MM-DD
   };
 }
+
+export interface DailyFlowEntry {
+  date: string;
+  deposits: number;
+  deposit_count: number;
+  withdrawals: number;
+  withdrawal_count: number;
+  net_flow: number;
+}
