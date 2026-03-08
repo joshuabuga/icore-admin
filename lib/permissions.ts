@@ -35,6 +35,10 @@ export const PERMISSIONS = {
     // Bonus Engine
     BONUS_READ: 'bonus:read',
     BONUS_WRITE: 'bonus:write',
+
+    // TPay
+    TPAY_READ: 'tpay:read',
+    TPAY_WRITE: 'tpay:write',
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

@@ -105,6 +105,13 @@ const PERMISSION_GROUPS = [
       { value: PERMISSIONS.ANALYTICS_READ, label: "View Analytics" },
     ],
   },
+  {
+    label: "TPay",
+    permissions: [
+      { value: PERMISSIONS.TPAY_READ, label: "View TPay" },
+      { value: PERMISSIONS.TPAY_WRITE, label: "Manage TPay" },
+    ],
+  },
 ];
 
 export function EditStaffDialog({

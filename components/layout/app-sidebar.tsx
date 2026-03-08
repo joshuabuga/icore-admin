@@ -19,6 +19,7 @@ import {
   Plus,
   Edit,
   LogIn,
+  CreditCard,
 } from "lucide-react"
 import Image from "next/image"
 
@@ -96,6 +97,11 @@ const navigationItems = [
     title: "Staff",
     url: "/staff",
     icon: UserCog,
+  },
+  {
+    title: "TPay",
+    url: "/tpay",
+    icon: CreditCard,
   },
 ]
 
