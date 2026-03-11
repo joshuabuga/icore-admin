@@ -82,11 +82,11 @@ const navigationItems = [
   //   url: "/bonus-engine",
   //   icon: Gift,
   // },
-  {
-    title: "Games",
-    url: "/games",
-    icon: Gamepad,
-  },
+  // {
+  //   title: "Games",
+  //   url: "/games",
+  //   icon: Gamepad,
+  // },
   {
     title: "Staff",
     url: "/staff",
