@@ -41,7 +41,12 @@ export async function GET(request: Request) {
         const createdAtAfter = searchParams.get('created_at_after') || '';
         const createdAtBefore = searchParams.get('created_at_before') || '';
 
-        if (type === 'users') {
+        if (type === 'daily-flow') {
+            const startDate = searchParams.get('start_date') || '';
+            const endDate = searchParams.get('end_date') || '';
+            const result = await adminConsole.fetchDailyFlow(startDate, endDate);
+            return NextResponse.json(result);
+        } else if (type === 'users') {
             const result = await adminConsole.fetchUsersPerDay(createdAtAfter, createdAtBefore);
             return NextResponse.json(result);
         } else {

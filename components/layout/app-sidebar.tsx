@@ -48,11 +48,11 @@ import ThemeToggle from "@/components/providers/ThemeToggle"
 
 const navigationItems = [
   {
-    title: "Summary",
+    title: "Dashboards",
     icon: LayoutDashboard,
     items : [
-      { title: "Summary Metabase", url: "/summary", icon: LayoutDashboard },
-      { title: "Legacy Dashboard", url: "/summary/legacy", icon: DatabaseBackup },
+      { title: "Summary", url: "/summary/legacy", icon: DatabaseBackup },
+      { title: "Graph Analytics", url: "/analytics", icon: BarChart3 },
     ]
   },
   {
@@ -78,21 +78,16 @@ const navigationItems = [
       { title: "Saved Promos", url: "/promos/saved", icon: Edit },
     ],
   },
-  {
-    title: "Bonus Engine",
-    url: "/bonus-engine",
-    icon: Gift,
-  },
-  {
-    title: "Analytics",
-    url: "/analytics",
-    icon: BarChart3,
-  },
-  {
-    title: "Games",
-    url: "/games",
-    icon: Gamepad,
-  },
+  // {
+  //   title: "Bonus Engine",
+  //   url: "/bonus-engine",
+  //   icon: Gift,
+  // },
+  // {
+  //   title: "Games",
+  //   url: "/games",
+  //   icon: Gamepad,
+  // },
   {
     title: "Staff",
     url: "/staff",

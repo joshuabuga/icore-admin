@@ -1,8 +1,13 @@
 "use client";
 
+import { useState } from "react";
+import { format } from "date-fns";
 import { useSummary } from "@/hooks/use-summary";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
     TrendingUp,
     TrendingDown,
@@ -12,11 +17,16 @@ import {
     UserCheck,
     UserX,
     Activity,
-    Briefcase
+    Briefcase,
+    CalendarIcon,
+    X,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function LegacyPage() {
-    const { summary, isLoading, error } = useSummary();
+    const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+    const dateParam = selectedDate ? format(selectedDate, "yyyy-MM-dd") : undefined;
+    const { summary, isLoading, error } = useSummary(dateParam);
 
     if (error) {
         return (
@@ -36,11 +46,50 @@ export default function LegacyPage() {
 
     return (
         <div className="space-y-6">
-            <div>
-                <h1 className="text-2xl font-bold tracking-tight">Legacy Dashboard</h1>
-                <p className="text-muted-foreground">
-                    Overview of platform activity and metrics
-                </p>
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-2xl font-bold tracking-tight">Legacy Dashboard</h1>
+                    <p className="text-muted-foreground">
+                        {selectedDate
+                            ? `Showing data for ${format(selectedDate, "MMMM d, yyyy")}`
+                            : "Overview of platform activity and metrics"}
+                    </p>
+                </div>
+                <div className="flex items-center gap-2">
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button
+                                variant="outline"
+                                className={cn(
+                                    "w-[200px] justify-start text-left font-normal",
+                                    !selectedDate && "text-muted-foreground"
+                                )}
+                            >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {selectedDate ? format(selectedDate, "MMM d, yyyy") : "Pick a date"}
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="end">
+                            <Calendar
+                                mode="single"
+                                selected={selectedDate}
+                                onSelect={setSelectedDate}
+                                disabled={(date) => date > new Date()}
+                                initialFocus
+                            />
+                        </PopoverContent>
+                    </Popover>
+                    {selectedDate && (
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setSelectedDate(undefined)}
+                            title="Reset to today"
+                        >
+                            <X className="h-4 w-4" />
+                        </Button>
+                    )}
+                </div>
             </div>
 
             {/* Deposits Section */}

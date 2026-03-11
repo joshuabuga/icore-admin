@@ -8,7 +8,7 @@ export async function OPTIONS() {
     return new NextResponse(null, { status: 200 });
 }
 
-export async function GET() {
+export async function GET(request: Request) {
     try {
         const { userId } = await auth();
 
@@ -40,7 +40,9 @@ export async function GET() {
             );
         }
 
-        const summary = await adminConsole.fetchSummary();
+        const { searchParams } = new URL(request.url);
+        const date = searchParams.get('date') || undefined;
+        const summary = await adminConsole.fetchSummary(date);
         return NextResponse.json(summary);
     } catch (error) {
         console.error('Error fetching summary:', error);

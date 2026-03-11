@@ -4,13 +4,14 @@ import useSWR from 'swr';
 import { fetcher } from '@/lib/fetcher';
 import { Summary } from '@/types/summary';
 
-export function useSummary() {
+export function useSummary(date?: string) {
+    const key = date ? `/api/summary?date=${date}` : '/api/summary';
     const { data, error, isLoading, mutate } = useSWR<Summary>(
-        '/api/summary',
+        key,
         fetcher,
         {
             revalidateOnFocus: false,
-            refreshInterval: 60000,
+            refreshInterval: date ? 0 : 60000,
         }
     );
 
