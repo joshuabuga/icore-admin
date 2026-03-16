@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, Phone, Calendar, Wallet, Shield } from "lucide-react";
 
 import { usePlayer, usePlayerTransactions } from "@/hooks/use-players";
+import { usePermissions } from "@/hooks/use-permissions";
 import { DataTable } from "@/components/shared/data-table";
 import { transactionsColumns } from "@/components/players/transactions-columns";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency, formatDate, formatPhone } from "@/lib/utils/table-utils";
 import SMSDialog from "@/components/sms/sms-dialog";
+import CreditPlayerDialog from "@/components/players/credit-player-dialog";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -21,6 +23,7 @@ interface PageProps {
 export default function PlayerDetailPage({ params }: PageProps) {
   const { id } = use(params);
   const { player, isLoading: playerLoading, error: playerError } = usePlayer(id);
+  const { hasPermission, PERMISSIONS } = usePermissions();
 
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -87,7 +90,16 @@ export default function PlayerDetailPage({ params }: PageProps) {
             <p className="text-muted-foreground">Player account details</p>
           </div>
           {player?.msisdn && (
-            <SMSDialog msisdn={player.msisdn}/>
+            <div className="flex gap-2">
+              <SMSDialog msisdn={player.msisdn}/>
+              {hasPermission(PERMISSIONS.BATCHES_PROCESS) && (
+                <CreditPlayerDialog
+                  playerId={id}
+                  msisdn={player.msisdn}
+                  playerName={player.name}
+                />
+              )}
+            </div>
           )}
         </div>
         {player && (

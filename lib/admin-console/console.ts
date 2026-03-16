@@ -1,10 +1,21 @@
 import { AccessTokenResponse } from "@/types/accessToken";
-import { DailyFlowEntry, PayinsGraphResponse, UsersGraphResponse } from "@/types/analytics";
+import {
+  DailyFlowEntry,
+  DailyFTDVolume,
+  DailyNewUsersFTD,
+  DailyStakesWinnings,
+  HourlyActiveUsers,
+  HourlyRegistration,
+  PayinsGraphResponse,
+  TopGame,
+  UsersGraphResponse,
+} from "@/types/analytics";
 import { Payin } from "@/types/payins";
 import { Payout } from "@/types/payouts";
 import { UserDetail, UserListItem } from "@/types/users";
 import { Game,GameDetail } from "@/types/games";
 import { Summary } from "@/types/summary";
+import { getEnvConfig } from "./env-config";
 
 
 export interface FetchParams {
@@ -24,11 +35,6 @@ export interface PaginatedResponse<T> {
 }
 
 class AdminConsole {
-  private baseURL;
-
-  constructor() {
-    this.baseURL = process.env.TUCHEZE_ADMIN_API;
-  }
 
   private getHeaders(accessToken?: string, { omitContentType = false } = {}): HeadersInit {
     const headers: HeadersInit = {
@@ -79,30 +85,30 @@ class AdminConsole {
     return `?${searchParams.toString()}`;
   }
 
-  private async getAccessToken(): Promise<AccessTokenResponse> {
-    const email = process.env.TUCHEZE_ADMIN_USERNAME;
-    const password = process.env.TUCHEZE_ADMIN_PASSWORD;
-    const response = await fetch(`${this.baseURL}/api/v1/console/auth/token/`, {
+  async getAuth(): Promise<{ access: string; baseURL: string }> {
+    const config = await getEnvConfig();
+    const response = await fetch(`${config.baseURL}/api/v1/console/auth/token/`, {
       method: 'POST',
       headers: this.getHeaders(),
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email: config.username, password: config.password }),
     });
-    
+
     if (!response.ok) {
       throw new Error(`Failed to getAccessToken: ${response.statusText}`);
     }
-    
-    return response.json();
+
+    const result: AccessTokenResponse = await response.json();
+    return { access: result.data.access, baseURL: config.baseURL };
   }
-  
+
   /** Perform Fetch functions **/
   async fetchUsers(params: FetchParams = {}): Promise<PaginatedResponse<UserListItem>> {
     try {
-      const accessToken = await this.getAccessToken();
+      const { access, baseURL } = await this.getAuth();
       const queryString = this.buildQueryString(params);
-      const response = await fetch(`${this.baseURL}/api/v1/console/users/${queryString}`, {
+      const response = await fetch(`${baseURL}/api/v1/console/users/${queryString}`, {
         method: 'GET',
-        headers: this.getHeaders(accessToken.data.access),
+        headers: this.getHeaders(access),
       });
 
       if (!response.ok) {
@@ -119,13 +125,13 @@ class AdminConsole {
       throw error;
     }
   }
-  
+
   async fetchUser(id:string):Promise<UserDetail> {
     try {
-      const accessToken = await this.getAccessToken();
-      const response = await fetch(`${this.baseURL}/api/v1/console/users/${id}/`, {
+      const { access, baseURL } = await this.getAuth();
+      const response = await fetch(`${baseURL}/api/v1/console/users/${id}/`, {
         method: 'GET',
-        headers: this.getHeaders(accessToken.data.access),
+        headers: this.getHeaders(access),
       });
 
       if (!response.ok) {
@@ -142,11 +148,11 @@ class AdminConsole {
 
   async fetchUserTransactions(params: FetchParams):Promise<PaginatedResponse<Payin>> {
     try {
-      const accessToken = await this.getAccessToken();
+      const { access, baseURL } = await this.getAuth();
       const queryString = this.buildQueryString(params);
-      const response = await fetch(`${this.baseURL}/api/v1/console/wallets/transactions/${queryString}`, {
+      const response = await fetch(`${baseURL}/api/v1/console/wallets/transactions/${queryString}`, {
         method: 'GET',
-        headers: this.getHeaders(accessToken.data.access),
+        headers: this.getHeaders(access),
       });
       if (!response.ok) {
         throw new Error(`Failed to fetch transactions: ${response.statusText}`);
@@ -165,13 +171,13 @@ class AdminConsole {
 
   async fetchSummary(date?: string):Promise<Summary> {
     try {
-      const accessToken = await this.getAccessToken();
+      const { access, baseURL } = await this.getAuth();
       const url = date
-        ? `${this.baseURL}/api/v1/console/stats/summary/?date=${date}`
-        : `${this.baseURL}/api/v1/console/stats/summary/`;
+        ? `${baseURL}/api/v1/console/stats/summary/?date=${date}`
+        : `${baseURL}/api/v1/console/stats/summary/`;
       const response = await fetch(url, {
         method: 'GET',
-        headers: this.getHeaders(accessToken.data.access),
+        headers: this.getHeaders(access),
       });
 
       if (!response.ok) {
@@ -188,16 +194,16 @@ class AdminConsole {
 
   async fetchDailyFlow(startDate: string, endDate: string): Promise<DailyFlowEntry[]> {
     try {
-      const accessToken = await this.getAccessToken();
+      const { access, baseURL } = await this.getAuth();
       const params = new URLSearchParams({
         start_date: startDate,
         end_date: endDate,
       });
       const response = await fetch(
-        `${this.baseURL}/api/v1/console/stats/daily-flow/?${params.toString()}`,
+        `${baseURL}/api/v1/console/stats/daily-flow/?${params.toString()}`,
         {
           method: 'GET',
-          headers: this.getHeaders(accessToken.data.access),
+          headers: this.getHeaders(access),
         }
       );
 
@@ -215,11 +221,11 @@ class AdminConsole {
 
   async fetchDeposits(params: FetchParams = {}): Promise<PaginatedResponse<Payin>> {
     try {
-      const accessToken = await this.getAccessToken();
+      const { access, baseURL } = await this.getAuth();
       const queryString = this.buildQueryString(params, 'created_at');
-      const response = await fetch(`${this.baseURL}/api/v1/console/payments/payins/${queryString}`, {
+      const response = await fetch(`${baseURL}/api/v1/console/payments/payins/${queryString}`, {
         method: 'GET',
-        headers: this.getHeaders(accessToken.data.access),
+        headers: this.getHeaders(access),
       });
 
       if (!response.ok) {
@@ -239,11 +245,11 @@ class AdminConsole {
 
   async fetchWithdrawals(params: FetchParams = {}): Promise<PaginatedResponse<Payout>> {
     try {
-      const accessToken = await this.getAccessToken();
+      const { access, baseURL } = await this.getAuth();
       const queryString = this.buildQueryString(params, 'created_at');
-      const response = await fetch(`${this.baseURL}/api/v1/console/payments/payouts/${queryString}`, {
+      const response = await fetch(`${baseURL}/api/v1/console/payments/payouts/${queryString}`, {
         method: 'GET',
-        headers: this.getHeaders(accessToken.data.access),
+        headers: this.getHeaders(access),
       });
 
       if (!response.ok) {
@@ -263,11 +269,11 @@ class AdminConsole {
 
   async fetchGames(params: FetchParams = {}): Promise<PaginatedResponse<Game>> {
     try {
-      const accessToken = await this.getAccessToken();
+      const { access, baseURL } = await this.getAuth();
       const queryString = this.buildQueryString(params);
-      const response = await fetch(`${this.baseURL}/api/v1/console/games/${queryString}`, {
+      const response = await fetch(`${baseURL}/api/v1/console/games/${queryString}`, {
         method: 'GET',
-        headers: this.getHeaders(accessToken.data.access),
+        headers: this.getHeaders(access),
       });
 
       if (!response.ok) {
@@ -288,10 +294,10 @@ class AdminConsole {
   /*** Update Functions ***/
   async updateUser(id:string, data:UserDetail):Promise<UserDetail> {
     try {
-      const accessToken = await this.getAccessToken();
-      const response = await fetch(`${this.baseURL}/api/v1/console/users/${id}/`, {
+      const { access, baseURL } = await this.getAuth();
+      const response = await fetch(`${baseURL}/api/v1/console/users/${id}/`, {
         method: 'PUT',
-        headers: this.getHeaders(accessToken.data.access),
+        headers: this.getHeaders(access),
         body: JSON.stringify(data),
       });
 
@@ -309,11 +315,11 @@ class AdminConsole {
 
   async updateGame(id:string, data:Partial<GameDetail>):Promise<GameDetail> {
     try {
-      const accessToken = await this.getAccessToken();
+      const { access, baseURL } = await this.getAuth();
       const formData = this.toFormData(data as unknown as Record<string, unknown>);
-      const response = await fetch(`${this.baseURL}/api/v1/console/games/${id}/`, {
+      const response = await fetch(`${baseURL}/api/v1/console/games/${id}/`, {
         method: 'PUT',
-        headers: this.getHeaders(accessToken.data.access, { omitContentType: true }),
+        headers: this.getHeaders(access, { omitContentType: true }),
         body: formData,
       });
 
@@ -333,7 +339,7 @@ class AdminConsole {
 
   async updateGameThumbnail(id:string, thumbnailFile: File):Promise<GameDetail> {
     try {
-      const accessToken = await this.getAccessToken();
+      const { access, baseURL } = await this.getAuth();
       // The external API expects thumbnail as a base64 string
       const arrayBuffer = await thumbnailFile.arrayBuffer();
       const base64 = Buffer.from(arrayBuffer).toString('base64');
@@ -343,9 +349,9 @@ class AdminConsole {
       formData.append('id', id);
       formData.append('thumbnail', dataUri);
 
-      const response = await fetch(`${this.baseURL}/api/v1/console/games/${id}/`, {
+      const response = await fetch(`${baseURL}/api/v1/console/games/${id}/`, {
         method: 'PUT',
-        headers: this.getHeaders(accessToken.data.access, { omitContentType: true }),
+        headers: this.getHeaders(access, { omitContentType: true }),
         body: formData,
       });
 
@@ -366,16 +372,16 @@ class AdminConsole {
   /*** Delete Functions ***/
   async deleteUser(id:string):Promise<void> {
     try {
-      const accessToken = await this.getAccessToken();
-      const response = await fetch(`${this.baseURL}/api/v1/console/users/${id}/`, {
+      const { access, baseURL } = await this.getAuth();
+      const response = await fetch(`${baseURL}/api/v1/console/users/${id}/`, {
         method: 'DELETE',
-        headers: this.getHeaders(accessToken.data.access),
+        headers: this.getHeaders(access),
       });
-      
+
       if (!response.ok) {
         throw new Error(`Failed to deleteUser: ${response.statusText}`);
       }
-      
+
       return response.json();
     } catch (error) {
       console.error(error);
@@ -386,16 +392,16 @@ class AdminConsole {
   /** Analytics methods */
   async fetchPayinsPerDay(createdAtAfter: string, createdAtBefore: string): Promise<PayinsGraphResponse> {
     try {
-      const accessToken = await this.getAccessToken();
+      const { access, baseURL } = await this.getAuth();
       const params = new URLSearchParams({
         created_at_after: createdAtAfter,
         created_at_before: createdAtBefore,
       });
       const response = await fetch(
-        `${this.baseURL}/api/v1/console/stats/series/payins-per-month/?${params.toString()}`,
+        `${baseURL}/api/v1/console/stats/series/payins-per-month/?${params.toString()}`,
         {
           method: 'GET',
-          headers: this.getHeaders(accessToken.data.access),
+          headers: this.getHeaders(access),
         }
       );
 
@@ -410,18 +416,118 @@ class AdminConsole {
     }
   }
 
+  async fetchHourlyRegistrations(): Promise<HourlyRegistration[]> {
+    try {
+      const { access, baseURL } = await this.getAuth();
+      const response = await fetch(
+        `${baseURL}/api/v1/console/stats/hourly-registrations/`,
+        { method: 'GET', headers: this.getHeaders(access) }
+      );
+      if (!response.ok) throw new Error(`Failed to fetchHourlyRegistrations: ${response.statusText}`);
+      const result = await response.json();
+      return result.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async fetchHourlyActiveUsers(): Promise<HourlyActiveUsers[]> {
+    try {
+      const { access, baseURL } = await this.getAuth();
+      const response = await fetch(
+        `${baseURL}/api/v1/console/stats/hourly-active-users/`,
+        { method: 'GET', headers: this.getHeaders(access) }
+      );
+      if (!response.ok) throw new Error(`Failed to fetchHourlyActiveUsers: ${response.statusText}`);
+      const result = await response.json();
+      return result.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async fetchDailyStakesWinnings(startDate: string, endDate: string): Promise<DailyStakesWinnings[]> {
+    try {
+      const { access, baseURL } = await this.getAuth();
+      const params = new URLSearchParams({ start_date: startDate, end_date: endDate });
+      const response = await fetch(
+        `${baseURL}/api/v1/console/stats/daily-stakes-winnings/?${params.toString()}`,
+        { method: 'GET', headers: this.getHeaders(access) }
+      );
+      if (!response.ok) throw new Error(`Failed to fetchDailyStakesWinnings: ${response.statusText}`);
+      const result = await response.json();
+      return result.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async fetchDailyNewUsersFTD(startDate: string, endDate: string): Promise<DailyNewUsersFTD[]> {
+    try {
+      const { access, baseURL } = await this.getAuth();
+      const params = new URLSearchParams({ start_date: startDate, end_date: endDate });
+      const response = await fetch(
+        `${baseURL}/api/v1/console/stats/daily-new-users-ftd/?${params.toString()}`,
+        { method: 'GET', headers: this.getHeaders(access) }
+      );
+      if (!response.ok) throw new Error(`Failed to fetchDailyNewUsersFTD: ${response.statusText}`);
+      const result = await response.json();
+      return result.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async fetchDailyFTDVolume(startDate: string, endDate: string): Promise<DailyFTDVolume[]> {
+    try {
+      const { access, baseURL } = await this.getAuth();
+      const params = new URLSearchParams({ start_date: startDate, end_date: endDate });
+      const response = await fetch(
+        `${baseURL}/api/v1/console/stats/daily-ftd-volume/?${params.toString()}`,
+        { method: 'GET', headers: this.getHeaders(access) }
+      );
+      if (!response.ok) throw new Error(`Failed to fetchDailyFTDVolume: ${response.statusText}`);
+      const result = await response.json();
+      return result.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async fetchTopGames(startDate: string, endDate: string): Promise<TopGame[]> {
+    try {
+      const { access, baseURL } = await this.getAuth();
+      const params = new URLSearchParams({ start_date: startDate, end_date: endDate });
+      const response = await fetch(
+        `${baseURL}/api/v1/console/stats/top-games/?${params.toString()}`,
+        { method: 'GET', headers: this.getHeaders(access) }
+      );
+      if (!response.ok) throw new Error(`Failed to fetchTopGames: ${response.statusText}`);
+      const result = await response.json();
+      return result.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
   async fetchUsersPerDay(createdAtAfter: string, createdAtBefore: string): Promise<UsersGraphResponse> {
     try {
-      const accessToken = await this.getAccessToken();
+      const { access, baseURL } = await this.getAuth();
       const params = new URLSearchParams({
         created_at_after: createdAtAfter,
         created_at_before: createdAtBefore,
       });
       const response = await fetch(
-        `${this.baseURL}/api/v1/console/stats/series/users-per-month/?${params.toString()}`,
+        `${baseURL}/api/v1/console/stats/series/users-per-month/?${params.toString()}`,
         {
           method: 'GET',
-          headers: this.getHeaders(accessToken.data.access),
+          headers: this.getHeaders(access),
         }
       );
 

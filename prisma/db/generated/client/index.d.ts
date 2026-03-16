@@ -39,6 +39,11 @@ export type Batch = $Result.DefaultSelection<Prisma.$BatchPayload>
  */
 export type Promo = $Result.DefaultSelection<Prisma.$PromoPayload>
 /**
+ * Model CreditLog
+ * 
+ */
+export type CreditLog = $Result.DefaultSelection<Prisma.$CreditLogPayload>
+/**
  * Model Permissions
  * 
  */
@@ -267,6 +272,16 @@ export class PrismaClient<
     * ```
     */
   get promo(): Prisma.PromoDelegate<ExtArgs>;
+
+  /**
+   * `prisma.creditLog`: Exposes CRUD operations for the **CreditLog** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more CreditLogs
+    * const creditLogs = await prisma.creditLog.findMany()
+    * ```
+    */
+  get creditLog(): Prisma.CreditLogDelegate<ExtArgs>;
 
   /**
    * `prisma.permissions`: Exposes CRUD operations for the **Permissions** model.
@@ -723,6 +738,7 @@ export namespace Prisma {
     ProcessingLog: 'ProcessingLog',
     Batch: 'Batch',
     Promo: 'Promo',
+    CreditLog: 'CreditLog',
     Permissions: 'Permissions'
   };
 
@@ -739,7 +755,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "customer" | "processingLog" | "batch" | "promo" | "permissions"
+      modelProps: "user" | "customer" | "processingLog" | "batch" | "promo" | "creditLog" | "permissions"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1093,6 +1109,76 @@ export namespace Prisma {
           }
         }
       }
+      CreditLog: {
+        payload: Prisma.$CreditLogPayload<ExtArgs>
+        fields: Prisma.CreditLogFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CreditLogFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreditLogPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CreditLogFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreditLogPayload>
+          }
+          findFirst: {
+            args: Prisma.CreditLogFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreditLogPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CreditLogFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreditLogPayload>
+          }
+          findMany: {
+            args: Prisma.CreditLogFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreditLogPayload>[]
+          }
+          create: {
+            args: Prisma.CreditLogCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreditLogPayload>
+          }
+          createMany: {
+            args: Prisma.CreditLogCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CreditLogCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreditLogPayload>[]
+          }
+          delete: {
+            args: Prisma.CreditLogDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreditLogPayload>
+          }
+          update: {
+            args: Prisma.CreditLogUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreditLogPayload>
+          }
+          deleteMany: {
+            args: Prisma.CreditLogDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CreditLogUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.CreditLogUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CreditLogPayload>
+          }
+          aggregate: {
+            args: Prisma.CreditLogAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCreditLog>
+          }
+          groupBy: {
+            args: Prisma.CreditLogGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CreditLogGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CreditLogCountArgs<ExtArgs>
+            result: $Utils.Optional<CreditLogCountAggregateOutputType> | number
+          }
+        }
+      }
       Permissions: {
         payload: Prisma.$PermissionsPayload<ExtArgs>
         fields: Prisma.PermissionsFieldRefs
@@ -1328,6 +1414,7 @@ export namespace Prisma {
     batchesApproved: number
     batchesRejected: number
     promoUploaded: number
+    creditsIssued: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1335,6 +1422,7 @@ export namespace Prisma {
     batchesApproved?: boolean | UserCountOutputTypeCountBatchesApprovedArgs
     batchesRejected?: boolean | UserCountOutputTypeCountBatchesRejectedArgs
     promoUploaded?: boolean | UserCountOutputTypeCountPromoUploadedArgs
+    creditsIssued?: boolean | UserCountOutputTypeCountCreditsIssuedArgs
   }
 
   // Custom InputTypes
@@ -1374,6 +1462,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountPromoUploadedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: PromoWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountCreditsIssuedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CreditLogWhereInput
   }
 
 
@@ -1581,6 +1676,7 @@ export namespace Prisma {
     batchesApproved?: boolean | User$batchesApprovedArgs<ExtArgs>
     batchesRejected?: boolean | User$batchesRejectedArgs<ExtArgs>
     promoUploaded?: boolean | User$promoUploadedArgs<ExtArgs>
+    creditsIssued?: boolean | User$creditsIssuedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1603,6 +1699,7 @@ export namespace Prisma {
     batchesApproved?: boolean | User$batchesApprovedArgs<ExtArgs>
     batchesRejected?: boolean | User$batchesRejectedArgs<ExtArgs>
     promoUploaded?: boolean | User$promoUploadedArgs<ExtArgs>
+    creditsIssued?: boolean | User$creditsIssuedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1614,6 +1711,7 @@ export namespace Prisma {
       batchesApproved: Prisma.$BatchPayload<ExtArgs>[]
       batchesRejected: Prisma.$BatchPayload<ExtArgs>[]
       promoUploaded: Prisma.$PromoPayload<ExtArgs>[]
+      creditsIssued: Prisma.$CreditLogPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -1988,6 +2086,7 @@ export namespace Prisma {
     batchesApproved<T extends User$batchesApprovedArgs<ExtArgs> = {}>(args?: Subset<T, User$batchesApprovedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BatchPayload<ExtArgs>, T, "findMany"> | Null>
     batchesRejected<T extends User$batchesRejectedArgs<ExtArgs> = {}>(args?: Subset<T, User$batchesRejectedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BatchPayload<ExtArgs>, T, "findMany"> | Null>
     promoUploaded<T extends User$promoUploadedArgs<ExtArgs> = {}>(args?: Subset<T, User$promoUploadedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PromoPayload<ExtArgs>, T, "findMany"> | Null>
+    creditsIssued<T extends User$creditsIssuedArgs<ExtArgs> = {}>(args?: Subset<T, User$creditsIssuedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CreditLogPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2412,6 +2511,26 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: PromoScalarFieldEnum | PromoScalarFieldEnum[]
+  }
+
+  /**
+   * User.creditsIssued
+   */
+  export type User$creditsIssuedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreditLog
+     */
+    select?: CreditLogSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreditLogInclude<ExtArgs> | null
+    where?: CreditLogWhereInput
+    orderBy?: CreditLogOrderByWithRelationInput | CreditLogOrderByWithRelationInput[]
+    cursor?: CreditLogWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CreditLogScalarFieldEnum | CreditLogScalarFieldEnum[]
   }
 
   /**
@@ -6583,6 +6702,1053 @@ export namespace Prisma {
 
 
   /**
+   * Model CreditLog
+   */
+
+  export type AggregateCreditLog = {
+    _count: CreditLogCountAggregateOutputType | null
+    _avg: CreditLogAvgAggregateOutputType | null
+    _sum: CreditLogSumAggregateOutputType | null
+    _min: CreditLogMinAggregateOutputType | null
+    _max: CreditLogMaxAggregateOutputType | null
+  }
+
+  export type CreditLogAvgAggregateOutputType = {
+    amount: number | null
+  }
+
+  export type CreditLogSumAggregateOutputType = {
+    amount: number | null
+  }
+
+  export type CreditLogMinAggregateOutputType = {
+    id: string | null
+    playerId: string | null
+    msisdn: string | null
+    amount: number | null
+    subject: string | null
+    description: string | null
+    status: $Enums.ProcessingStatus | null
+    smsStatus: string | null
+    errorMessage: string | null
+    creditedAt: Date | null
+    creditedById: string | null
+  }
+
+  export type CreditLogMaxAggregateOutputType = {
+    id: string | null
+    playerId: string | null
+    msisdn: string | null
+    amount: number | null
+    subject: string | null
+    description: string | null
+    status: $Enums.ProcessingStatus | null
+    smsStatus: string | null
+    errorMessage: string | null
+    creditedAt: Date | null
+    creditedById: string | null
+  }
+
+  export type CreditLogCountAggregateOutputType = {
+    id: number
+    playerId: number
+    msisdn: number
+    amount: number
+    subject: number
+    description: number
+    status: number
+    creditResponse: number
+    smsStatus: number
+    errorMessage: number
+    creditedAt: number
+    creditedById: number
+    _all: number
+  }
+
+
+  export type CreditLogAvgAggregateInputType = {
+    amount?: true
+  }
+
+  export type CreditLogSumAggregateInputType = {
+    amount?: true
+  }
+
+  export type CreditLogMinAggregateInputType = {
+    id?: true
+    playerId?: true
+    msisdn?: true
+    amount?: true
+    subject?: true
+    description?: true
+    status?: true
+    smsStatus?: true
+    errorMessage?: true
+    creditedAt?: true
+    creditedById?: true
+  }
+
+  export type CreditLogMaxAggregateInputType = {
+    id?: true
+    playerId?: true
+    msisdn?: true
+    amount?: true
+    subject?: true
+    description?: true
+    status?: true
+    smsStatus?: true
+    errorMessage?: true
+    creditedAt?: true
+    creditedById?: true
+  }
+
+  export type CreditLogCountAggregateInputType = {
+    id?: true
+    playerId?: true
+    msisdn?: true
+    amount?: true
+    subject?: true
+    description?: true
+    status?: true
+    creditResponse?: true
+    smsStatus?: true
+    errorMessage?: true
+    creditedAt?: true
+    creditedById?: true
+    _all?: true
+  }
+
+  export type CreditLogAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CreditLog to aggregate.
+     */
+    where?: CreditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CreditLogs to fetch.
+     */
+    orderBy?: CreditLogOrderByWithRelationInput | CreditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CreditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CreditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CreditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned CreditLogs
+    **/
+    _count?: true | CreditLogCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: CreditLogAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CreditLogSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CreditLogMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CreditLogMaxAggregateInputType
+  }
+
+  export type GetCreditLogAggregateType<T extends CreditLogAggregateArgs> = {
+        [P in keyof T & keyof AggregateCreditLog]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCreditLog[P]>
+      : GetScalarType<T[P], AggregateCreditLog[P]>
+  }
+
+
+
+
+  export type CreditLogGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CreditLogWhereInput
+    orderBy?: CreditLogOrderByWithAggregationInput | CreditLogOrderByWithAggregationInput[]
+    by: CreditLogScalarFieldEnum[] | CreditLogScalarFieldEnum
+    having?: CreditLogScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CreditLogCountAggregateInputType | true
+    _avg?: CreditLogAvgAggregateInputType
+    _sum?: CreditLogSumAggregateInputType
+    _min?: CreditLogMinAggregateInputType
+    _max?: CreditLogMaxAggregateInputType
+  }
+
+  export type CreditLogGroupByOutputType = {
+    id: string
+    playerId: string
+    msisdn: string
+    amount: number
+    subject: string
+    description: string | null
+    status: $Enums.ProcessingStatus
+    creditResponse: JsonValue | null
+    smsStatus: string | null
+    errorMessage: string | null
+    creditedAt: Date
+    creditedById: string
+    _count: CreditLogCountAggregateOutputType | null
+    _avg: CreditLogAvgAggregateOutputType | null
+    _sum: CreditLogSumAggregateOutputType | null
+    _min: CreditLogMinAggregateOutputType | null
+    _max: CreditLogMaxAggregateOutputType | null
+  }
+
+  type GetCreditLogGroupByPayload<T extends CreditLogGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CreditLogGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CreditLogGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CreditLogGroupByOutputType[P]>
+            : GetScalarType<T[P], CreditLogGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CreditLogSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    playerId?: boolean
+    msisdn?: boolean
+    amount?: boolean
+    subject?: boolean
+    description?: boolean
+    status?: boolean
+    creditResponse?: boolean
+    smsStatus?: boolean
+    errorMessage?: boolean
+    creditedAt?: boolean
+    creditedById?: boolean
+    creditedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["creditLog"]>
+
+  export type CreditLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    playerId?: boolean
+    msisdn?: boolean
+    amount?: boolean
+    subject?: boolean
+    description?: boolean
+    status?: boolean
+    creditResponse?: boolean
+    smsStatus?: boolean
+    errorMessage?: boolean
+    creditedAt?: boolean
+    creditedById?: boolean
+    creditedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["creditLog"]>
+
+  export type CreditLogSelectScalar = {
+    id?: boolean
+    playerId?: boolean
+    msisdn?: boolean
+    amount?: boolean
+    subject?: boolean
+    description?: boolean
+    status?: boolean
+    creditResponse?: boolean
+    smsStatus?: boolean
+    errorMessage?: boolean
+    creditedAt?: boolean
+    creditedById?: boolean
+  }
+
+  export type CreditLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    creditedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type CreditLogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    creditedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $CreditLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "CreditLog"
+    objects: {
+      creditedBy: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      playerId: string
+      msisdn: string
+      amount: number
+      subject: string
+      description: string | null
+      status: $Enums.ProcessingStatus
+      creditResponse: Prisma.JsonValue | null
+      smsStatus: string | null
+      errorMessage: string | null
+      creditedAt: Date
+      creditedById: string
+    }, ExtArgs["result"]["creditLog"]>
+    composites: {}
+  }
+
+  type CreditLogGetPayload<S extends boolean | null | undefined | CreditLogDefaultArgs> = $Result.GetResult<Prisma.$CreditLogPayload, S>
+
+  type CreditLogCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<CreditLogFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: CreditLogCountAggregateInputType | true
+    }
+
+  export interface CreditLogDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['CreditLog'], meta: { name: 'CreditLog' } }
+    /**
+     * Find zero or one CreditLog that matches the filter.
+     * @param {CreditLogFindUniqueArgs} args - Arguments to find a CreditLog
+     * @example
+     * // Get one CreditLog
+     * const creditLog = await prisma.creditLog.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CreditLogFindUniqueArgs>(args: SelectSubset<T, CreditLogFindUniqueArgs<ExtArgs>>): Prisma__CreditLogClient<$Result.GetResult<Prisma.$CreditLogPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one CreditLog that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {CreditLogFindUniqueOrThrowArgs} args - Arguments to find a CreditLog
+     * @example
+     * // Get one CreditLog
+     * const creditLog = await prisma.creditLog.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CreditLogFindUniqueOrThrowArgs>(args: SelectSubset<T, CreditLogFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CreditLogClient<$Result.GetResult<Prisma.$CreditLogPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first CreditLog that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CreditLogFindFirstArgs} args - Arguments to find a CreditLog
+     * @example
+     * // Get one CreditLog
+     * const creditLog = await prisma.creditLog.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CreditLogFindFirstArgs>(args?: SelectSubset<T, CreditLogFindFirstArgs<ExtArgs>>): Prisma__CreditLogClient<$Result.GetResult<Prisma.$CreditLogPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first CreditLog that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CreditLogFindFirstOrThrowArgs} args - Arguments to find a CreditLog
+     * @example
+     * // Get one CreditLog
+     * const creditLog = await prisma.creditLog.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CreditLogFindFirstOrThrowArgs>(args?: SelectSubset<T, CreditLogFindFirstOrThrowArgs<ExtArgs>>): Prisma__CreditLogClient<$Result.GetResult<Prisma.$CreditLogPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more CreditLogs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CreditLogFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all CreditLogs
+     * const creditLogs = await prisma.creditLog.findMany()
+     * 
+     * // Get first 10 CreditLogs
+     * const creditLogs = await prisma.creditLog.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const creditLogWithIdOnly = await prisma.creditLog.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CreditLogFindManyArgs>(args?: SelectSubset<T, CreditLogFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CreditLogPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a CreditLog.
+     * @param {CreditLogCreateArgs} args - Arguments to create a CreditLog.
+     * @example
+     * // Create one CreditLog
+     * const CreditLog = await prisma.creditLog.create({
+     *   data: {
+     *     // ... data to create a CreditLog
+     *   }
+     * })
+     * 
+     */
+    create<T extends CreditLogCreateArgs>(args: SelectSubset<T, CreditLogCreateArgs<ExtArgs>>): Prisma__CreditLogClient<$Result.GetResult<Prisma.$CreditLogPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many CreditLogs.
+     * @param {CreditLogCreateManyArgs} args - Arguments to create many CreditLogs.
+     * @example
+     * // Create many CreditLogs
+     * const creditLog = await prisma.creditLog.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CreditLogCreateManyArgs>(args?: SelectSubset<T, CreditLogCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many CreditLogs and returns the data saved in the database.
+     * @param {CreditLogCreateManyAndReturnArgs} args - Arguments to create many CreditLogs.
+     * @example
+     * // Create many CreditLogs
+     * const creditLog = await prisma.creditLog.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many CreditLogs and only return the `id`
+     * const creditLogWithIdOnly = await prisma.creditLog.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CreditLogCreateManyAndReturnArgs>(args?: SelectSubset<T, CreditLogCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CreditLogPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a CreditLog.
+     * @param {CreditLogDeleteArgs} args - Arguments to delete one CreditLog.
+     * @example
+     * // Delete one CreditLog
+     * const CreditLog = await prisma.creditLog.delete({
+     *   where: {
+     *     // ... filter to delete one CreditLog
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CreditLogDeleteArgs>(args: SelectSubset<T, CreditLogDeleteArgs<ExtArgs>>): Prisma__CreditLogClient<$Result.GetResult<Prisma.$CreditLogPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one CreditLog.
+     * @param {CreditLogUpdateArgs} args - Arguments to update one CreditLog.
+     * @example
+     * // Update one CreditLog
+     * const creditLog = await prisma.creditLog.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CreditLogUpdateArgs>(args: SelectSubset<T, CreditLogUpdateArgs<ExtArgs>>): Prisma__CreditLogClient<$Result.GetResult<Prisma.$CreditLogPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more CreditLogs.
+     * @param {CreditLogDeleteManyArgs} args - Arguments to filter CreditLogs to delete.
+     * @example
+     * // Delete a few CreditLogs
+     * const { count } = await prisma.creditLog.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CreditLogDeleteManyArgs>(args?: SelectSubset<T, CreditLogDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CreditLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CreditLogUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many CreditLogs
+     * const creditLog = await prisma.creditLog.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CreditLogUpdateManyArgs>(args: SelectSubset<T, CreditLogUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one CreditLog.
+     * @param {CreditLogUpsertArgs} args - Arguments to update or create a CreditLog.
+     * @example
+     * // Update or create a CreditLog
+     * const creditLog = await prisma.creditLog.upsert({
+     *   create: {
+     *     // ... data to create a CreditLog
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the CreditLog we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CreditLogUpsertArgs>(args: SelectSubset<T, CreditLogUpsertArgs<ExtArgs>>): Prisma__CreditLogClient<$Result.GetResult<Prisma.$CreditLogPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of CreditLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CreditLogCountArgs} args - Arguments to filter CreditLogs to count.
+     * @example
+     * // Count the number of CreditLogs
+     * const count = await prisma.creditLog.count({
+     *   where: {
+     *     // ... the filter for the CreditLogs we want to count
+     *   }
+     * })
+    **/
+    count<T extends CreditLogCountArgs>(
+      args?: Subset<T, CreditLogCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CreditLogCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a CreditLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CreditLogAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CreditLogAggregateArgs>(args: Subset<T, CreditLogAggregateArgs>): Prisma.PrismaPromise<GetCreditLogAggregateType<T>>
+
+    /**
+     * Group by CreditLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CreditLogGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CreditLogGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CreditLogGroupByArgs['orderBy'] }
+        : { orderBy?: CreditLogGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CreditLogGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCreditLogGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the CreditLog model
+   */
+  readonly fields: CreditLogFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for CreditLog.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CreditLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    creditedBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the CreditLog model
+   */ 
+  interface CreditLogFieldRefs {
+    readonly id: FieldRef<"CreditLog", 'String'>
+    readonly playerId: FieldRef<"CreditLog", 'String'>
+    readonly msisdn: FieldRef<"CreditLog", 'String'>
+    readonly amount: FieldRef<"CreditLog", 'Int'>
+    readonly subject: FieldRef<"CreditLog", 'String'>
+    readonly description: FieldRef<"CreditLog", 'String'>
+    readonly status: FieldRef<"CreditLog", 'ProcessingStatus'>
+    readonly creditResponse: FieldRef<"CreditLog", 'Json'>
+    readonly smsStatus: FieldRef<"CreditLog", 'String'>
+    readonly errorMessage: FieldRef<"CreditLog", 'String'>
+    readonly creditedAt: FieldRef<"CreditLog", 'DateTime'>
+    readonly creditedById: FieldRef<"CreditLog", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * CreditLog findUnique
+   */
+  export type CreditLogFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreditLog
+     */
+    select?: CreditLogSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which CreditLog to fetch.
+     */
+    where: CreditLogWhereUniqueInput
+  }
+
+  /**
+   * CreditLog findUniqueOrThrow
+   */
+  export type CreditLogFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreditLog
+     */
+    select?: CreditLogSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which CreditLog to fetch.
+     */
+    where: CreditLogWhereUniqueInput
+  }
+
+  /**
+   * CreditLog findFirst
+   */
+  export type CreditLogFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreditLog
+     */
+    select?: CreditLogSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which CreditLog to fetch.
+     */
+    where?: CreditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CreditLogs to fetch.
+     */
+    orderBy?: CreditLogOrderByWithRelationInput | CreditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CreditLogs.
+     */
+    cursor?: CreditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CreditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CreditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CreditLogs.
+     */
+    distinct?: CreditLogScalarFieldEnum | CreditLogScalarFieldEnum[]
+  }
+
+  /**
+   * CreditLog findFirstOrThrow
+   */
+  export type CreditLogFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreditLog
+     */
+    select?: CreditLogSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which CreditLog to fetch.
+     */
+    where?: CreditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CreditLogs to fetch.
+     */
+    orderBy?: CreditLogOrderByWithRelationInput | CreditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CreditLogs.
+     */
+    cursor?: CreditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CreditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CreditLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CreditLogs.
+     */
+    distinct?: CreditLogScalarFieldEnum | CreditLogScalarFieldEnum[]
+  }
+
+  /**
+   * CreditLog findMany
+   */
+  export type CreditLogFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreditLog
+     */
+    select?: CreditLogSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreditLogInclude<ExtArgs> | null
+    /**
+     * Filter, which CreditLogs to fetch.
+     */
+    where?: CreditLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CreditLogs to fetch.
+     */
+    orderBy?: CreditLogOrderByWithRelationInput | CreditLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing CreditLogs.
+     */
+    cursor?: CreditLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CreditLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CreditLogs.
+     */
+    skip?: number
+    distinct?: CreditLogScalarFieldEnum | CreditLogScalarFieldEnum[]
+  }
+
+  /**
+   * CreditLog create
+   */
+  export type CreditLogCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreditLog
+     */
+    select?: CreditLogSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreditLogInclude<ExtArgs> | null
+    /**
+     * The data needed to create a CreditLog.
+     */
+    data: XOR<CreditLogCreateInput, CreditLogUncheckedCreateInput>
+  }
+
+  /**
+   * CreditLog createMany
+   */
+  export type CreditLogCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many CreditLogs.
+     */
+    data: CreditLogCreateManyInput | CreditLogCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CreditLog createManyAndReturn
+   */
+  export type CreditLogCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreditLog
+     */
+    select?: CreditLogSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many CreditLogs.
+     */
+    data: CreditLogCreateManyInput | CreditLogCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreditLogIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CreditLog update
+   */
+  export type CreditLogUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreditLog
+     */
+    select?: CreditLogSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreditLogInclude<ExtArgs> | null
+    /**
+     * The data needed to update a CreditLog.
+     */
+    data: XOR<CreditLogUpdateInput, CreditLogUncheckedUpdateInput>
+    /**
+     * Choose, which CreditLog to update.
+     */
+    where: CreditLogWhereUniqueInput
+  }
+
+  /**
+   * CreditLog updateMany
+   */
+  export type CreditLogUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update CreditLogs.
+     */
+    data: XOR<CreditLogUpdateManyMutationInput, CreditLogUncheckedUpdateManyInput>
+    /**
+     * Filter which CreditLogs to update
+     */
+    where?: CreditLogWhereInput
+  }
+
+  /**
+   * CreditLog upsert
+   */
+  export type CreditLogUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreditLog
+     */
+    select?: CreditLogSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreditLogInclude<ExtArgs> | null
+    /**
+     * The filter to search for the CreditLog to update in case it exists.
+     */
+    where: CreditLogWhereUniqueInput
+    /**
+     * In case the CreditLog found by the `where` argument doesn't exist, create a new CreditLog with this data.
+     */
+    create: XOR<CreditLogCreateInput, CreditLogUncheckedCreateInput>
+    /**
+     * In case the CreditLog was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CreditLogUpdateInput, CreditLogUncheckedUpdateInput>
+  }
+
+  /**
+   * CreditLog delete
+   */
+  export type CreditLogDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreditLog
+     */
+    select?: CreditLogSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreditLogInclude<ExtArgs> | null
+    /**
+     * Filter which CreditLog to delete.
+     */
+    where: CreditLogWhereUniqueInput
+  }
+
+  /**
+   * CreditLog deleteMany
+   */
+  export type CreditLogDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CreditLogs to delete
+     */
+    where?: CreditLogWhereInput
+  }
+
+  /**
+   * CreditLog without action
+   */
+  export type CreditLogDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreditLog
+     */
+    select?: CreditLogSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreditLogInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model Permissions
    */
 
@@ -7575,6 +8741,24 @@ export namespace Prisma {
   export type PromoScalarFieldEnum = (typeof PromoScalarFieldEnum)[keyof typeof PromoScalarFieldEnum]
 
 
+  export const CreditLogScalarFieldEnum: {
+    id: 'id',
+    playerId: 'playerId',
+    msisdn: 'msisdn',
+    amount: 'amount',
+    subject: 'subject',
+    description: 'description',
+    status: 'status',
+    creditResponse: 'creditResponse',
+    smsStatus: 'smsStatus',
+    errorMessage: 'errorMessage',
+    creditedAt: 'creditedAt',
+    creditedById: 'creditedById'
+  };
+
+  export type CreditLogScalarFieldEnum = (typeof CreditLogScalarFieldEnum)[keyof typeof CreditLogScalarFieldEnum]
+
+
   export const PermissionsScalarFieldEnum: {
     id: 'id',
     user_id: 'user_id',
@@ -7764,6 +8948,7 @@ export namespace Prisma {
     batchesApproved?: BatchListRelationFilter
     batchesRejected?: BatchListRelationFilter
     promoUploaded?: PromoListRelationFilter
+    creditsIssued?: CreditLogListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -7775,6 +8960,7 @@ export namespace Prisma {
     batchesApproved?: BatchOrderByRelationAggregateInput
     batchesRejected?: BatchOrderByRelationAggregateInput
     promoUploaded?: PromoOrderByRelationAggregateInput
+    creditsIssued?: CreditLogOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -7789,6 +8975,7 @@ export namespace Prisma {
     batchesApproved?: BatchListRelationFilter
     batchesRejected?: BatchListRelationFilter
     promoUploaded?: PromoListRelationFilter
+    creditsIssued?: CreditLogListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -8128,6 +9315,98 @@ export namespace Prisma {
     uploaded_by_id?: StringNullableWithAggregatesFilter<"Promo"> | string | null
   }
 
+  export type CreditLogWhereInput = {
+    AND?: CreditLogWhereInput | CreditLogWhereInput[]
+    OR?: CreditLogWhereInput[]
+    NOT?: CreditLogWhereInput | CreditLogWhereInput[]
+    id?: StringFilter<"CreditLog"> | string
+    playerId?: StringFilter<"CreditLog"> | string
+    msisdn?: StringFilter<"CreditLog"> | string
+    amount?: IntFilter<"CreditLog"> | number
+    subject?: StringFilter<"CreditLog"> | string
+    description?: StringNullableFilter<"CreditLog"> | string | null
+    status?: EnumProcessingStatusFilter<"CreditLog"> | $Enums.ProcessingStatus
+    creditResponse?: JsonNullableFilter<"CreditLog">
+    smsStatus?: StringNullableFilter<"CreditLog"> | string | null
+    errorMessage?: StringNullableFilter<"CreditLog"> | string | null
+    creditedAt?: DateTimeFilter<"CreditLog"> | Date | string
+    creditedById?: StringFilter<"CreditLog"> | string
+    creditedBy?: XOR<UserRelationFilter, UserWhereInput>
+  }
+
+  export type CreditLogOrderByWithRelationInput = {
+    id?: SortOrder
+    playerId?: SortOrder
+    msisdn?: SortOrder
+    amount?: SortOrder
+    subject?: SortOrder
+    description?: SortOrderInput | SortOrder
+    status?: SortOrder
+    creditResponse?: SortOrderInput | SortOrder
+    smsStatus?: SortOrderInput | SortOrder
+    errorMessage?: SortOrderInput | SortOrder
+    creditedAt?: SortOrder
+    creditedById?: SortOrder
+    creditedBy?: UserOrderByWithRelationInput
+  }
+
+  export type CreditLogWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: CreditLogWhereInput | CreditLogWhereInput[]
+    OR?: CreditLogWhereInput[]
+    NOT?: CreditLogWhereInput | CreditLogWhereInput[]
+    playerId?: StringFilter<"CreditLog"> | string
+    msisdn?: StringFilter<"CreditLog"> | string
+    amount?: IntFilter<"CreditLog"> | number
+    subject?: StringFilter<"CreditLog"> | string
+    description?: StringNullableFilter<"CreditLog"> | string | null
+    status?: EnumProcessingStatusFilter<"CreditLog"> | $Enums.ProcessingStatus
+    creditResponse?: JsonNullableFilter<"CreditLog">
+    smsStatus?: StringNullableFilter<"CreditLog"> | string | null
+    errorMessage?: StringNullableFilter<"CreditLog"> | string | null
+    creditedAt?: DateTimeFilter<"CreditLog"> | Date | string
+    creditedById?: StringFilter<"CreditLog"> | string
+    creditedBy?: XOR<UserRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type CreditLogOrderByWithAggregationInput = {
+    id?: SortOrder
+    playerId?: SortOrder
+    msisdn?: SortOrder
+    amount?: SortOrder
+    subject?: SortOrder
+    description?: SortOrderInput | SortOrder
+    status?: SortOrder
+    creditResponse?: SortOrderInput | SortOrder
+    smsStatus?: SortOrderInput | SortOrder
+    errorMessage?: SortOrderInput | SortOrder
+    creditedAt?: SortOrder
+    creditedById?: SortOrder
+    _count?: CreditLogCountOrderByAggregateInput
+    _avg?: CreditLogAvgOrderByAggregateInput
+    _max?: CreditLogMaxOrderByAggregateInput
+    _min?: CreditLogMinOrderByAggregateInput
+    _sum?: CreditLogSumOrderByAggregateInput
+  }
+
+  export type CreditLogScalarWhereWithAggregatesInput = {
+    AND?: CreditLogScalarWhereWithAggregatesInput | CreditLogScalarWhereWithAggregatesInput[]
+    OR?: CreditLogScalarWhereWithAggregatesInput[]
+    NOT?: CreditLogScalarWhereWithAggregatesInput | CreditLogScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"CreditLog"> | string
+    playerId?: StringWithAggregatesFilter<"CreditLog"> | string
+    msisdn?: StringWithAggregatesFilter<"CreditLog"> | string
+    amount?: IntWithAggregatesFilter<"CreditLog"> | number
+    subject?: StringWithAggregatesFilter<"CreditLog"> | string
+    description?: StringNullableWithAggregatesFilter<"CreditLog"> | string | null
+    status?: EnumProcessingStatusWithAggregatesFilter<"CreditLog"> | $Enums.ProcessingStatus
+    creditResponse?: JsonNullableWithAggregatesFilter<"CreditLog">
+    smsStatus?: StringNullableWithAggregatesFilter<"CreditLog"> | string | null
+    errorMessage?: StringNullableWithAggregatesFilter<"CreditLog"> | string | null
+    creditedAt?: DateTimeWithAggregatesFilter<"CreditLog"> | Date | string
+    creditedById?: StringWithAggregatesFilter<"CreditLog"> | string
+  }
+
   export type PermissionsWhereInput = {
     AND?: PermissionsWhereInput | PermissionsWhereInput[]
     OR?: PermissionsWhereInput[]
@@ -8182,6 +9461,7 @@ export namespace Prisma {
     batchesApproved?: BatchCreateNestedManyWithoutApprovedByInput
     batchesRejected?: BatchCreateNestedManyWithoutRejectedByInput
     promoUploaded?: PromoCreateNestedManyWithoutUploaded_byInput
+    creditsIssued?: CreditLogCreateNestedManyWithoutCreditedByInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -8193,6 +9473,7 @@ export namespace Prisma {
     batchesApproved?: BatchUncheckedCreateNestedManyWithoutApprovedByInput
     batchesRejected?: BatchUncheckedCreateNestedManyWithoutRejectedByInput
     promoUploaded?: PromoUncheckedCreateNestedManyWithoutUploaded_byInput
+    creditsIssued?: CreditLogUncheckedCreateNestedManyWithoutCreditedByInput
   }
 
   export type UserUpdateInput = {
@@ -8204,6 +9485,7 @@ export namespace Prisma {
     batchesApproved?: BatchUpdateManyWithoutApprovedByNestedInput
     batchesRejected?: BatchUpdateManyWithoutRejectedByNestedInput
     promoUploaded?: PromoUpdateManyWithoutUploaded_byNestedInput
+    creditsIssued?: CreditLogUpdateManyWithoutCreditedByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -8215,6 +9497,7 @@ export namespace Prisma {
     batchesApproved?: BatchUncheckedUpdateManyWithoutApprovedByNestedInput
     batchesRejected?: BatchUncheckedUpdateManyWithoutRejectedByNestedInput
     promoUploaded?: PromoUncheckedUpdateManyWithoutUploaded_byNestedInput
+    creditsIssued?: CreditLogUncheckedUpdateManyWithoutCreditedByNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -8577,6 +9860,110 @@ export namespace Prisma {
     uploaded_by_id?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type CreditLogCreateInput = {
+    id?: string
+    playerId: string
+    msisdn: string
+    amount: number
+    subject: string
+    description?: string | null
+    status: $Enums.ProcessingStatus
+    creditResponse?: NullableJsonNullValueInput | InputJsonValue
+    smsStatus?: string | null
+    errorMessage?: string | null
+    creditedAt?: Date | string
+    creditedBy: UserCreateNestedOneWithoutCreditsIssuedInput
+  }
+
+  export type CreditLogUncheckedCreateInput = {
+    id?: string
+    playerId: string
+    msisdn: string
+    amount: number
+    subject: string
+    description?: string | null
+    status: $Enums.ProcessingStatus
+    creditResponse?: NullableJsonNullValueInput | InputJsonValue
+    smsStatus?: string | null
+    errorMessage?: string | null
+    creditedAt?: Date | string
+    creditedById: string
+  }
+
+  export type CreditLogUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    playerId?: StringFieldUpdateOperationsInput | string
+    msisdn?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    subject?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProcessingStatusFieldUpdateOperationsInput | $Enums.ProcessingStatus
+    creditResponse?: NullableJsonNullValueInput | InputJsonValue
+    smsStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    creditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creditedBy?: UserUpdateOneRequiredWithoutCreditsIssuedNestedInput
+  }
+
+  export type CreditLogUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    playerId?: StringFieldUpdateOperationsInput | string
+    msisdn?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    subject?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProcessingStatusFieldUpdateOperationsInput | $Enums.ProcessingStatus
+    creditResponse?: NullableJsonNullValueInput | InputJsonValue
+    smsStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    creditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creditedById?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type CreditLogCreateManyInput = {
+    id?: string
+    playerId: string
+    msisdn: string
+    amount: number
+    subject: string
+    description?: string | null
+    status: $Enums.ProcessingStatus
+    creditResponse?: NullableJsonNullValueInput | InputJsonValue
+    smsStatus?: string | null
+    errorMessage?: string | null
+    creditedAt?: Date | string
+    creditedById: string
+  }
+
+  export type CreditLogUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    playerId?: StringFieldUpdateOperationsInput | string
+    msisdn?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    subject?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProcessingStatusFieldUpdateOperationsInput | $Enums.ProcessingStatus
+    creditResponse?: NullableJsonNullValueInput | InputJsonValue
+    smsStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    creditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CreditLogUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    playerId?: StringFieldUpdateOperationsInput | string
+    msisdn?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    subject?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProcessingStatusFieldUpdateOperationsInput | $Enums.ProcessingStatus
+    creditResponse?: NullableJsonNullValueInput | InputJsonValue
+    smsStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    creditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creditedById?: StringFieldUpdateOperationsInput | string
+  }
+
   export type PermissionsCreateInput = {
     id?: string
     permission: string
@@ -8658,6 +10045,12 @@ export namespace Prisma {
     none?: PromoWhereInput
   }
 
+  export type CreditLogListRelationFilter = {
+    every?: CreditLogWhereInput
+    some?: CreditLogWhereInput
+    none?: CreditLogWhereInput
+  }
+
   export type PermissionsOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -8667,6 +10060,10 @@ export namespace Prisma {
   }
 
   export type PromoOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type CreditLogOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -9209,6 +10606,57 @@ export namespace Prisma {
     isNot?: UserWhereInput
   }
 
+  export type CreditLogCountOrderByAggregateInput = {
+    id?: SortOrder
+    playerId?: SortOrder
+    msisdn?: SortOrder
+    amount?: SortOrder
+    subject?: SortOrder
+    description?: SortOrder
+    status?: SortOrder
+    creditResponse?: SortOrder
+    smsStatus?: SortOrder
+    errorMessage?: SortOrder
+    creditedAt?: SortOrder
+    creditedById?: SortOrder
+  }
+
+  export type CreditLogAvgOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type CreditLogMaxOrderByAggregateInput = {
+    id?: SortOrder
+    playerId?: SortOrder
+    msisdn?: SortOrder
+    amount?: SortOrder
+    subject?: SortOrder
+    description?: SortOrder
+    status?: SortOrder
+    smsStatus?: SortOrder
+    errorMessage?: SortOrder
+    creditedAt?: SortOrder
+    creditedById?: SortOrder
+  }
+
+  export type CreditLogMinOrderByAggregateInput = {
+    id?: SortOrder
+    playerId?: SortOrder
+    msisdn?: SortOrder
+    amount?: SortOrder
+    subject?: SortOrder
+    description?: SortOrder
+    status?: SortOrder
+    smsStatus?: SortOrder
+    errorMessage?: SortOrder
+    creditedAt?: SortOrder
+    creditedById?: SortOrder
+  }
+
+  export type CreditLogSumOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
   export type PermissionsCountOrderByAggregateInput = {
     id?: SortOrder
     user_id?: SortOrder
@@ -9255,6 +10703,13 @@ export namespace Prisma {
     connect?: PromoWhereUniqueInput | PromoWhereUniqueInput[]
   }
 
+  export type CreditLogCreateNestedManyWithoutCreditedByInput = {
+    create?: XOR<CreditLogCreateWithoutCreditedByInput, CreditLogUncheckedCreateWithoutCreditedByInput> | CreditLogCreateWithoutCreditedByInput[] | CreditLogUncheckedCreateWithoutCreditedByInput[]
+    connectOrCreate?: CreditLogCreateOrConnectWithoutCreditedByInput | CreditLogCreateOrConnectWithoutCreditedByInput[]
+    createMany?: CreditLogCreateManyCreditedByInputEnvelope
+    connect?: CreditLogWhereUniqueInput | CreditLogWhereUniqueInput[]
+  }
+
   export type PermissionsUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<PermissionsCreateWithoutUserInput, PermissionsUncheckedCreateWithoutUserInput> | PermissionsCreateWithoutUserInput[] | PermissionsUncheckedCreateWithoutUserInput[]
     connectOrCreate?: PermissionsCreateOrConnectWithoutUserInput | PermissionsCreateOrConnectWithoutUserInput[]
@@ -9281,6 +10736,13 @@ export namespace Prisma {
     connectOrCreate?: PromoCreateOrConnectWithoutUploaded_byInput | PromoCreateOrConnectWithoutUploaded_byInput[]
     createMany?: PromoCreateManyUploaded_byInputEnvelope
     connect?: PromoWhereUniqueInput | PromoWhereUniqueInput[]
+  }
+
+  export type CreditLogUncheckedCreateNestedManyWithoutCreditedByInput = {
+    create?: XOR<CreditLogCreateWithoutCreditedByInput, CreditLogUncheckedCreateWithoutCreditedByInput> | CreditLogCreateWithoutCreditedByInput[] | CreditLogUncheckedCreateWithoutCreditedByInput[]
+    connectOrCreate?: CreditLogCreateOrConnectWithoutCreditedByInput | CreditLogCreateOrConnectWithoutCreditedByInput[]
+    createMany?: CreditLogCreateManyCreditedByInputEnvelope
+    connect?: CreditLogWhereUniqueInput | CreditLogWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -9347,6 +10809,20 @@ export namespace Prisma {
     deleteMany?: PromoScalarWhereInput | PromoScalarWhereInput[]
   }
 
+  export type CreditLogUpdateManyWithoutCreditedByNestedInput = {
+    create?: XOR<CreditLogCreateWithoutCreditedByInput, CreditLogUncheckedCreateWithoutCreditedByInput> | CreditLogCreateWithoutCreditedByInput[] | CreditLogUncheckedCreateWithoutCreditedByInput[]
+    connectOrCreate?: CreditLogCreateOrConnectWithoutCreditedByInput | CreditLogCreateOrConnectWithoutCreditedByInput[]
+    upsert?: CreditLogUpsertWithWhereUniqueWithoutCreditedByInput | CreditLogUpsertWithWhereUniqueWithoutCreditedByInput[]
+    createMany?: CreditLogCreateManyCreditedByInputEnvelope
+    set?: CreditLogWhereUniqueInput | CreditLogWhereUniqueInput[]
+    disconnect?: CreditLogWhereUniqueInput | CreditLogWhereUniqueInput[]
+    delete?: CreditLogWhereUniqueInput | CreditLogWhereUniqueInput[]
+    connect?: CreditLogWhereUniqueInput | CreditLogWhereUniqueInput[]
+    update?: CreditLogUpdateWithWhereUniqueWithoutCreditedByInput | CreditLogUpdateWithWhereUniqueWithoutCreditedByInput[]
+    updateMany?: CreditLogUpdateManyWithWhereWithoutCreditedByInput | CreditLogUpdateManyWithWhereWithoutCreditedByInput[]
+    deleteMany?: CreditLogScalarWhereInput | CreditLogScalarWhereInput[]
+  }
+
   export type PermissionsUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<PermissionsCreateWithoutUserInput, PermissionsUncheckedCreateWithoutUserInput> | PermissionsCreateWithoutUserInput[] | PermissionsUncheckedCreateWithoutUserInput[]
     connectOrCreate?: PermissionsCreateOrConnectWithoutUserInput | PermissionsCreateOrConnectWithoutUserInput[]
@@ -9401,6 +10877,20 @@ export namespace Prisma {
     update?: PromoUpdateWithWhereUniqueWithoutUploaded_byInput | PromoUpdateWithWhereUniqueWithoutUploaded_byInput[]
     updateMany?: PromoUpdateManyWithWhereWithoutUploaded_byInput | PromoUpdateManyWithWhereWithoutUploaded_byInput[]
     deleteMany?: PromoScalarWhereInput | PromoScalarWhereInput[]
+  }
+
+  export type CreditLogUncheckedUpdateManyWithoutCreditedByNestedInput = {
+    create?: XOR<CreditLogCreateWithoutCreditedByInput, CreditLogUncheckedCreateWithoutCreditedByInput> | CreditLogCreateWithoutCreditedByInput[] | CreditLogUncheckedCreateWithoutCreditedByInput[]
+    connectOrCreate?: CreditLogCreateOrConnectWithoutCreditedByInput | CreditLogCreateOrConnectWithoutCreditedByInput[]
+    upsert?: CreditLogUpsertWithWhereUniqueWithoutCreditedByInput | CreditLogUpsertWithWhereUniqueWithoutCreditedByInput[]
+    createMany?: CreditLogCreateManyCreditedByInputEnvelope
+    set?: CreditLogWhereUniqueInput | CreditLogWhereUniqueInput[]
+    disconnect?: CreditLogWhereUniqueInput | CreditLogWhereUniqueInput[]
+    delete?: CreditLogWhereUniqueInput | CreditLogWhereUniqueInput[]
+    connect?: CreditLogWhereUniqueInput | CreditLogWhereUniqueInput[]
+    update?: CreditLogUpdateWithWhereUniqueWithoutCreditedByInput | CreditLogUpdateWithWhereUniqueWithoutCreditedByInput[]
+    updateMany?: CreditLogUpdateManyWithWhereWithoutCreditedByInput | CreditLogUpdateManyWithWhereWithoutCreditedByInput[]
+    deleteMany?: CreditLogScalarWhereInput | CreditLogScalarWhereInput[]
   }
 
   export type BatchCreateNestedOneWithoutRecipientsInput = {
@@ -9601,6 +11091,20 @@ export namespace Prisma {
     delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPromoUploadedInput, UserUpdateWithoutPromoUploadedInput>, UserUncheckedUpdateWithoutPromoUploadedInput>
+  }
+
+  export type UserCreateNestedOneWithoutCreditsIssuedInput = {
+    create?: XOR<UserCreateWithoutCreditsIssuedInput, UserUncheckedCreateWithoutCreditsIssuedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCreditsIssuedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutCreditsIssuedNestedInput = {
+    create?: XOR<UserCreateWithoutCreditsIssuedInput, UserUncheckedCreateWithoutCreditsIssuedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCreditsIssuedInput
+    upsert?: UserUpsertWithoutCreditsIssuedInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCreditsIssuedInput, UserUpdateWithoutCreditsIssuedInput>, UserUncheckedUpdateWithoutCreditsIssuedInput>
   }
 
   export type UserCreateNestedOneWithoutPermissionsInput = {
@@ -10047,6 +11551,44 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type CreditLogCreateWithoutCreditedByInput = {
+    id?: string
+    playerId: string
+    msisdn: string
+    amount: number
+    subject: string
+    description?: string | null
+    status: $Enums.ProcessingStatus
+    creditResponse?: NullableJsonNullValueInput | InputJsonValue
+    smsStatus?: string | null
+    errorMessage?: string | null
+    creditedAt?: Date | string
+  }
+
+  export type CreditLogUncheckedCreateWithoutCreditedByInput = {
+    id?: string
+    playerId: string
+    msisdn: string
+    amount: number
+    subject: string
+    description?: string | null
+    status: $Enums.ProcessingStatus
+    creditResponse?: NullableJsonNullValueInput | InputJsonValue
+    smsStatus?: string | null
+    errorMessage?: string | null
+    creditedAt?: Date | string
+  }
+
+  export type CreditLogCreateOrConnectWithoutCreditedByInput = {
+    where: CreditLogWhereUniqueInput
+    create: XOR<CreditLogCreateWithoutCreditedByInput, CreditLogUncheckedCreateWithoutCreditedByInput>
+  }
+
+  export type CreditLogCreateManyCreditedByInputEnvelope = {
+    data: CreditLogCreateManyCreditedByInput | CreditLogCreateManyCreditedByInput[]
+    skipDuplicates?: boolean
+  }
+
   export type PermissionsUpsertWithWhereUniqueWithoutUserInput = {
     where: PermissionsWhereUniqueInput
     update: XOR<PermissionsUpdateWithoutUserInput, PermissionsUncheckedUpdateWithoutUserInput>
@@ -10152,6 +11694,40 @@ export namespace Prisma {
     amount?: IntNullableFilter<"Promo"> | number | null
     is_active?: BoolFilter<"Promo"> | boolean
     uploaded_by_id?: StringNullableFilter<"Promo"> | string | null
+  }
+
+  export type CreditLogUpsertWithWhereUniqueWithoutCreditedByInput = {
+    where: CreditLogWhereUniqueInput
+    update: XOR<CreditLogUpdateWithoutCreditedByInput, CreditLogUncheckedUpdateWithoutCreditedByInput>
+    create: XOR<CreditLogCreateWithoutCreditedByInput, CreditLogUncheckedCreateWithoutCreditedByInput>
+  }
+
+  export type CreditLogUpdateWithWhereUniqueWithoutCreditedByInput = {
+    where: CreditLogWhereUniqueInput
+    data: XOR<CreditLogUpdateWithoutCreditedByInput, CreditLogUncheckedUpdateWithoutCreditedByInput>
+  }
+
+  export type CreditLogUpdateManyWithWhereWithoutCreditedByInput = {
+    where: CreditLogScalarWhereInput
+    data: XOR<CreditLogUpdateManyMutationInput, CreditLogUncheckedUpdateManyWithoutCreditedByInput>
+  }
+
+  export type CreditLogScalarWhereInput = {
+    AND?: CreditLogScalarWhereInput | CreditLogScalarWhereInput[]
+    OR?: CreditLogScalarWhereInput[]
+    NOT?: CreditLogScalarWhereInput | CreditLogScalarWhereInput[]
+    id?: StringFilter<"CreditLog"> | string
+    playerId?: StringFilter<"CreditLog"> | string
+    msisdn?: StringFilter<"CreditLog"> | string
+    amount?: IntFilter<"CreditLog"> | number
+    subject?: StringFilter<"CreditLog"> | string
+    description?: StringNullableFilter<"CreditLog"> | string | null
+    status?: EnumProcessingStatusFilter<"CreditLog"> | $Enums.ProcessingStatus
+    creditResponse?: JsonNullableFilter<"CreditLog">
+    smsStatus?: StringNullableFilter<"CreditLog"> | string | null
+    errorMessage?: StringNullableFilter<"CreditLog"> | string | null
+    creditedAt?: DateTimeFilter<"CreditLog"> | Date | string
+    creditedById?: StringFilter<"CreditLog"> | string
   }
 
   export type BatchCreateWithoutRecipientsInput = {
@@ -10362,6 +11938,7 @@ export namespace Prisma {
     permissions?: PermissionsCreateNestedManyWithoutUserInput
     batchesRejected?: BatchCreateNestedManyWithoutRejectedByInput
     promoUploaded?: PromoCreateNestedManyWithoutUploaded_byInput
+    creditsIssued?: CreditLogCreateNestedManyWithoutCreditedByInput
   }
 
   export type UserUncheckedCreateWithoutBatchesApprovedInput = {
@@ -10372,6 +11949,7 @@ export namespace Prisma {
     permissions?: PermissionsUncheckedCreateNestedManyWithoutUserInput
     batchesRejected?: BatchUncheckedCreateNestedManyWithoutRejectedByInput
     promoUploaded?: PromoUncheckedCreateNestedManyWithoutUploaded_byInput
+    creditsIssued?: CreditLogUncheckedCreateNestedManyWithoutCreditedByInput
   }
 
   export type UserCreateOrConnectWithoutBatchesApprovedInput = {
@@ -10387,6 +11965,7 @@ export namespace Prisma {
     permissions?: PermissionsCreateNestedManyWithoutUserInput
     batchesApproved?: BatchCreateNestedManyWithoutApprovedByInput
     promoUploaded?: PromoCreateNestedManyWithoutUploaded_byInput
+    creditsIssued?: CreditLogCreateNestedManyWithoutCreditedByInput
   }
 
   export type UserUncheckedCreateWithoutBatchesRejectedInput = {
@@ -10397,6 +11976,7 @@ export namespace Prisma {
     permissions?: PermissionsUncheckedCreateNestedManyWithoutUserInput
     batchesApproved?: BatchUncheckedCreateNestedManyWithoutApprovedByInput
     promoUploaded?: PromoUncheckedCreateNestedManyWithoutUploaded_byInput
+    creditsIssued?: CreditLogUncheckedCreateNestedManyWithoutCreditedByInput
   }
 
   export type UserCreateOrConnectWithoutBatchesRejectedInput = {
@@ -10481,6 +12061,7 @@ export namespace Prisma {
     permissions?: PermissionsUpdateManyWithoutUserNestedInput
     batchesRejected?: BatchUpdateManyWithoutRejectedByNestedInput
     promoUploaded?: PromoUpdateManyWithoutUploaded_byNestedInput
+    creditsIssued?: CreditLogUpdateManyWithoutCreditedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBatchesApprovedInput = {
@@ -10491,6 +12072,7 @@ export namespace Prisma {
     permissions?: PermissionsUncheckedUpdateManyWithoutUserNestedInput
     batchesRejected?: BatchUncheckedUpdateManyWithoutRejectedByNestedInput
     promoUploaded?: PromoUncheckedUpdateManyWithoutUploaded_byNestedInput
+    creditsIssued?: CreditLogUncheckedUpdateManyWithoutCreditedByNestedInput
   }
 
   export type UserUpsertWithoutBatchesRejectedInput = {
@@ -10512,6 +12094,7 @@ export namespace Prisma {
     permissions?: PermissionsUpdateManyWithoutUserNestedInput
     batchesApproved?: BatchUpdateManyWithoutApprovedByNestedInput
     promoUploaded?: PromoUpdateManyWithoutUploaded_byNestedInput
+    creditsIssued?: CreditLogUpdateManyWithoutCreditedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBatchesRejectedInput = {
@@ -10522,6 +12105,7 @@ export namespace Prisma {
     permissions?: PermissionsUncheckedUpdateManyWithoutUserNestedInput
     batchesApproved?: BatchUncheckedUpdateManyWithoutApprovedByNestedInput
     promoUploaded?: PromoUncheckedUpdateManyWithoutUploaded_byNestedInput
+    creditsIssued?: CreditLogUncheckedUpdateManyWithoutCreditedByNestedInput
   }
 
   export type UserCreateWithoutPromoUploadedInput = {
@@ -10532,6 +12116,7 @@ export namespace Prisma {
     permissions?: PermissionsCreateNestedManyWithoutUserInput
     batchesApproved?: BatchCreateNestedManyWithoutApprovedByInput
     batchesRejected?: BatchCreateNestedManyWithoutRejectedByInput
+    creditsIssued?: CreditLogCreateNestedManyWithoutCreditedByInput
   }
 
   export type UserUncheckedCreateWithoutPromoUploadedInput = {
@@ -10542,6 +12127,7 @@ export namespace Prisma {
     permissions?: PermissionsUncheckedCreateNestedManyWithoutUserInput
     batchesApproved?: BatchUncheckedCreateNestedManyWithoutApprovedByInput
     batchesRejected?: BatchUncheckedCreateNestedManyWithoutRejectedByInput
+    creditsIssued?: CreditLogUncheckedCreateNestedManyWithoutCreditedByInput
   }
 
   export type UserCreateOrConnectWithoutPromoUploadedInput = {
@@ -10568,6 +12154,7 @@ export namespace Prisma {
     permissions?: PermissionsUpdateManyWithoutUserNestedInput
     batchesApproved?: BatchUpdateManyWithoutApprovedByNestedInput
     batchesRejected?: BatchUpdateManyWithoutRejectedByNestedInput
+    creditsIssued?: CreditLogUpdateManyWithoutCreditedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPromoUploadedInput = {
@@ -10578,6 +12165,67 @@ export namespace Prisma {
     permissions?: PermissionsUncheckedUpdateManyWithoutUserNestedInput
     batchesApproved?: BatchUncheckedUpdateManyWithoutApprovedByNestedInput
     batchesRejected?: BatchUncheckedUpdateManyWithoutRejectedByNestedInput
+    creditsIssued?: CreditLogUncheckedUpdateManyWithoutCreditedByNestedInput
+  }
+
+  export type UserCreateWithoutCreditsIssuedInput = {
+    id: string
+    name: string
+    email: string
+    role?: $Enums.UserRole
+    permissions?: PermissionsCreateNestedManyWithoutUserInput
+    batchesApproved?: BatchCreateNestedManyWithoutApprovedByInput
+    batchesRejected?: BatchCreateNestedManyWithoutRejectedByInput
+    promoUploaded?: PromoCreateNestedManyWithoutUploaded_byInput
+  }
+
+  export type UserUncheckedCreateWithoutCreditsIssuedInput = {
+    id: string
+    name: string
+    email: string
+    role?: $Enums.UserRole
+    permissions?: PermissionsUncheckedCreateNestedManyWithoutUserInput
+    batchesApproved?: BatchUncheckedCreateNestedManyWithoutApprovedByInput
+    batchesRejected?: BatchUncheckedCreateNestedManyWithoutRejectedByInput
+    promoUploaded?: PromoUncheckedCreateNestedManyWithoutUploaded_byInput
+  }
+
+  export type UserCreateOrConnectWithoutCreditsIssuedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCreditsIssuedInput, UserUncheckedCreateWithoutCreditsIssuedInput>
+  }
+
+  export type UserUpsertWithoutCreditsIssuedInput = {
+    update: XOR<UserUpdateWithoutCreditsIssuedInput, UserUncheckedUpdateWithoutCreditsIssuedInput>
+    create: XOR<UserCreateWithoutCreditsIssuedInput, UserUncheckedCreateWithoutCreditsIssuedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutCreditsIssuedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutCreditsIssuedInput, UserUncheckedUpdateWithoutCreditsIssuedInput>
+  }
+
+  export type UserUpdateWithoutCreditsIssuedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    permissions?: PermissionsUpdateManyWithoutUserNestedInput
+    batchesApproved?: BatchUpdateManyWithoutApprovedByNestedInput
+    batchesRejected?: BatchUpdateManyWithoutRejectedByNestedInput
+    promoUploaded?: PromoUpdateManyWithoutUploaded_byNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCreditsIssuedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    permissions?: PermissionsUncheckedUpdateManyWithoutUserNestedInput
+    batchesApproved?: BatchUncheckedUpdateManyWithoutApprovedByNestedInput
+    batchesRejected?: BatchUncheckedUpdateManyWithoutRejectedByNestedInput
+    promoUploaded?: PromoUncheckedUpdateManyWithoutUploaded_byNestedInput
   }
 
   export type UserCreateWithoutPermissionsInput = {
@@ -10588,6 +12236,7 @@ export namespace Prisma {
     batchesApproved?: BatchCreateNestedManyWithoutApprovedByInput
     batchesRejected?: BatchCreateNestedManyWithoutRejectedByInput
     promoUploaded?: PromoCreateNestedManyWithoutUploaded_byInput
+    creditsIssued?: CreditLogCreateNestedManyWithoutCreditedByInput
   }
 
   export type UserUncheckedCreateWithoutPermissionsInput = {
@@ -10598,6 +12247,7 @@ export namespace Prisma {
     batchesApproved?: BatchUncheckedCreateNestedManyWithoutApprovedByInput
     batchesRejected?: BatchUncheckedCreateNestedManyWithoutRejectedByInput
     promoUploaded?: PromoUncheckedCreateNestedManyWithoutUploaded_byInput
+    creditsIssued?: CreditLogUncheckedCreateNestedManyWithoutCreditedByInput
   }
 
   export type UserCreateOrConnectWithoutPermissionsInput = {
@@ -10624,6 +12274,7 @@ export namespace Prisma {
     batchesApproved?: BatchUpdateManyWithoutApprovedByNestedInput
     batchesRejected?: BatchUpdateManyWithoutRejectedByNestedInput
     promoUploaded?: PromoUpdateManyWithoutUploaded_byNestedInput
+    creditsIssued?: CreditLogUpdateManyWithoutCreditedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPermissionsInput = {
@@ -10634,6 +12285,7 @@ export namespace Prisma {
     batchesApproved?: BatchUncheckedUpdateManyWithoutApprovedByNestedInput
     batchesRejected?: BatchUncheckedUpdateManyWithoutRejectedByNestedInput
     promoUploaded?: PromoUncheckedUpdateManyWithoutUploaded_byNestedInput
+    creditsIssued?: CreditLogUncheckedUpdateManyWithoutCreditedByNestedInput
   }
 
   export type PermissionsCreateManyUserInput = {
@@ -10677,6 +12329,20 @@ export namespace Prisma {
     term_and_conditions?: string | null
     amount?: number | null
     is_active: boolean
+  }
+
+  export type CreditLogCreateManyCreditedByInput = {
+    id?: string
+    playerId: string
+    msisdn: string
+    amount: number
+    subject: string
+    description?: string | null
+    status: $Enums.ProcessingStatus
+    creditResponse?: NullableJsonNullValueInput | InputJsonValue
+    smsStatus?: string | null
+    errorMessage?: string | null
+    creditedAt?: Date | string
   }
 
   export type PermissionsUpdateWithoutUserInput = {
@@ -10816,6 +12482,48 @@ export namespace Prisma {
     is_active?: BoolFieldUpdateOperationsInput | boolean
   }
 
+  export type CreditLogUpdateWithoutCreditedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    playerId?: StringFieldUpdateOperationsInput | string
+    msisdn?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    subject?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProcessingStatusFieldUpdateOperationsInput | $Enums.ProcessingStatus
+    creditResponse?: NullableJsonNullValueInput | InputJsonValue
+    smsStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    creditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CreditLogUncheckedUpdateWithoutCreditedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    playerId?: StringFieldUpdateOperationsInput | string
+    msisdn?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    subject?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProcessingStatusFieldUpdateOperationsInput | $Enums.ProcessingStatus
+    creditResponse?: NullableJsonNullValueInput | InputJsonValue
+    smsStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    creditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CreditLogUncheckedUpdateManyWithoutCreditedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    playerId?: StringFieldUpdateOperationsInput | string
+    msisdn?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    subject?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProcessingStatusFieldUpdateOperationsInput | $Enums.ProcessingStatus
+    creditResponse?: NullableJsonNullValueInput | InputJsonValue
+    smsStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    creditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type CustomerCreateManyBatchInput = {
     id?: string
     name: string
@@ -10921,6 +12629,10 @@ export namespace Prisma {
      * @deprecated Use PromoDefaultArgs instead
      */
     export type PromoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = PromoDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use CreditLogDefaultArgs instead
+     */
+    export type CreditLogArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = CreditLogDefaultArgs<ExtArgs>
     /**
      * @deprecated Use PermissionsDefaultArgs instead
      */

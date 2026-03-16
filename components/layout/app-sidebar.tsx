@@ -19,6 +19,9 @@ import {
   Plus,
   Edit,
   LogIn,
+  TrendingUp,
+  Activity,
+  DollarSign,
 } from "lucide-react"
 import Image from "next/image"
 
@@ -44,6 +47,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import ThemeToggle from "@/components/providers/ThemeToggle"
+import { EnvironmentSwitcher } from "@/components/layout/environment-switcher"
 
 const navigationItems = [
   {
@@ -52,6 +56,9 @@ const navigationItems = [
     items : [
       { title: "Summary", url: "/summary/legacy", icon: DatabaseBackup },
       { title: "Graph Analytics", url: "/analytics", icon: BarChart3 },
+      { title: "Financial Flow", url: "/analytics/financial", icon: DollarSign },
+      { title: "Growth", url: "/analytics/growth", icon: TrendingUp },
+      { title: "Engagement & Games", url: "/analytics/engagement", icon: Activity },
     ]
   },
   {
@@ -232,6 +239,12 @@ export function AppSidebar() {
               </SidebarMenuButton>
             </SidebarMenuItem>
           )}
+
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild tooltip="Environment">
+              <EnvironmentSwitcher />
+            </SidebarMenuButton>
+          </SidebarMenuItem>
 
           <SidebarMenuItem>
             <SidebarMenuButton asChild tooltip="Toggle theme">
