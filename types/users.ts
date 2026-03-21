@@ -34,6 +34,7 @@ export interface UserDetail {
   is_active: boolean;
   is_verified: boolean;
   is_payout_locked: boolean;
+  is_wagering_exempt: boolean;
   wallet_id: number;
   created_at: string;
   platform: string;
@@ -56,6 +57,7 @@ export interface UserListItem {
   created_at: string;
   last_login: string;
   is_payout_locked: boolean;
+  is_wagering_exempt: boolean;
   bets: number;
 }
 

@@ -81,13 +81,36 @@ export default function PlayersPage() {
     [updatePlayer, refetch]
   );
 
+  const handleToggleWageringExemption = useCallback(
+    async (player: UserListItem) => {
+      try {
+        await updatePlayer({
+          id: String(player.id),
+          data: { is_wagering_exempt: !player.is_wagering_exempt },
+        });
+        toast.success(
+          player.is_wagering_exempt
+            ? `Wagering exemption removed for ${player.name || player.msisdn}`
+            : `Wagering exemption added for ${player.name || player.msisdn}`
+        );
+        refetch();
+      } catch (err) {
+        toast.error(
+          err instanceof Error ? err.message : "Failed to update wagering exemption"
+        );
+      }
+    },
+    [updatePlayer, refetch]
+  );
+
   const actionHandlers: PlayerActionHandlers = useMemo(
     () => ({
       onToggleActive: handleToggleActive,
       onTogglePayout: handleTogglePayout,
+      onToggleWageringExemption: handleToggleWageringExemption,
       isUpdating,
     }),
-    [handleToggleActive, handleTogglePayout, isUpdating]
+    [handleToggleActive, handleTogglePayout, handleToggleWageringExemption, isUpdating]
   );
 
   const columns = useMemo(

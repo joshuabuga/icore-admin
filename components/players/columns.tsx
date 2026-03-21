@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
-import { MoreHorizontal, Eye, Ban, Wallet } from "lucide-react";
+import {MoreHorizontal, Eye, Ban, Wallet, Receipt} from "lucide-react";
 
 import { UserListItem } from "@/types/users";
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,7 @@ import { formatDate, formatCurrency, formatPhone } from "@/lib/utils/table-utils
 export interface PlayerActionHandlers {
   onToggleActive: (player: UserListItem) => Promise<void>;
   onTogglePayout: (player: UserListItem) => Promise<void>;
+  onToggleWageringExemption: (player: UserListItem) => Promise<void>;
   isUpdating?: boolean;
 }
 
@@ -45,6 +46,7 @@ function PlayerActionsCell({
   const router = useRouter();
   const [showSuspendDialog, setShowSuspendDialog] = useState(false);
   const [showPayoutDialog, setShowPayoutDialog] = useState(false);
+  const [showWageringDialog, setShowWageringDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSuspend = async () => {
@@ -66,6 +68,16 @@ function PlayerActionsCell({
       setShowPayoutDialog(false);
     }
   };
+
+  const handleToggleWageringExemption = async () => {
+    setIsLoading(true);
+    try {
+      await handlers.onToggleWageringExemption(player);
+    } finally {
+      setIsLoading(false);
+      setShowWageringDialog(false);
+    }
+  }
 
   return (
     <>
@@ -91,6 +103,10 @@ function PlayerActionsCell({
           <DropdownMenuItem onClick={() => setShowPayoutDialog(true)}>
             <Wallet className="mr-2 h-4 w-4" />
             {player.is_payout_locked ? "Enable payout" : "Disable payout"}
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setShowWageringDialog(true)}>
+            <Receipt className="mr-2 h-4 w-4" />
+            {player.is_wagering_exempt ? "Remove exemption" : "Add exemption"}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -140,6 +156,32 @@ function PlayerActionsCell({
               onClick={handleTogglePayout}
               disabled={isLoading}
               variant={player.is_payout_locked ? "default" : "destructive"}
+            >
+              {isLoading ? "Processing..." : "Confirm"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+    {/*  Toggle Wagering Exemption Dialog */}
+      <AlertDialog open={showWageringDialog} onOpenChange={setShowWageringDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {player.is_wagering_exempt ? "Remove Wagering Exemption?" : "Add Wagering Exemption?"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {player.is_wagering_exempt
+                ? `This will remove ${player.name || player.msisdn}'s wagering exemption.`
+                : `This will add a wagering exemption for ${player.name || player.msisdn}.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+                onClick={handleToggleWageringExemption}
+                disabled={isLoading}
+                variant={player.is_wagering_exempt ? "default" : "destructive"}
             >
               {isLoading ? "Processing..." : "Confirm"}
             </AlertDialogAction>
