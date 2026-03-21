@@ -1,25 +1,35 @@
-import { BatchProcessingConfig, CreditRequest, SMSRequest } from '@/types/crediting';
+import { CreditRequest, SMSRequest } from '@/types/crediting';
+import { adminConsole } from './console';
 
 class PaymentProcessor {
-    private config: BatchProcessingConfig;
+    private smsApiUrl: string;
+    private smsConfig: { apikey: string; clientId: string; shortcode: string };
 
-    constructor(config: BatchProcessingConfig) {
-        this.config = config;
+    constructor() {
+        this.smsApiUrl = process.env.SMS_API_URL || '';
+        this.smsConfig = {
+            apikey: process.env.SMS_API_KEY || '',
+            clientId: process.env.SMS_CLIENT_ID || '',
+            shortcode: process.env.SMS_SHORTCODE || '',
+        };
     }
 
     async creditUser(data: CreditRequest) {
         try {
+            const { access, baseURL } = await adminConsole.getAuth();
+            const creditUrl = `${baseURL}/api/v1/console/wallets/credit/`;
+
             const headers = {
-                Authorization: `Bearer ${this.config.api_key}`,
+                Authorization: `Bearer ${access}`,
                 'Content-Type': 'application/json',
             };
 
             console.log('Credit API Request:', {
-                url: this.config.api_url,
+                url: creditUrl,
                 data: data,
             });
 
-            const response = await fetch(this.config.api_url, {
+            const response = await fetch(creditUrl, {
                 method: 'POST',
                 headers,
                 body: JSON.stringify(data),
@@ -32,7 +42,7 @@ class PaymentProcessor {
                 console.error('Credit API returned non-JSON response:', {
                     status: response.status,
                     contentType,
-                    body: text.substring(0, 200), // First 200 chars
+                    body: text.substring(0, 200),
                 });
                 throw new Error(
                     `Credit API returned ${response.status}: Expected JSON but got ${contentType}`
@@ -62,8 +72,8 @@ class PaymentProcessor {
         // Message format matching the original Python script
         const message = `Congratulations ${data.name}! You have been awarded Ksh ${data.amount} from ${data.promo}. Cash iko kwa account.\nPlay and win BIG with Tucheze.com`;
 
-        // Remove + prefix from phone number if present
-        const phoneNumber = data.phone.replace(/^\+/, '');
+        // Strip spaces, then normalize to 254 format
+        const phoneNumber = data.phone.replace(/\s/g, '').replace(/^\+/, '').replace(/^0/, '254');
 
         const smsData = {
             "MessageParameters":[
@@ -72,19 +82,19 @@ class PaymentProcessor {
                     "Number":phoneNumber,
                 }
             ],
-            "ApiKey": this.config.sms_config.apikey,
-            "SenderId": this.config.sms_config.shortcode,
-            "ClientId": this.config.sms_config.clientId,
+            "ApiKey": this.smsConfig.apikey,
+            "SenderId": this.smsConfig.shortcode,
+            "ClientId": this.smsConfig.clientId,
         };
 
         console.log('SMS API Request:', {
-            url: this.config.sms_api_url,
+            url: this.smsApiUrl,
             mobile: data.phone,
-            shortcode: this.config.sms_config.shortcode,
+            shortcode: this.smsConfig.shortcode,
         });
 
         try {
-            const response = await fetch(this.config.sms_api_url, {
+            const response = await fetch(this.smsApiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(smsData),
@@ -120,7 +130,7 @@ class PaymentProcessor {
                     status: response.status,
                     statusText: response.statusText,
                     contentType,
-                    body: errorBody.substring(0, 500), // First 500 chars
+                    body: errorBody.substring(0, 500),
                 });
 
                 throw new Error(
@@ -134,21 +144,17 @@ class PaymentProcessor {
             throw new Error(`Failed to send SMS: ${error}`);
         }
     }
+
     // Wire up batch processing
     async processBatchPayment(
         customer: CreditRequest[],
         smsData: SMSRequest[]
     ) {
-        // Process each customer
         for (const [index, cust] of customer.entries()) {
             try {
-                // Credit user
                 const creditResponse = await this.creditUser(cust);
-
-                // Send SMS
                 const smsResponse = await this.sendSMS(smsData[index]);
 
-                // Handle responses
                 console.log('Credit Response:', creditResponse);
                 console.log('SMS Response:', smsResponse);
             } catch (error) {
@@ -158,13 +164,4 @@ class PaymentProcessor {
     }
 }
 
-export const paymentProcessor = new PaymentProcessor({
-    api_key: process.env.PAYMENT_API_KEY || '',
-    api_url: process.env.PAYMENT_API_URL || '',
-    sms_api_url: process.env.SMS_API_URL || '',
-    sms_config: {
-        apikey: process.env.SMS_API_KEY || '',
-        clientId: process.env.SMS_CLIENT_ID || '',
-        shortcode: process.env.SMS_SHORTCODE || '',
-    },
-});
+export const paymentProcessor = new PaymentProcessor();

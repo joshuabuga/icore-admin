@@ -177,6 +177,21 @@ exports.Prisma.PromoScalarFieldEnum = {
   uploaded_by_id: 'uploaded_by_id'
 };
 
+exports.Prisma.CreditLogScalarFieldEnum = {
+  id: 'id',
+  playerId: 'playerId',
+  msisdn: 'msisdn',
+  amount: 'amount',
+  subject: 'subject',
+  description: 'description',
+  status: 'status',
+  creditResponse: 'creditResponse',
+  smsStatus: 'smsStatus',
+  errorMessage: 'errorMessage',
+  creditedAt: 'creditedAt',
+  creditedById: 'creditedById'
+};
+
 exports.Prisma.PermissionsScalarFieldEnum = {
   id: 'id',
   user_id: 'user_id',
@@ -243,6 +258,7 @@ exports.Prisma.ModelName = {
   ProcessingLog: 'ProcessingLog',
   Batch: 'Batch',
   Promo: 'Promo',
+  CreditLog: 'CreditLog',
   Permissions: 'Permissions'
 };
 

@@ -16,9 +16,10 @@ model User {
   role        UserRole      @default(user)
   permissions Permissions[]
 
-  batchesApproved Batch[] @relation("UserApprovedBatches")
-  batchesRejected Batch[] @relation("UserRejectedBatches")
-  promoUploaded   Promo[] @relation("UserUploadedPromos")
+  batchesApproved Batch[]     @relation("UserApprovedBatches")
+  batchesRejected Batch[]     @relation("UserRejectedBatches")
+  promoUploaded   Promo[]     @relation("UserUploadedPromos")
+  creditsIssued   CreditLog[] @relation("UserCreditedPlayers")
 }
 
 model Customer {
@@ -79,6 +80,23 @@ model Promo {
   is_active           Boolean
   uploaded_by_id      String? // Made optional to handle existing data
   uploaded_by         User?     @relation("UserUploadedPromos", fields: [uploaded_by_id], references: [id], onDelete: SetNull)
+}
+
+model CreditLog {
+  id             String           @id @default(uuid())
+  playerId       String
+  msisdn         String
+  amount         Int
+  subject        String
+  description    String?
+  status         ProcessingStatus
+  creditResponse Json?
+  smsStatus      String?
+  errorMessage   String?
+  creditedAt     DateTime         @default(now())
+
+  creditedById String
+  creditedBy   User   @relation("UserCreditedPlayers", fields: [creditedById], references: [id], onDelete: SetNull)
 }
 
 model Permissions {
