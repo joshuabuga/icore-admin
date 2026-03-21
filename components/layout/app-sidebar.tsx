@@ -21,7 +21,7 @@ import {
   LogIn,
   TrendingUp,
   Activity,
-  DollarSign,
+  DollarSign, CreditCard,
 } from "lucide-react"
 import Image from "next/image"
 
@@ -94,6 +94,11 @@ const navigationItems = [
     url: "/games",
     icon: Gamepad,
   },
+  {
+    title:"Tpay",
+    url:"/tpay",
+    icon: CreditCard,
+},
   {
     title: "Staff",
     url: "/staff",

@@ -2,7 +2,7 @@
 
 import useSWR from 'swr';
 import { fetcher } from '@/lib/fetcher';
-import { ShortCode, TPayPagination, ProviderConfig, UpdateProviderConfigPayload, UpdateCredentialsPayload } from '@/types/tpay';
+import { ShortCode, TPayPagination, ProviderConfig, UpdateProviderConfigPayload, UpdateCredentialsPayload, AccountBalanceData } from '@/types/tpay';
 
 interface ShortcodesResponse {
     data: ShortCode[];
@@ -65,6 +65,48 @@ export function useProviderConfigMutations() {
     };
 
     return { updateProviderConfig };
+}
+
+interface AccountBalanceApiResponse {
+    data: {
+        status_code: string;
+        message: string;
+        data: AccountBalanceData;
+    };
+    message: string;
+    status: boolean;
+}
+
+export function useAccountBalance() {
+    const { data, error, isLoading, mutate } = useSWR<AccountBalanceApiResponse>(
+        '/api/tpay/account-balance',
+        fetcher,
+        { revalidateOnFocus: false }
+    );
+
+    return {
+        balance: data?.data?.data,
+        isLoading,
+        error,
+        refetch: mutate,
+    };
+}
+
+export function useMoveFundsMutation() {
+    const moveFunds = async (amount: string) => {
+        const res = await fetch('/api/tpay/move-funds', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount }),
+        });
+        const json = await res.json().catch(() => ({}));
+        if (!isSuccessStatus(res.status)) {
+            throw new Error(json.error || json.detail || `Failed to move funds (${res.status})`);
+        }
+        return json;
+    };
+
+    return { moveFunds };
 }
 
 export function useShortcodeMutations() {

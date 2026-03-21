@@ -3,13 +3,15 @@
 import { useState, useMemo, useCallback } from "react";
 import Image from "next/image";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { ArrowRightLeft, Loader2, Wallet } from "lucide-react";
 
 import {
     useShortcodes,
     useShortcodeMutations,
     useProviderConfig,
     useProviderConfigMutations,
+    useAccountBalance,
+    useMoveFundsMutation,
 } from "@/hooks/use-shortcodes";
 import { ShortCode, Provider, UpdateCredentialsPayload, PROVIDER_LABELS } from "@/types/tpay";
 import { DataTable } from "@/components/shared/data-table";
@@ -32,6 +34,20 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 function ProviderSelect({
     label,
@@ -82,11 +98,16 @@ export default function TPayPage() {
     const { updateCredentials } = useShortcodeMutations();
     const { config, isLoading: configLoading, refetch: refetchConfig } = useProviderConfig();
     const { updateProviderConfig } = useProviderConfigMutations();
+    const { balance, isLoading: balanceLoading, refetch: refetchBalance } = useAccountBalance();
+    const { moveFunds } = useMoveFundsMutation();
 
     const [credentialsDialogOpen, setCredentialsDialogOpen] = useState(false);
     const [selectedShortcode, setSelectedShortcode] = useState<ShortCode | null>(null);
     const [isMutating, setIsMutating] = useState(false);
     const [isConfigMutating, setIsConfigMutating] = useState(false);
+    const [moveFundsAmount, setMoveFundsAmount] = useState("");
+    const [isMovingFunds, setIsMovingFunds] = useState(false);
+    const [moveFundsDialogOpen, setMoveFundsDialogOpen] = useState(false);
 
     const handleProviderChange = useCallback(
         async (field: "c2b_provider" | "b2c_provider", value: Provider) => {
@@ -123,6 +144,22 @@ export default function TPayPage() {
         },
         [updateCredentials, refetch]
     );
+
+    const handleMoveFunds = useCallback(async () => {
+        if (!moveFundsAmount) return;
+        setIsMovingFunds(true);
+        try {
+            await moveFunds(moveFundsAmount);
+            toast.success("Funds moved successfully");
+            setMoveFundsAmount("");
+            setMoveFundsDialogOpen(false);
+            refetchBalance();
+        } catch (err) {
+            toast.error(err instanceof Error ? err.message : "Failed to move funds");
+        } finally {
+            setIsMovingFunds(false);
+        }
+    }, [moveFunds, moveFundsAmount, refetchBalance]);
 
     const actionHandlers: ShortCodeActionHandlers = useMemo(
         () => ({
@@ -196,6 +233,103 @@ export default function TPayPage() {
                         onValueChange={(v) => handleProviderChange("b2c_provider", v)}
                         disabled={configLoading || isConfigMutating}
                     />
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <CardTitle className="flex items-center gap-2">
+                                <Wallet className="h-5 w-5" />
+                                Account Balance
+                                {balanceLoading && (
+                                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                                )}
+                            </CardTitle>
+                            <CardDescription>
+                                B2C account balances
+                                {balance?.currency_code && ` (${balance.currency_code})`}
+                            </CardDescription>
+                        </div>
+                        <AlertDialog open={moveFundsDialogOpen} onOpenChange={setMoveFundsDialogOpen}>
+                            <AlertDialogTrigger asChild>
+                                <Button variant="outline" size="sm">
+                                    <ArrowRightLeft className="mr-2 h-4 w-4" />
+                                    Move Funds
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Move B2C Funds</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Transfer funds to the B2C bulk payment account for processing withdrawals.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <div className="py-4">
+                                    <Label htmlFor="move-amount">Amount ({balance?.currency_code || "KES"})</Label>
+                                    <Input
+                                        id="move-amount"
+                                        type="number"
+                                        step="0.01"
+                                        min="0"
+                                        placeholder="0.00"
+                                        value={moveFundsAmount}
+                                        onChange={(e) => setMoveFundsAmount(e.target.value)}
+                                        className="mt-2"
+                                    />
+                                </div>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel disabled={isMovingFunds}>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            handleMoveFunds();
+                                        }}
+                                        disabled={!moveFundsAmount || isMovingFunds}
+                                    >
+                                        {isMovingFunds && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                        Move Funds
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    {balance ? (
+                        <div className="space-y-4">
+                            <div className="rounded-lg border bg-muted/50 p-4">
+                                <p className="text-sm text-muted-foreground">Total Balance</p>
+                                <p className="text-2xl font-bold">
+                                    {balance.currency_code ?? "KES"}{" "}
+                                    {(balance.org_account_balance ?? 0).toLocaleString(undefined, {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
+                                    })}
+                                </p>
+                            </div>
+                            {balance.accounts && balance.accounts.length > 0 && (
+                            <div className="grid gap-3 sm:grid-cols-3">
+                                {balance.accounts.map((account) => (
+                                    <div key={account.account_label} className="rounded-lg border p-3">
+                                        <p className="text-xs text-muted-foreground">{account.account_label}</p>
+                                        <p className="text-lg font-semibold">
+                                            {(account.account_balance ?? 0).toLocaleString(undefined, {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2,
+                                            })}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                            )}
+                        </div>
+                    ) : !balanceLoading ? (
+                        <p className="text-sm text-muted-foreground">
+                            No balance data available. This may mean no active B2C shortcode is configured.
+                        </p>
+                    ) : null}
                 </CardContent>
             </Card>
 

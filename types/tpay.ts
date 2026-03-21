@@ -60,6 +60,32 @@ export interface UpdateCredentialsPayload {
     initiator?: string;
 }
 
+export interface AccountBalanceAccount {
+    account_label: string;
+    account_balance: number;
+}
+
+export interface AccountBalanceData {
+    currency_code: string;
+    org_account_balance: number;
+    accounts: AccountBalanceAccount[];
+}
+
+export interface AccountBalanceResponse {
+    status_code: string;
+    message: string;
+    data: AccountBalanceData;
+}
+
+export interface MoveFundsPayload {
+    amount: string;
+}
+
+export interface MoveFundsResponse {
+    status: string;
+    detail: string;
+}
+
 export const PROVIDER_LABELS: Record<Provider, string> = {
     mpesa: "M-Pesa",
     sasapay: "SasaPay",

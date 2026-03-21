@@ -1,4 +1,7 @@
 import {
+    AccountBalanceResponse,
+    MoveFundsPayload,
+    MoveFundsResponse,
     ProviderConfig,
     ShortCode,
     TPayPaginatedResponse,
@@ -68,6 +71,23 @@ class TPayClient {
             body: JSON.stringify(payload),
         });
         return this.handleResponse<TPayResponse<ShortCode>>(response);
+    }
+
+    async fetchAccountBalance(token: string): Promise<AccountBalanceResponse> {
+        const response = await fetch(`${this.baseURL}/api/v1/admin/account-balance/`, {
+            method: 'GET',
+            headers: this.getHeaders(token),
+        });
+        return this.handleResponse<AccountBalanceResponse>(response);
+    }
+
+    async moveFunds(token: string, payload: MoveFundsPayload): Promise<MoveFundsResponse> {
+        const response = await fetch(`${this.baseURL}/api/v1/admin/move-funds/`, {
+            method: 'POST',
+            headers: this.getHeaders(token),
+            body: JSON.stringify(payload),
+        });
+        return this.handleResponse<MoveFundsResponse>(response);
     }
 }
 
