@@ -87,6 +87,21 @@ export interface CreditRequest {
     description: string;
 }
 
+export interface DebitRequest {
+    msisdn: string;
+    amount: string;
+    subject: string;
+    description: string;
+}
+
+export interface DebitResponse {
+    msisdn: string;
+    amount_debited: string;
+    balance: string;
+    balance_locked: string;
+    available_balance: string;
+}
+
 export interface SMSRequest {
     phone: string;
     amount: number;

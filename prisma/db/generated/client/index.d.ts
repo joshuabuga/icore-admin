@@ -44,6 +44,11 @@ export type Promo = $Result.DefaultSelection<Prisma.$PromoPayload>
  */
 export type CreditLog = $Result.DefaultSelection<Prisma.$CreditLogPayload>
 /**
+ * Model DebitLog
+ * 
+ */
+export type DebitLog = $Result.DefaultSelection<Prisma.$DebitLogPayload>
+/**
  * Model Permissions
  * 
  */
@@ -68,6 +73,7 @@ export type UserRole = (typeof UserRole)[keyof typeof UserRole]
 export const ProcessingStatus: {
   PENDING: 'PENDING',
   CREDITED: 'CREDITED',
+  DEBITED: 'DEBITED',
   FAILED: 'FAILED'
 };
 
@@ -282,6 +288,16 @@ export class PrismaClient<
     * ```
     */
   get creditLog(): Prisma.CreditLogDelegate<ExtArgs>;
+
+  /**
+   * `prisma.debitLog`: Exposes CRUD operations for the **DebitLog** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more DebitLogs
+    * const debitLogs = await prisma.debitLog.findMany()
+    * ```
+    */
+  get debitLog(): Prisma.DebitLogDelegate<ExtArgs>;
 
   /**
    * `prisma.permissions`: Exposes CRUD operations for the **Permissions** model.
@@ -739,6 +755,7 @@ export namespace Prisma {
     Batch: 'Batch',
     Promo: 'Promo',
     CreditLog: 'CreditLog',
+    DebitLog: 'DebitLog',
     Permissions: 'Permissions'
   };
 
@@ -755,7 +772,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "customer" | "processingLog" | "batch" | "promo" | "creditLog" | "permissions"
+      modelProps: "user" | "customer" | "processingLog" | "batch" | "promo" | "creditLog" | "debitLog" | "permissions"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1179,6 +1196,76 @@ export namespace Prisma {
           }
         }
       }
+      DebitLog: {
+        payload: Prisma.$DebitLogPayload<ExtArgs>
+        fields: Prisma.DebitLogFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.DebitLogFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DebitLogPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.DebitLogFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DebitLogPayload>
+          }
+          findFirst: {
+            args: Prisma.DebitLogFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DebitLogPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.DebitLogFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DebitLogPayload>
+          }
+          findMany: {
+            args: Prisma.DebitLogFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DebitLogPayload>[]
+          }
+          create: {
+            args: Prisma.DebitLogCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DebitLogPayload>
+          }
+          createMany: {
+            args: Prisma.DebitLogCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.DebitLogCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DebitLogPayload>[]
+          }
+          delete: {
+            args: Prisma.DebitLogDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DebitLogPayload>
+          }
+          update: {
+            args: Prisma.DebitLogUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DebitLogPayload>
+          }
+          deleteMany: {
+            args: Prisma.DebitLogDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.DebitLogUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.DebitLogUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DebitLogPayload>
+          }
+          aggregate: {
+            args: Prisma.DebitLogAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateDebitLog>
+          }
+          groupBy: {
+            args: Prisma.DebitLogGroupByArgs<ExtArgs>
+            result: $Utils.Optional<DebitLogGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.DebitLogCountArgs<ExtArgs>
+            result: $Utils.Optional<DebitLogCountAggregateOutputType> | number
+          }
+        }
+      }
       Permissions: {
         payload: Prisma.$PermissionsPayload<ExtArgs>
         fields: Prisma.PermissionsFieldRefs
@@ -1415,6 +1502,7 @@ export namespace Prisma {
     batchesRejected: number
     promoUploaded: number
     creditsIssued: number
+    debitsIssued: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1423,6 +1511,7 @@ export namespace Prisma {
     batchesRejected?: boolean | UserCountOutputTypeCountBatchesRejectedArgs
     promoUploaded?: boolean | UserCountOutputTypeCountPromoUploadedArgs
     creditsIssued?: boolean | UserCountOutputTypeCountCreditsIssuedArgs
+    debitsIssued?: boolean | UserCountOutputTypeCountDebitsIssuedArgs
   }
 
   // Custom InputTypes
@@ -1469,6 +1558,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountCreditsIssuedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CreditLogWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountDebitsIssuedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DebitLogWhereInput
   }
 
 
@@ -1677,6 +1773,7 @@ export namespace Prisma {
     batchesRejected?: boolean | User$batchesRejectedArgs<ExtArgs>
     promoUploaded?: boolean | User$promoUploadedArgs<ExtArgs>
     creditsIssued?: boolean | User$creditsIssuedArgs<ExtArgs>
+    debitsIssued?: boolean | User$debitsIssuedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1700,6 +1797,7 @@ export namespace Prisma {
     batchesRejected?: boolean | User$batchesRejectedArgs<ExtArgs>
     promoUploaded?: boolean | User$promoUploadedArgs<ExtArgs>
     creditsIssued?: boolean | User$creditsIssuedArgs<ExtArgs>
+    debitsIssued?: boolean | User$debitsIssuedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1712,6 +1810,7 @@ export namespace Prisma {
       batchesRejected: Prisma.$BatchPayload<ExtArgs>[]
       promoUploaded: Prisma.$PromoPayload<ExtArgs>[]
       creditsIssued: Prisma.$CreditLogPayload<ExtArgs>[]
+      debitsIssued: Prisma.$DebitLogPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2087,6 +2186,7 @@ export namespace Prisma {
     batchesRejected<T extends User$batchesRejectedArgs<ExtArgs> = {}>(args?: Subset<T, User$batchesRejectedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BatchPayload<ExtArgs>, T, "findMany"> | Null>
     promoUploaded<T extends User$promoUploadedArgs<ExtArgs> = {}>(args?: Subset<T, User$promoUploadedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PromoPayload<ExtArgs>, T, "findMany"> | Null>
     creditsIssued<T extends User$creditsIssuedArgs<ExtArgs> = {}>(args?: Subset<T, User$creditsIssuedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CreditLogPayload<ExtArgs>, T, "findMany"> | Null>
+    debitsIssued<T extends User$debitsIssuedArgs<ExtArgs> = {}>(args?: Subset<T, User$debitsIssuedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DebitLogPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2531,6 +2631,26 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: CreditLogScalarFieldEnum | CreditLogScalarFieldEnum[]
+  }
+
+  /**
+   * User.debitsIssued
+   */
+  export type User$debitsIssuedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DebitLog
+     */
+    select?: DebitLogSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebitLogInclude<ExtArgs> | null
+    where?: DebitLogWhereInput
+    orderBy?: DebitLogOrderByWithRelationInput | DebitLogOrderByWithRelationInput[]
+    cursor?: DebitLogWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DebitLogScalarFieldEnum | DebitLogScalarFieldEnum[]
   }
 
   /**
@@ -7749,6 +7869,1041 @@ export namespace Prisma {
 
 
   /**
+   * Model DebitLog
+   */
+
+  export type AggregateDebitLog = {
+    _count: DebitLogCountAggregateOutputType | null
+    _avg: DebitLogAvgAggregateOutputType | null
+    _sum: DebitLogSumAggregateOutputType | null
+    _min: DebitLogMinAggregateOutputType | null
+    _max: DebitLogMaxAggregateOutputType | null
+  }
+
+  export type DebitLogAvgAggregateOutputType = {
+    amount: number | null
+  }
+
+  export type DebitLogSumAggregateOutputType = {
+    amount: number | null
+  }
+
+  export type DebitLogMinAggregateOutputType = {
+    id: string | null
+    playerId: string | null
+    msisdn: string | null
+    amount: number | null
+    subject: string | null
+    description: string | null
+    status: $Enums.ProcessingStatus | null
+    errorMessage: string | null
+    debitedAt: Date | null
+    debitedById: string | null
+  }
+
+  export type DebitLogMaxAggregateOutputType = {
+    id: string | null
+    playerId: string | null
+    msisdn: string | null
+    amount: number | null
+    subject: string | null
+    description: string | null
+    status: $Enums.ProcessingStatus | null
+    errorMessage: string | null
+    debitedAt: Date | null
+    debitedById: string | null
+  }
+
+  export type DebitLogCountAggregateOutputType = {
+    id: number
+    playerId: number
+    msisdn: number
+    amount: number
+    subject: number
+    description: number
+    status: number
+    debitResponse: number
+    errorMessage: number
+    debitedAt: number
+    debitedById: number
+    _all: number
+  }
+
+
+  export type DebitLogAvgAggregateInputType = {
+    amount?: true
+  }
+
+  export type DebitLogSumAggregateInputType = {
+    amount?: true
+  }
+
+  export type DebitLogMinAggregateInputType = {
+    id?: true
+    playerId?: true
+    msisdn?: true
+    amount?: true
+    subject?: true
+    description?: true
+    status?: true
+    errorMessage?: true
+    debitedAt?: true
+    debitedById?: true
+  }
+
+  export type DebitLogMaxAggregateInputType = {
+    id?: true
+    playerId?: true
+    msisdn?: true
+    amount?: true
+    subject?: true
+    description?: true
+    status?: true
+    errorMessage?: true
+    debitedAt?: true
+    debitedById?: true
+  }
+
+  export type DebitLogCountAggregateInputType = {
+    id?: true
+    playerId?: true
+    msisdn?: true
+    amount?: true
+    subject?: true
+    description?: true
+    status?: true
+    debitResponse?: true
+    errorMessage?: true
+    debitedAt?: true
+    debitedById?: true
+    _all?: true
+  }
+
+  export type DebitLogAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DebitLog to aggregate.
+     */
+    where?: DebitLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DebitLogs to fetch.
+     */
+    orderBy?: DebitLogOrderByWithRelationInput | DebitLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: DebitLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DebitLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DebitLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned DebitLogs
+    **/
+    _count?: true | DebitLogCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: DebitLogAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: DebitLogSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: DebitLogMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: DebitLogMaxAggregateInputType
+  }
+
+  export type GetDebitLogAggregateType<T extends DebitLogAggregateArgs> = {
+        [P in keyof T & keyof AggregateDebitLog]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDebitLog[P]>
+      : GetScalarType<T[P], AggregateDebitLog[P]>
+  }
+
+
+
+
+  export type DebitLogGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DebitLogWhereInput
+    orderBy?: DebitLogOrderByWithAggregationInput | DebitLogOrderByWithAggregationInput[]
+    by: DebitLogScalarFieldEnum[] | DebitLogScalarFieldEnum
+    having?: DebitLogScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DebitLogCountAggregateInputType | true
+    _avg?: DebitLogAvgAggregateInputType
+    _sum?: DebitLogSumAggregateInputType
+    _min?: DebitLogMinAggregateInputType
+    _max?: DebitLogMaxAggregateInputType
+  }
+
+  export type DebitLogGroupByOutputType = {
+    id: string
+    playerId: string
+    msisdn: string
+    amount: number
+    subject: string
+    description: string | null
+    status: $Enums.ProcessingStatus
+    debitResponse: JsonValue | null
+    errorMessage: string | null
+    debitedAt: Date
+    debitedById: string
+    _count: DebitLogCountAggregateOutputType | null
+    _avg: DebitLogAvgAggregateOutputType | null
+    _sum: DebitLogSumAggregateOutputType | null
+    _min: DebitLogMinAggregateOutputType | null
+    _max: DebitLogMaxAggregateOutputType | null
+  }
+
+  type GetDebitLogGroupByPayload<T extends DebitLogGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<DebitLogGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DebitLogGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DebitLogGroupByOutputType[P]>
+            : GetScalarType<T[P], DebitLogGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type DebitLogSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    playerId?: boolean
+    msisdn?: boolean
+    amount?: boolean
+    subject?: boolean
+    description?: boolean
+    status?: boolean
+    debitResponse?: boolean
+    errorMessage?: boolean
+    debitedAt?: boolean
+    debitedById?: boolean
+    debitedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["debitLog"]>
+
+  export type DebitLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    playerId?: boolean
+    msisdn?: boolean
+    amount?: boolean
+    subject?: boolean
+    description?: boolean
+    status?: boolean
+    debitResponse?: boolean
+    errorMessage?: boolean
+    debitedAt?: boolean
+    debitedById?: boolean
+    debitedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["debitLog"]>
+
+  export type DebitLogSelectScalar = {
+    id?: boolean
+    playerId?: boolean
+    msisdn?: boolean
+    amount?: boolean
+    subject?: boolean
+    description?: boolean
+    status?: boolean
+    debitResponse?: boolean
+    errorMessage?: boolean
+    debitedAt?: boolean
+    debitedById?: boolean
+  }
+
+  export type DebitLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    debitedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type DebitLogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    debitedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $DebitLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "DebitLog"
+    objects: {
+      debitedBy: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      playerId: string
+      msisdn: string
+      amount: number
+      subject: string
+      description: string | null
+      status: $Enums.ProcessingStatus
+      debitResponse: Prisma.JsonValue | null
+      errorMessage: string | null
+      debitedAt: Date
+      debitedById: string
+    }, ExtArgs["result"]["debitLog"]>
+    composites: {}
+  }
+
+  type DebitLogGetPayload<S extends boolean | null | undefined | DebitLogDefaultArgs> = $Result.GetResult<Prisma.$DebitLogPayload, S>
+
+  type DebitLogCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<DebitLogFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: DebitLogCountAggregateInputType | true
+    }
+
+  export interface DebitLogDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['DebitLog'], meta: { name: 'DebitLog' } }
+    /**
+     * Find zero or one DebitLog that matches the filter.
+     * @param {DebitLogFindUniqueArgs} args - Arguments to find a DebitLog
+     * @example
+     * // Get one DebitLog
+     * const debitLog = await prisma.debitLog.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends DebitLogFindUniqueArgs>(args: SelectSubset<T, DebitLogFindUniqueArgs<ExtArgs>>): Prisma__DebitLogClient<$Result.GetResult<Prisma.$DebitLogPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one DebitLog that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {DebitLogFindUniqueOrThrowArgs} args - Arguments to find a DebitLog
+     * @example
+     * // Get one DebitLog
+     * const debitLog = await prisma.debitLog.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends DebitLogFindUniqueOrThrowArgs>(args: SelectSubset<T, DebitLogFindUniqueOrThrowArgs<ExtArgs>>): Prisma__DebitLogClient<$Result.GetResult<Prisma.$DebitLogPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first DebitLog that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DebitLogFindFirstArgs} args - Arguments to find a DebitLog
+     * @example
+     * // Get one DebitLog
+     * const debitLog = await prisma.debitLog.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends DebitLogFindFirstArgs>(args?: SelectSubset<T, DebitLogFindFirstArgs<ExtArgs>>): Prisma__DebitLogClient<$Result.GetResult<Prisma.$DebitLogPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first DebitLog that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DebitLogFindFirstOrThrowArgs} args - Arguments to find a DebitLog
+     * @example
+     * // Get one DebitLog
+     * const debitLog = await prisma.debitLog.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends DebitLogFindFirstOrThrowArgs>(args?: SelectSubset<T, DebitLogFindFirstOrThrowArgs<ExtArgs>>): Prisma__DebitLogClient<$Result.GetResult<Prisma.$DebitLogPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more DebitLogs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DebitLogFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all DebitLogs
+     * const debitLogs = await prisma.debitLog.findMany()
+     * 
+     * // Get first 10 DebitLogs
+     * const debitLogs = await prisma.debitLog.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const debitLogWithIdOnly = await prisma.debitLog.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends DebitLogFindManyArgs>(args?: SelectSubset<T, DebitLogFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DebitLogPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a DebitLog.
+     * @param {DebitLogCreateArgs} args - Arguments to create a DebitLog.
+     * @example
+     * // Create one DebitLog
+     * const DebitLog = await prisma.debitLog.create({
+     *   data: {
+     *     // ... data to create a DebitLog
+     *   }
+     * })
+     * 
+     */
+    create<T extends DebitLogCreateArgs>(args: SelectSubset<T, DebitLogCreateArgs<ExtArgs>>): Prisma__DebitLogClient<$Result.GetResult<Prisma.$DebitLogPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many DebitLogs.
+     * @param {DebitLogCreateManyArgs} args - Arguments to create many DebitLogs.
+     * @example
+     * // Create many DebitLogs
+     * const debitLog = await prisma.debitLog.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends DebitLogCreateManyArgs>(args?: SelectSubset<T, DebitLogCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many DebitLogs and returns the data saved in the database.
+     * @param {DebitLogCreateManyAndReturnArgs} args - Arguments to create many DebitLogs.
+     * @example
+     * // Create many DebitLogs
+     * const debitLog = await prisma.debitLog.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many DebitLogs and only return the `id`
+     * const debitLogWithIdOnly = await prisma.debitLog.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends DebitLogCreateManyAndReturnArgs>(args?: SelectSubset<T, DebitLogCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DebitLogPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a DebitLog.
+     * @param {DebitLogDeleteArgs} args - Arguments to delete one DebitLog.
+     * @example
+     * // Delete one DebitLog
+     * const DebitLog = await prisma.debitLog.delete({
+     *   where: {
+     *     // ... filter to delete one DebitLog
+     *   }
+     * })
+     * 
+     */
+    delete<T extends DebitLogDeleteArgs>(args: SelectSubset<T, DebitLogDeleteArgs<ExtArgs>>): Prisma__DebitLogClient<$Result.GetResult<Prisma.$DebitLogPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one DebitLog.
+     * @param {DebitLogUpdateArgs} args - Arguments to update one DebitLog.
+     * @example
+     * // Update one DebitLog
+     * const debitLog = await prisma.debitLog.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends DebitLogUpdateArgs>(args: SelectSubset<T, DebitLogUpdateArgs<ExtArgs>>): Prisma__DebitLogClient<$Result.GetResult<Prisma.$DebitLogPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more DebitLogs.
+     * @param {DebitLogDeleteManyArgs} args - Arguments to filter DebitLogs to delete.
+     * @example
+     * // Delete a few DebitLogs
+     * const { count } = await prisma.debitLog.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends DebitLogDeleteManyArgs>(args?: SelectSubset<T, DebitLogDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DebitLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DebitLogUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many DebitLogs
+     * const debitLog = await prisma.debitLog.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends DebitLogUpdateManyArgs>(args: SelectSubset<T, DebitLogUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one DebitLog.
+     * @param {DebitLogUpsertArgs} args - Arguments to update or create a DebitLog.
+     * @example
+     * // Update or create a DebitLog
+     * const debitLog = await prisma.debitLog.upsert({
+     *   create: {
+     *     // ... data to create a DebitLog
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the DebitLog we want to update
+     *   }
+     * })
+     */
+    upsert<T extends DebitLogUpsertArgs>(args: SelectSubset<T, DebitLogUpsertArgs<ExtArgs>>): Prisma__DebitLogClient<$Result.GetResult<Prisma.$DebitLogPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of DebitLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DebitLogCountArgs} args - Arguments to filter DebitLogs to count.
+     * @example
+     * // Count the number of DebitLogs
+     * const count = await prisma.debitLog.count({
+     *   where: {
+     *     // ... the filter for the DebitLogs we want to count
+     *   }
+     * })
+    **/
+    count<T extends DebitLogCountArgs>(
+      args?: Subset<T, DebitLogCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DebitLogCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a DebitLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DebitLogAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DebitLogAggregateArgs>(args: Subset<T, DebitLogAggregateArgs>): Prisma.PrismaPromise<GetDebitLogAggregateType<T>>
+
+    /**
+     * Group by DebitLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DebitLogGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends DebitLogGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: DebitLogGroupByArgs['orderBy'] }
+        : { orderBy?: DebitLogGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, DebitLogGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDebitLogGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the DebitLog model
+   */
+  readonly fields: DebitLogFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for DebitLog.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__DebitLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    debitedBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the DebitLog model
+   */ 
+  interface DebitLogFieldRefs {
+    readonly id: FieldRef<"DebitLog", 'String'>
+    readonly playerId: FieldRef<"DebitLog", 'String'>
+    readonly msisdn: FieldRef<"DebitLog", 'String'>
+    readonly amount: FieldRef<"DebitLog", 'Float'>
+    readonly subject: FieldRef<"DebitLog", 'String'>
+    readonly description: FieldRef<"DebitLog", 'String'>
+    readonly status: FieldRef<"DebitLog", 'ProcessingStatus'>
+    readonly debitResponse: FieldRef<"DebitLog", 'Json'>
+    readonly errorMessage: FieldRef<"DebitLog", 'String'>
+    readonly debitedAt: FieldRef<"DebitLog", 'DateTime'>
+    readonly debitedById: FieldRef<"DebitLog", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * DebitLog findUnique
+   */
+  export type DebitLogFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DebitLog
+     */
+    select?: DebitLogSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebitLogInclude<ExtArgs> | null
+    /**
+     * Filter, which DebitLog to fetch.
+     */
+    where: DebitLogWhereUniqueInput
+  }
+
+  /**
+   * DebitLog findUniqueOrThrow
+   */
+  export type DebitLogFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DebitLog
+     */
+    select?: DebitLogSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebitLogInclude<ExtArgs> | null
+    /**
+     * Filter, which DebitLog to fetch.
+     */
+    where: DebitLogWhereUniqueInput
+  }
+
+  /**
+   * DebitLog findFirst
+   */
+  export type DebitLogFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DebitLog
+     */
+    select?: DebitLogSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebitLogInclude<ExtArgs> | null
+    /**
+     * Filter, which DebitLog to fetch.
+     */
+    where?: DebitLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DebitLogs to fetch.
+     */
+    orderBy?: DebitLogOrderByWithRelationInput | DebitLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DebitLogs.
+     */
+    cursor?: DebitLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DebitLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DebitLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DebitLogs.
+     */
+    distinct?: DebitLogScalarFieldEnum | DebitLogScalarFieldEnum[]
+  }
+
+  /**
+   * DebitLog findFirstOrThrow
+   */
+  export type DebitLogFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DebitLog
+     */
+    select?: DebitLogSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebitLogInclude<ExtArgs> | null
+    /**
+     * Filter, which DebitLog to fetch.
+     */
+    where?: DebitLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DebitLogs to fetch.
+     */
+    orderBy?: DebitLogOrderByWithRelationInput | DebitLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DebitLogs.
+     */
+    cursor?: DebitLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DebitLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DebitLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DebitLogs.
+     */
+    distinct?: DebitLogScalarFieldEnum | DebitLogScalarFieldEnum[]
+  }
+
+  /**
+   * DebitLog findMany
+   */
+  export type DebitLogFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DebitLog
+     */
+    select?: DebitLogSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebitLogInclude<ExtArgs> | null
+    /**
+     * Filter, which DebitLogs to fetch.
+     */
+    where?: DebitLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DebitLogs to fetch.
+     */
+    orderBy?: DebitLogOrderByWithRelationInput | DebitLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing DebitLogs.
+     */
+    cursor?: DebitLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DebitLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DebitLogs.
+     */
+    skip?: number
+    distinct?: DebitLogScalarFieldEnum | DebitLogScalarFieldEnum[]
+  }
+
+  /**
+   * DebitLog create
+   */
+  export type DebitLogCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DebitLog
+     */
+    select?: DebitLogSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebitLogInclude<ExtArgs> | null
+    /**
+     * The data needed to create a DebitLog.
+     */
+    data: XOR<DebitLogCreateInput, DebitLogUncheckedCreateInput>
+  }
+
+  /**
+   * DebitLog createMany
+   */
+  export type DebitLogCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many DebitLogs.
+     */
+    data: DebitLogCreateManyInput | DebitLogCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * DebitLog createManyAndReturn
+   */
+  export type DebitLogCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DebitLog
+     */
+    select?: DebitLogSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many DebitLogs.
+     */
+    data: DebitLogCreateManyInput | DebitLogCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebitLogIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * DebitLog update
+   */
+  export type DebitLogUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DebitLog
+     */
+    select?: DebitLogSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebitLogInclude<ExtArgs> | null
+    /**
+     * The data needed to update a DebitLog.
+     */
+    data: XOR<DebitLogUpdateInput, DebitLogUncheckedUpdateInput>
+    /**
+     * Choose, which DebitLog to update.
+     */
+    where: DebitLogWhereUniqueInput
+  }
+
+  /**
+   * DebitLog updateMany
+   */
+  export type DebitLogUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update DebitLogs.
+     */
+    data: XOR<DebitLogUpdateManyMutationInput, DebitLogUncheckedUpdateManyInput>
+    /**
+     * Filter which DebitLogs to update
+     */
+    where?: DebitLogWhereInput
+  }
+
+  /**
+   * DebitLog upsert
+   */
+  export type DebitLogUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DebitLog
+     */
+    select?: DebitLogSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebitLogInclude<ExtArgs> | null
+    /**
+     * The filter to search for the DebitLog to update in case it exists.
+     */
+    where: DebitLogWhereUniqueInput
+    /**
+     * In case the DebitLog found by the `where` argument doesn't exist, create a new DebitLog with this data.
+     */
+    create: XOR<DebitLogCreateInput, DebitLogUncheckedCreateInput>
+    /**
+     * In case the DebitLog was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<DebitLogUpdateInput, DebitLogUncheckedUpdateInput>
+  }
+
+  /**
+   * DebitLog delete
+   */
+  export type DebitLogDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DebitLog
+     */
+    select?: DebitLogSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebitLogInclude<ExtArgs> | null
+    /**
+     * Filter which DebitLog to delete.
+     */
+    where: DebitLogWhereUniqueInput
+  }
+
+  /**
+   * DebitLog deleteMany
+   */
+  export type DebitLogDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DebitLogs to delete
+     */
+    where?: DebitLogWhereInput
+  }
+
+  /**
+   * DebitLog without action
+   */
+  export type DebitLogDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DebitLog
+     */
+    select?: DebitLogSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DebitLogInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model Permissions
    */
 
@@ -8759,6 +9914,23 @@ export namespace Prisma {
   export type CreditLogScalarFieldEnum = (typeof CreditLogScalarFieldEnum)[keyof typeof CreditLogScalarFieldEnum]
 
 
+  export const DebitLogScalarFieldEnum: {
+    id: 'id',
+    playerId: 'playerId',
+    msisdn: 'msisdn',
+    amount: 'amount',
+    subject: 'subject',
+    description: 'description',
+    status: 'status',
+    debitResponse: 'debitResponse',
+    errorMessage: 'errorMessage',
+    debitedAt: 'debitedAt',
+    debitedById: 'debitedById'
+  };
+
+  export type DebitLogScalarFieldEnum = (typeof DebitLogScalarFieldEnum)[keyof typeof DebitLogScalarFieldEnum]
+
+
   export const PermissionsScalarFieldEnum: {
     id: 'id',
     user_id: 'user_id',
@@ -8949,6 +10121,7 @@ export namespace Prisma {
     batchesRejected?: BatchListRelationFilter
     promoUploaded?: PromoListRelationFilter
     creditsIssued?: CreditLogListRelationFilter
+    debitsIssued?: DebitLogListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -8961,6 +10134,7 @@ export namespace Prisma {
     batchesRejected?: BatchOrderByRelationAggregateInput
     promoUploaded?: PromoOrderByRelationAggregateInput
     creditsIssued?: CreditLogOrderByRelationAggregateInput
+    debitsIssued?: DebitLogOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -8976,6 +10150,7 @@ export namespace Prisma {
     batchesRejected?: BatchListRelationFilter
     promoUploaded?: PromoListRelationFilter
     creditsIssued?: CreditLogListRelationFilter
+    debitsIssued?: DebitLogListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -9407,6 +10582,93 @@ export namespace Prisma {
     creditedById?: StringWithAggregatesFilter<"CreditLog"> | string
   }
 
+  export type DebitLogWhereInput = {
+    AND?: DebitLogWhereInput | DebitLogWhereInput[]
+    OR?: DebitLogWhereInput[]
+    NOT?: DebitLogWhereInput | DebitLogWhereInput[]
+    id?: StringFilter<"DebitLog"> | string
+    playerId?: StringFilter<"DebitLog"> | string
+    msisdn?: StringFilter<"DebitLog"> | string
+    amount?: FloatFilter<"DebitLog"> | number
+    subject?: StringFilter<"DebitLog"> | string
+    description?: StringNullableFilter<"DebitLog"> | string | null
+    status?: EnumProcessingStatusFilter<"DebitLog"> | $Enums.ProcessingStatus
+    debitResponse?: JsonNullableFilter<"DebitLog">
+    errorMessage?: StringNullableFilter<"DebitLog"> | string | null
+    debitedAt?: DateTimeFilter<"DebitLog"> | Date | string
+    debitedById?: StringFilter<"DebitLog"> | string
+    debitedBy?: XOR<UserRelationFilter, UserWhereInput>
+  }
+
+  export type DebitLogOrderByWithRelationInput = {
+    id?: SortOrder
+    playerId?: SortOrder
+    msisdn?: SortOrder
+    amount?: SortOrder
+    subject?: SortOrder
+    description?: SortOrderInput | SortOrder
+    status?: SortOrder
+    debitResponse?: SortOrderInput | SortOrder
+    errorMessage?: SortOrderInput | SortOrder
+    debitedAt?: SortOrder
+    debitedById?: SortOrder
+    debitedBy?: UserOrderByWithRelationInput
+  }
+
+  export type DebitLogWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: DebitLogWhereInput | DebitLogWhereInput[]
+    OR?: DebitLogWhereInput[]
+    NOT?: DebitLogWhereInput | DebitLogWhereInput[]
+    playerId?: StringFilter<"DebitLog"> | string
+    msisdn?: StringFilter<"DebitLog"> | string
+    amount?: FloatFilter<"DebitLog"> | number
+    subject?: StringFilter<"DebitLog"> | string
+    description?: StringNullableFilter<"DebitLog"> | string | null
+    status?: EnumProcessingStatusFilter<"DebitLog"> | $Enums.ProcessingStatus
+    debitResponse?: JsonNullableFilter<"DebitLog">
+    errorMessage?: StringNullableFilter<"DebitLog"> | string | null
+    debitedAt?: DateTimeFilter<"DebitLog"> | Date | string
+    debitedById?: StringFilter<"DebitLog"> | string
+    debitedBy?: XOR<UserRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type DebitLogOrderByWithAggregationInput = {
+    id?: SortOrder
+    playerId?: SortOrder
+    msisdn?: SortOrder
+    amount?: SortOrder
+    subject?: SortOrder
+    description?: SortOrderInput | SortOrder
+    status?: SortOrder
+    debitResponse?: SortOrderInput | SortOrder
+    errorMessage?: SortOrderInput | SortOrder
+    debitedAt?: SortOrder
+    debitedById?: SortOrder
+    _count?: DebitLogCountOrderByAggregateInput
+    _avg?: DebitLogAvgOrderByAggregateInput
+    _max?: DebitLogMaxOrderByAggregateInput
+    _min?: DebitLogMinOrderByAggregateInput
+    _sum?: DebitLogSumOrderByAggregateInput
+  }
+
+  export type DebitLogScalarWhereWithAggregatesInput = {
+    AND?: DebitLogScalarWhereWithAggregatesInput | DebitLogScalarWhereWithAggregatesInput[]
+    OR?: DebitLogScalarWhereWithAggregatesInput[]
+    NOT?: DebitLogScalarWhereWithAggregatesInput | DebitLogScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"DebitLog"> | string
+    playerId?: StringWithAggregatesFilter<"DebitLog"> | string
+    msisdn?: StringWithAggregatesFilter<"DebitLog"> | string
+    amount?: FloatWithAggregatesFilter<"DebitLog"> | number
+    subject?: StringWithAggregatesFilter<"DebitLog"> | string
+    description?: StringNullableWithAggregatesFilter<"DebitLog"> | string | null
+    status?: EnumProcessingStatusWithAggregatesFilter<"DebitLog"> | $Enums.ProcessingStatus
+    debitResponse?: JsonNullableWithAggregatesFilter<"DebitLog">
+    errorMessage?: StringNullableWithAggregatesFilter<"DebitLog"> | string | null
+    debitedAt?: DateTimeWithAggregatesFilter<"DebitLog"> | Date | string
+    debitedById?: StringWithAggregatesFilter<"DebitLog"> | string
+  }
+
   export type PermissionsWhereInput = {
     AND?: PermissionsWhereInput | PermissionsWhereInput[]
     OR?: PermissionsWhereInput[]
@@ -9462,6 +10724,7 @@ export namespace Prisma {
     batchesRejected?: BatchCreateNestedManyWithoutRejectedByInput
     promoUploaded?: PromoCreateNestedManyWithoutUploaded_byInput
     creditsIssued?: CreditLogCreateNestedManyWithoutCreditedByInput
+    debitsIssued?: DebitLogCreateNestedManyWithoutDebitedByInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -9474,6 +10737,7 @@ export namespace Prisma {
     batchesRejected?: BatchUncheckedCreateNestedManyWithoutRejectedByInput
     promoUploaded?: PromoUncheckedCreateNestedManyWithoutUploaded_byInput
     creditsIssued?: CreditLogUncheckedCreateNestedManyWithoutCreditedByInput
+    debitsIssued?: DebitLogUncheckedCreateNestedManyWithoutDebitedByInput
   }
 
   export type UserUpdateInput = {
@@ -9486,6 +10750,7 @@ export namespace Prisma {
     batchesRejected?: BatchUpdateManyWithoutRejectedByNestedInput
     promoUploaded?: PromoUpdateManyWithoutUploaded_byNestedInput
     creditsIssued?: CreditLogUpdateManyWithoutCreditedByNestedInput
+    debitsIssued?: DebitLogUpdateManyWithoutDebitedByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -9498,6 +10763,7 @@ export namespace Prisma {
     batchesRejected?: BatchUncheckedUpdateManyWithoutRejectedByNestedInput
     promoUploaded?: PromoUncheckedUpdateManyWithoutUploaded_byNestedInput
     creditsIssued?: CreditLogUncheckedUpdateManyWithoutCreditedByNestedInput
+    debitsIssued?: DebitLogUncheckedUpdateManyWithoutDebitedByNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -9964,6 +11230,103 @@ export namespace Prisma {
     creditedById?: StringFieldUpdateOperationsInput | string
   }
 
+  export type DebitLogCreateInput = {
+    id?: string
+    playerId: string
+    msisdn: string
+    amount: number
+    subject: string
+    description?: string | null
+    status: $Enums.ProcessingStatus
+    debitResponse?: NullableJsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
+    debitedAt?: Date | string
+    debitedBy: UserCreateNestedOneWithoutDebitsIssuedInput
+  }
+
+  export type DebitLogUncheckedCreateInput = {
+    id?: string
+    playerId: string
+    msisdn: string
+    amount: number
+    subject: string
+    description?: string | null
+    status: $Enums.ProcessingStatus
+    debitResponse?: NullableJsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
+    debitedAt?: Date | string
+    debitedById: string
+  }
+
+  export type DebitLogUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    playerId?: StringFieldUpdateOperationsInput | string
+    msisdn?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    subject?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProcessingStatusFieldUpdateOperationsInput | $Enums.ProcessingStatus
+    debitResponse?: NullableJsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    debitedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    debitedBy?: UserUpdateOneRequiredWithoutDebitsIssuedNestedInput
+  }
+
+  export type DebitLogUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    playerId?: StringFieldUpdateOperationsInput | string
+    msisdn?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    subject?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProcessingStatusFieldUpdateOperationsInput | $Enums.ProcessingStatus
+    debitResponse?: NullableJsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    debitedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    debitedById?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type DebitLogCreateManyInput = {
+    id?: string
+    playerId: string
+    msisdn: string
+    amount: number
+    subject: string
+    description?: string | null
+    status: $Enums.ProcessingStatus
+    debitResponse?: NullableJsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
+    debitedAt?: Date | string
+    debitedById: string
+  }
+
+  export type DebitLogUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    playerId?: StringFieldUpdateOperationsInput | string
+    msisdn?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    subject?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProcessingStatusFieldUpdateOperationsInput | $Enums.ProcessingStatus
+    debitResponse?: NullableJsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    debitedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DebitLogUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    playerId?: StringFieldUpdateOperationsInput | string
+    msisdn?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    subject?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProcessingStatusFieldUpdateOperationsInput | $Enums.ProcessingStatus
+    debitResponse?: NullableJsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    debitedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    debitedById?: StringFieldUpdateOperationsInput | string
+  }
+
   export type PermissionsCreateInput = {
     id?: string
     permission: string
@@ -10051,6 +11414,12 @@ export namespace Prisma {
     none?: CreditLogWhereInput
   }
 
+  export type DebitLogListRelationFilter = {
+    every?: DebitLogWhereInput
+    some?: DebitLogWhereInput
+    none?: DebitLogWhereInput
+  }
+
   export type PermissionsOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -10064,6 +11433,10 @@ export namespace Prisma {
   }
 
   export type CreditLogOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type DebitLogOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -10657,6 +12030,81 @@ export namespace Prisma {
     amount?: SortOrder
   }
 
+  export type FloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type DebitLogCountOrderByAggregateInput = {
+    id?: SortOrder
+    playerId?: SortOrder
+    msisdn?: SortOrder
+    amount?: SortOrder
+    subject?: SortOrder
+    description?: SortOrder
+    status?: SortOrder
+    debitResponse?: SortOrder
+    errorMessage?: SortOrder
+    debitedAt?: SortOrder
+    debitedById?: SortOrder
+  }
+
+  export type DebitLogAvgOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type DebitLogMaxOrderByAggregateInput = {
+    id?: SortOrder
+    playerId?: SortOrder
+    msisdn?: SortOrder
+    amount?: SortOrder
+    subject?: SortOrder
+    description?: SortOrder
+    status?: SortOrder
+    errorMessage?: SortOrder
+    debitedAt?: SortOrder
+    debitedById?: SortOrder
+  }
+
+  export type DebitLogMinOrderByAggregateInput = {
+    id?: SortOrder
+    playerId?: SortOrder
+    msisdn?: SortOrder
+    amount?: SortOrder
+    subject?: SortOrder
+    description?: SortOrder
+    status?: SortOrder
+    errorMessage?: SortOrder
+    debitedAt?: SortOrder
+    debitedById?: SortOrder
+  }
+
+  export type DebitLogSumOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
   export type PermissionsCountOrderByAggregateInput = {
     id?: SortOrder
     user_id?: SortOrder
@@ -10710,6 +12158,13 @@ export namespace Prisma {
     connect?: CreditLogWhereUniqueInput | CreditLogWhereUniqueInput[]
   }
 
+  export type DebitLogCreateNestedManyWithoutDebitedByInput = {
+    create?: XOR<DebitLogCreateWithoutDebitedByInput, DebitLogUncheckedCreateWithoutDebitedByInput> | DebitLogCreateWithoutDebitedByInput[] | DebitLogUncheckedCreateWithoutDebitedByInput[]
+    connectOrCreate?: DebitLogCreateOrConnectWithoutDebitedByInput | DebitLogCreateOrConnectWithoutDebitedByInput[]
+    createMany?: DebitLogCreateManyDebitedByInputEnvelope
+    connect?: DebitLogWhereUniqueInput | DebitLogWhereUniqueInput[]
+  }
+
   export type PermissionsUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<PermissionsCreateWithoutUserInput, PermissionsUncheckedCreateWithoutUserInput> | PermissionsCreateWithoutUserInput[] | PermissionsUncheckedCreateWithoutUserInput[]
     connectOrCreate?: PermissionsCreateOrConnectWithoutUserInput | PermissionsCreateOrConnectWithoutUserInput[]
@@ -10743,6 +12198,13 @@ export namespace Prisma {
     connectOrCreate?: CreditLogCreateOrConnectWithoutCreditedByInput | CreditLogCreateOrConnectWithoutCreditedByInput[]
     createMany?: CreditLogCreateManyCreditedByInputEnvelope
     connect?: CreditLogWhereUniqueInput | CreditLogWhereUniqueInput[]
+  }
+
+  export type DebitLogUncheckedCreateNestedManyWithoutDebitedByInput = {
+    create?: XOR<DebitLogCreateWithoutDebitedByInput, DebitLogUncheckedCreateWithoutDebitedByInput> | DebitLogCreateWithoutDebitedByInput[] | DebitLogUncheckedCreateWithoutDebitedByInput[]
+    connectOrCreate?: DebitLogCreateOrConnectWithoutDebitedByInput | DebitLogCreateOrConnectWithoutDebitedByInput[]
+    createMany?: DebitLogCreateManyDebitedByInputEnvelope
+    connect?: DebitLogWhereUniqueInput | DebitLogWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -10823,6 +12285,20 @@ export namespace Prisma {
     deleteMany?: CreditLogScalarWhereInput | CreditLogScalarWhereInput[]
   }
 
+  export type DebitLogUpdateManyWithoutDebitedByNestedInput = {
+    create?: XOR<DebitLogCreateWithoutDebitedByInput, DebitLogUncheckedCreateWithoutDebitedByInput> | DebitLogCreateWithoutDebitedByInput[] | DebitLogUncheckedCreateWithoutDebitedByInput[]
+    connectOrCreate?: DebitLogCreateOrConnectWithoutDebitedByInput | DebitLogCreateOrConnectWithoutDebitedByInput[]
+    upsert?: DebitLogUpsertWithWhereUniqueWithoutDebitedByInput | DebitLogUpsertWithWhereUniqueWithoutDebitedByInput[]
+    createMany?: DebitLogCreateManyDebitedByInputEnvelope
+    set?: DebitLogWhereUniqueInput | DebitLogWhereUniqueInput[]
+    disconnect?: DebitLogWhereUniqueInput | DebitLogWhereUniqueInput[]
+    delete?: DebitLogWhereUniqueInput | DebitLogWhereUniqueInput[]
+    connect?: DebitLogWhereUniqueInput | DebitLogWhereUniqueInput[]
+    update?: DebitLogUpdateWithWhereUniqueWithoutDebitedByInput | DebitLogUpdateWithWhereUniqueWithoutDebitedByInput[]
+    updateMany?: DebitLogUpdateManyWithWhereWithoutDebitedByInput | DebitLogUpdateManyWithWhereWithoutDebitedByInput[]
+    deleteMany?: DebitLogScalarWhereInput | DebitLogScalarWhereInput[]
+  }
+
   export type PermissionsUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<PermissionsCreateWithoutUserInput, PermissionsUncheckedCreateWithoutUserInput> | PermissionsCreateWithoutUserInput[] | PermissionsUncheckedCreateWithoutUserInput[]
     connectOrCreate?: PermissionsCreateOrConnectWithoutUserInput | PermissionsCreateOrConnectWithoutUserInput[]
@@ -10891,6 +12367,20 @@ export namespace Prisma {
     update?: CreditLogUpdateWithWhereUniqueWithoutCreditedByInput | CreditLogUpdateWithWhereUniqueWithoutCreditedByInput[]
     updateMany?: CreditLogUpdateManyWithWhereWithoutCreditedByInput | CreditLogUpdateManyWithWhereWithoutCreditedByInput[]
     deleteMany?: CreditLogScalarWhereInput | CreditLogScalarWhereInput[]
+  }
+
+  export type DebitLogUncheckedUpdateManyWithoutDebitedByNestedInput = {
+    create?: XOR<DebitLogCreateWithoutDebitedByInput, DebitLogUncheckedCreateWithoutDebitedByInput> | DebitLogCreateWithoutDebitedByInput[] | DebitLogUncheckedCreateWithoutDebitedByInput[]
+    connectOrCreate?: DebitLogCreateOrConnectWithoutDebitedByInput | DebitLogCreateOrConnectWithoutDebitedByInput[]
+    upsert?: DebitLogUpsertWithWhereUniqueWithoutDebitedByInput | DebitLogUpsertWithWhereUniqueWithoutDebitedByInput[]
+    createMany?: DebitLogCreateManyDebitedByInputEnvelope
+    set?: DebitLogWhereUniqueInput | DebitLogWhereUniqueInput[]
+    disconnect?: DebitLogWhereUniqueInput | DebitLogWhereUniqueInput[]
+    delete?: DebitLogWhereUniqueInput | DebitLogWhereUniqueInput[]
+    connect?: DebitLogWhereUniqueInput | DebitLogWhereUniqueInput[]
+    update?: DebitLogUpdateWithWhereUniqueWithoutDebitedByInput | DebitLogUpdateWithWhereUniqueWithoutDebitedByInput[]
+    updateMany?: DebitLogUpdateManyWithWhereWithoutDebitedByInput | DebitLogUpdateManyWithWhereWithoutDebitedByInput[]
+    deleteMany?: DebitLogScalarWhereInput | DebitLogScalarWhereInput[]
   }
 
   export type BatchCreateNestedOneWithoutRecipientsInput = {
@@ -11105,6 +12595,28 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutCreditsIssuedInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCreditsIssuedInput, UserUpdateWithoutCreditsIssuedInput>, UserUncheckedUpdateWithoutCreditsIssuedInput>
+  }
+
+  export type UserCreateNestedOneWithoutDebitsIssuedInput = {
+    create?: XOR<UserCreateWithoutDebitsIssuedInput, UserUncheckedCreateWithoutDebitsIssuedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutDebitsIssuedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type FloatFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type UserUpdateOneRequiredWithoutDebitsIssuedNestedInput = {
+    create?: XOR<UserCreateWithoutDebitsIssuedInput, UserUncheckedCreateWithoutDebitsIssuedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutDebitsIssuedInput
+    upsert?: UserUpsertWithoutDebitsIssuedInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutDebitsIssuedInput, UserUpdateWithoutDebitsIssuedInput>, UserUncheckedUpdateWithoutDebitsIssuedInput>
   }
 
   export type UserCreateNestedOneWithoutPermissionsInput = {
@@ -11417,6 +12929,22 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
+  export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
   export type PermissionsCreateWithoutUserInput = {
     id?: string
     permission: string
@@ -11589,6 +13117,42 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type DebitLogCreateWithoutDebitedByInput = {
+    id?: string
+    playerId: string
+    msisdn: string
+    amount: number
+    subject: string
+    description?: string | null
+    status: $Enums.ProcessingStatus
+    debitResponse?: NullableJsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
+    debitedAt?: Date | string
+  }
+
+  export type DebitLogUncheckedCreateWithoutDebitedByInput = {
+    id?: string
+    playerId: string
+    msisdn: string
+    amount: number
+    subject: string
+    description?: string | null
+    status: $Enums.ProcessingStatus
+    debitResponse?: NullableJsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
+    debitedAt?: Date | string
+  }
+
+  export type DebitLogCreateOrConnectWithoutDebitedByInput = {
+    where: DebitLogWhereUniqueInput
+    create: XOR<DebitLogCreateWithoutDebitedByInput, DebitLogUncheckedCreateWithoutDebitedByInput>
+  }
+
+  export type DebitLogCreateManyDebitedByInputEnvelope = {
+    data: DebitLogCreateManyDebitedByInput | DebitLogCreateManyDebitedByInput[]
+    skipDuplicates?: boolean
+  }
+
   export type PermissionsUpsertWithWhereUniqueWithoutUserInput = {
     where: PermissionsWhereUniqueInput
     update: XOR<PermissionsUpdateWithoutUserInput, PermissionsUncheckedUpdateWithoutUserInput>
@@ -11728,6 +13292,39 @@ export namespace Prisma {
     errorMessage?: StringNullableFilter<"CreditLog"> | string | null
     creditedAt?: DateTimeFilter<"CreditLog"> | Date | string
     creditedById?: StringFilter<"CreditLog"> | string
+  }
+
+  export type DebitLogUpsertWithWhereUniqueWithoutDebitedByInput = {
+    where: DebitLogWhereUniqueInput
+    update: XOR<DebitLogUpdateWithoutDebitedByInput, DebitLogUncheckedUpdateWithoutDebitedByInput>
+    create: XOR<DebitLogCreateWithoutDebitedByInput, DebitLogUncheckedCreateWithoutDebitedByInput>
+  }
+
+  export type DebitLogUpdateWithWhereUniqueWithoutDebitedByInput = {
+    where: DebitLogWhereUniqueInput
+    data: XOR<DebitLogUpdateWithoutDebitedByInput, DebitLogUncheckedUpdateWithoutDebitedByInput>
+  }
+
+  export type DebitLogUpdateManyWithWhereWithoutDebitedByInput = {
+    where: DebitLogScalarWhereInput
+    data: XOR<DebitLogUpdateManyMutationInput, DebitLogUncheckedUpdateManyWithoutDebitedByInput>
+  }
+
+  export type DebitLogScalarWhereInput = {
+    AND?: DebitLogScalarWhereInput | DebitLogScalarWhereInput[]
+    OR?: DebitLogScalarWhereInput[]
+    NOT?: DebitLogScalarWhereInput | DebitLogScalarWhereInput[]
+    id?: StringFilter<"DebitLog"> | string
+    playerId?: StringFilter<"DebitLog"> | string
+    msisdn?: StringFilter<"DebitLog"> | string
+    amount?: FloatFilter<"DebitLog"> | number
+    subject?: StringFilter<"DebitLog"> | string
+    description?: StringNullableFilter<"DebitLog"> | string | null
+    status?: EnumProcessingStatusFilter<"DebitLog"> | $Enums.ProcessingStatus
+    debitResponse?: JsonNullableFilter<"DebitLog">
+    errorMessage?: StringNullableFilter<"DebitLog"> | string | null
+    debitedAt?: DateTimeFilter<"DebitLog"> | Date | string
+    debitedById?: StringFilter<"DebitLog"> | string
   }
 
   export type BatchCreateWithoutRecipientsInput = {
@@ -11939,6 +13536,7 @@ export namespace Prisma {
     batchesRejected?: BatchCreateNestedManyWithoutRejectedByInput
     promoUploaded?: PromoCreateNestedManyWithoutUploaded_byInput
     creditsIssued?: CreditLogCreateNestedManyWithoutCreditedByInput
+    debitsIssued?: DebitLogCreateNestedManyWithoutDebitedByInput
   }
 
   export type UserUncheckedCreateWithoutBatchesApprovedInput = {
@@ -11950,6 +13548,7 @@ export namespace Prisma {
     batchesRejected?: BatchUncheckedCreateNestedManyWithoutRejectedByInput
     promoUploaded?: PromoUncheckedCreateNestedManyWithoutUploaded_byInput
     creditsIssued?: CreditLogUncheckedCreateNestedManyWithoutCreditedByInput
+    debitsIssued?: DebitLogUncheckedCreateNestedManyWithoutDebitedByInput
   }
 
   export type UserCreateOrConnectWithoutBatchesApprovedInput = {
@@ -11966,6 +13565,7 @@ export namespace Prisma {
     batchesApproved?: BatchCreateNestedManyWithoutApprovedByInput
     promoUploaded?: PromoCreateNestedManyWithoutUploaded_byInput
     creditsIssued?: CreditLogCreateNestedManyWithoutCreditedByInput
+    debitsIssued?: DebitLogCreateNestedManyWithoutDebitedByInput
   }
 
   export type UserUncheckedCreateWithoutBatchesRejectedInput = {
@@ -11977,6 +13577,7 @@ export namespace Prisma {
     batchesApproved?: BatchUncheckedCreateNestedManyWithoutApprovedByInput
     promoUploaded?: PromoUncheckedCreateNestedManyWithoutUploaded_byInput
     creditsIssued?: CreditLogUncheckedCreateNestedManyWithoutCreditedByInput
+    debitsIssued?: DebitLogUncheckedCreateNestedManyWithoutDebitedByInput
   }
 
   export type UserCreateOrConnectWithoutBatchesRejectedInput = {
@@ -12062,6 +13663,7 @@ export namespace Prisma {
     batchesRejected?: BatchUpdateManyWithoutRejectedByNestedInput
     promoUploaded?: PromoUpdateManyWithoutUploaded_byNestedInput
     creditsIssued?: CreditLogUpdateManyWithoutCreditedByNestedInput
+    debitsIssued?: DebitLogUpdateManyWithoutDebitedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBatchesApprovedInput = {
@@ -12073,6 +13675,7 @@ export namespace Prisma {
     batchesRejected?: BatchUncheckedUpdateManyWithoutRejectedByNestedInput
     promoUploaded?: PromoUncheckedUpdateManyWithoutUploaded_byNestedInput
     creditsIssued?: CreditLogUncheckedUpdateManyWithoutCreditedByNestedInput
+    debitsIssued?: DebitLogUncheckedUpdateManyWithoutDebitedByNestedInput
   }
 
   export type UserUpsertWithoutBatchesRejectedInput = {
@@ -12095,6 +13698,7 @@ export namespace Prisma {
     batchesApproved?: BatchUpdateManyWithoutApprovedByNestedInput
     promoUploaded?: PromoUpdateManyWithoutUploaded_byNestedInput
     creditsIssued?: CreditLogUpdateManyWithoutCreditedByNestedInput
+    debitsIssued?: DebitLogUpdateManyWithoutDebitedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBatchesRejectedInput = {
@@ -12106,6 +13710,7 @@ export namespace Prisma {
     batchesApproved?: BatchUncheckedUpdateManyWithoutApprovedByNestedInput
     promoUploaded?: PromoUncheckedUpdateManyWithoutUploaded_byNestedInput
     creditsIssued?: CreditLogUncheckedUpdateManyWithoutCreditedByNestedInput
+    debitsIssued?: DebitLogUncheckedUpdateManyWithoutDebitedByNestedInput
   }
 
   export type UserCreateWithoutPromoUploadedInput = {
@@ -12117,6 +13722,7 @@ export namespace Prisma {
     batchesApproved?: BatchCreateNestedManyWithoutApprovedByInput
     batchesRejected?: BatchCreateNestedManyWithoutRejectedByInput
     creditsIssued?: CreditLogCreateNestedManyWithoutCreditedByInput
+    debitsIssued?: DebitLogCreateNestedManyWithoutDebitedByInput
   }
 
   export type UserUncheckedCreateWithoutPromoUploadedInput = {
@@ -12128,6 +13734,7 @@ export namespace Prisma {
     batchesApproved?: BatchUncheckedCreateNestedManyWithoutApprovedByInput
     batchesRejected?: BatchUncheckedCreateNestedManyWithoutRejectedByInput
     creditsIssued?: CreditLogUncheckedCreateNestedManyWithoutCreditedByInput
+    debitsIssued?: DebitLogUncheckedCreateNestedManyWithoutDebitedByInput
   }
 
   export type UserCreateOrConnectWithoutPromoUploadedInput = {
@@ -12155,6 +13762,7 @@ export namespace Prisma {
     batchesApproved?: BatchUpdateManyWithoutApprovedByNestedInput
     batchesRejected?: BatchUpdateManyWithoutRejectedByNestedInput
     creditsIssued?: CreditLogUpdateManyWithoutCreditedByNestedInput
+    debitsIssued?: DebitLogUpdateManyWithoutDebitedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPromoUploadedInput = {
@@ -12166,6 +13774,7 @@ export namespace Prisma {
     batchesApproved?: BatchUncheckedUpdateManyWithoutApprovedByNestedInput
     batchesRejected?: BatchUncheckedUpdateManyWithoutRejectedByNestedInput
     creditsIssued?: CreditLogUncheckedUpdateManyWithoutCreditedByNestedInput
+    debitsIssued?: DebitLogUncheckedUpdateManyWithoutDebitedByNestedInput
   }
 
   export type UserCreateWithoutCreditsIssuedInput = {
@@ -12177,6 +13786,7 @@ export namespace Prisma {
     batchesApproved?: BatchCreateNestedManyWithoutApprovedByInput
     batchesRejected?: BatchCreateNestedManyWithoutRejectedByInput
     promoUploaded?: PromoCreateNestedManyWithoutUploaded_byInput
+    debitsIssued?: DebitLogCreateNestedManyWithoutDebitedByInput
   }
 
   export type UserUncheckedCreateWithoutCreditsIssuedInput = {
@@ -12188,6 +13798,7 @@ export namespace Prisma {
     batchesApproved?: BatchUncheckedCreateNestedManyWithoutApprovedByInput
     batchesRejected?: BatchUncheckedCreateNestedManyWithoutRejectedByInput
     promoUploaded?: PromoUncheckedCreateNestedManyWithoutUploaded_byInput
+    debitsIssued?: DebitLogUncheckedCreateNestedManyWithoutDebitedByInput
   }
 
   export type UserCreateOrConnectWithoutCreditsIssuedInput = {
@@ -12215,6 +13826,7 @@ export namespace Prisma {
     batchesApproved?: BatchUpdateManyWithoutApprovedByNestedInput
     batchesRejected?: BatchUpdateManyWithoutRejectedByNestedInput
     promoUploaded?: PromoUpdateManyWithoutUploaded_byNestedInput
+    debitsIssued?: DebitLogUpdateManyWithoutDebitedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreditsIssuedInput = {
@@ -12226,6 +13838,71 @@ export namespace Prisma {
     batchesApproved?: BatchUncheckedUpdateManyWithoutApprovedByNestedInput
     batchesRejected?: BatchUncheckedUpdateManyWithoutRejectedByNestedInput
     promoUploaded?: PromoUncheckedUpdateManyWithoutUploaded_byNestedInput
+    debitsIssued?: DebitLogUncheckedUpdateManyWithoutDebitedByNestedInput
+  }
+
+  export type UserCreateWithoutDebitsIssuedInput = {
+    id: string
+    name: string
+    email: string
+    role?: $Enums.UserRole
+    permissions?: PermissionsCreateNestedManyWithoutUserInput
+    batchesApproved?: BatchCreateNestedManyWithoutApprovedByInput
+    batchesRejected?: BatchCreateNestedManyWithoutRejectedByInput
+    promoUploaded?: PromoCreateNestedManyWithoutUploaded_byInput
+    creditsIssued?: CreditLogCreateNestedManyWithoutCreditedByInput
+  }
+
+  export type UserUncheckedCreateWithoutDebitsIssuedInput = {
+    id: string
+    name: string
+    email: string
+    role?: $Enums.UserRole
+    permissions?: PermissionsUncheckedCreateNestedManyWithoutUserInput
+    batchesApproved?: BatchUncheckedCreateNestedManyWithoutApprovedByInput
+    batchesRejected?: BatchUncheckedCreateNestedManyWithoutRejectedByInput
+    promoUploaded?: PromoUncheckedCreateNestedManyWithoutUploaded_byInput
+    creditsIssued?: CreditLogUncheckedCreateNestedManyWithoutCreditedByInput
+  }
+
+  export type UserCreateOrConnectWithoutDebitsIssuedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutDebitsIssuedInput, UserUncheckedCreateWithoutDebitsIssuedInput>
+  }
+
+  export type UserUpsertWithoutDebitsIssuedInput = {
+    update: XOR<UserUpdateWithoutDebitsIssuedInput, UserUncheckedUpdateWithoutDebitsIssuedInput>
+    create: XOR<UserCreateWithoutDebitsIssuedInput, UserUncheckedCreateWithoutDebitsIssuedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutDebitsIssuedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutDebitsIssuedInput, UserUncheckedUpdateWithoutDebitsIssuedInput>
+  }
+
+  export type UserUpdateWithoutDebitsIssuedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    permissions?: PermissionsUpdateManyWithoutUserNestedInput
+    batchesApproved?: BatchUpdateManyWithoutApprovedByNestedInput
+    batchesRejected?: BatchUpdateManyWithoutRejectedByNestedInput
+    promoUploaded?: PromoUpdateManyWithoutUploaded_byNestedInput
+    creditsIssued?: CreditLogUpdateManyWithoutCreditedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutDebitsIssuedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    permissions?: PermissionsUncheckedUpdateManyWithoutUserNestedInput
+    batchesApproved?: BatchUncheckedUpdateManyWithoutApprovedByNestedInput
+    batchesRejected?: BatchUncheckedUpdateManyWithoutRejectedByNestedInput
+    promoUploaded?: PromoUncheckedUpdateManyWithoutUploaded_byNestedInput
+    creditsIssued?: CreditLogUncheckedUpdateManyWithoutCreditedByNestedInput
   }
 
   export type UserCreateWithoutPermissionsInput = {
@@ -12237,6 +13914,7 @@ export namespace Prisma {
     batchesRejected?: BatchCreateNestedManyWithoutRejectedByInput
     promoUploaded?: PromoCreateNestedManyWithoutUploaded_byInput
     creditsIssued?: CreditLogCreateNestedManyWithoutCreditedByInput
+    debitsIssued?: DebitLogCreateNestedManyWithoutDebitedByInput
   }
 
   export type UserUncheckedCreateWithoutPermissionsInput = {
@@ -12248,6 +13926,7 @@ export namespace Prisma {
     batchesRejected?: BatchUncheckedCreateNestedManyWithoutRejectedByInput
     promoUploaded?: PromoUncheckedCreateNestedManyWithoutUploaded_byInput
     creditsIssued?: CreditLogUncheckedCreateNestedManyWithoutCreditedByInput
+    debitsIssued?: DebitLogUncheckedCreateNestedManyWithoutDebitedByInput
   }
 
   export type UserCreateOrConnectWithoutPermissionsInput = {
@@ -12275,6 +13954,7 @@ export namespace Prisma {
     batchesRejected?: BatchUpdateManyWithoutRejectedByNestedInput
     promoUploaded?: PromoUpdateManyWithoutUploaded_byNestedInput
     creditsIssued?: CreditLogUpdateManyWithoutCreditedByNestedInput
+    debitsIssued?: DebitLogUpdateManyWithoutDebitedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPermissionsInput = {
@@ -12286,6 +13966,7 @@ export namespace Prisma {
     batchesRejected?: BatchUncheckedUpdateManyWithoutRejectedByNestedInput
     promoUploaded?: PromoUncheckedUpdateManyWithoutUploaded_byNestedInput
     creditsIssued?: CreditLogUncheckedUpdateManyWithoutCreditedByNestedInput
+    debitsIssued?: DebitLogUncheckedUpdateManyWithoutDebitedByNestedInput
   }
 
   export type PermissionsCreateManyUserInput = {
@@ -12343,6 +14024,19 @@ export namespace Prisma {
     smsStatus?: string | null
     errorMessage?: string | null
     creditedAt?: Date | string
+  }
+
+  export type DebitLogCreateManyDebitedByInput = {
+    id?: string
+    playerId: string
+    msisdn: string
+    amount: number
+    subject: string
+    description?: string | null
+    status: $Enums.ProcessingStatus
+    debitResponse?: NullableJsonNullValueInput | InputJsonValue
+    errorMessage?: string | null
+    debitedAt?: Date | string
   }
 
   export type PermissionsUpdateWithoutUserInput = {
@@ -12524,6 +14218,45 @@ export namespace Prisma {
     creditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type DebitLogUpdateWithoutDebitedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    playerId?: StringFieldUpdateOperationsInput | string
+    msisdn?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    subject?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProcessingStatusFieldUpdateOperationsInput | $Enums.ProcessingStatus
+    debitResponse?: NullableJsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    debitedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DebitLogUncheckedUpdateWithoutDebitedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    playerId?: StringFieldUpdateOperationsInput | string
+    msisdn?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    subject?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProcessingStatusFieldUpdateOperationsInput | $Enums.ProcessingStatus
+    debitResponse?: NullableJsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    debitedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DebitLogUncheckedUpdateManyWithoutDebitedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    playerId?: StringFieldUpdateOperationsInput | string
+    msisdn?: StringFieldUpdateOperationsInput | string
+    amount?: FloatFieldUpdateOperationsInput | number
+    subject?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProcessingStatusFieldUpdateOperationsInput | $Enums.ProcessingStatus
+    debitResponse?: NullableJsonNullValueInput | InputJsonValue
+    errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    debitedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type CustomerCreateManyBatchInput = {
     id?: string
     name: string
@@ -12633,6 +14366,10 @@ export namespace Prisma {
      * @deprecated Use CreditLogDefaultArgs instead
      */
     export type CreditLogArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = CreditLogDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use DebitLogDefaultArgs instead
+     */
+    export type DebitLogArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = DebitLogDefaultArgs<ExtArgs>
     /**
      * @deprecated Use PermissionsDefaultArgs instead
      */

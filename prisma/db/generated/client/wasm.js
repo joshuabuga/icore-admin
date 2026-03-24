@@ -192,6 +192,20 @@ exports.Prisma.CreditLogScalarFieldEnum = {
   creditedById: 'creditedById'
 };
 
+exports.Prisma.DebitLogScalarFieldEnum = {
+  id: 'id',
+  playerId: 'playerId',
+  msisdn: 'msisdn',
+  amount: 'amount',
+  subject: 'subject',
+  description: 'description',
+  status: 'status',
+  debitResponse: 'debitResponse',
+  errorMessage: 'errorMessage',
+  debitedAt: 'debitedAt',
+  debitedById: 'debitedById'
+};
+
 exports.Prisma.PermissionsScalarFieldEnum = {
   id: 'id',
   user_id: 'user_id',
@@ -239,6 +253,7 @@ exports.UserRole = exports.$Enums.UserRole = {
 exports.ProcessingStatus = exports.$Enums.ProcessingStatus = {
   PENDING: 'PENDING',
   CREDITED: 'CREDITED',
+  DEBITED: 'DEBITED',
   FAILED: 'FAILED'
 };
 
@@ -259,6 +274,7 @@ exports.Prisma.ModelName = {
   Batch: 'Batch',
   Promo: 'Promo',
   CreditLog: 'CreditLog',
+  DebitLog: 'DebitLog',
   Permissions: 'Permissions'
 };
 

@@ -15,6 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency, formatDate, formatPhone } from "@/lib/utils/table-utils";
 import SMSDialog from "@/components/sms/sms-dialog";
 import CreditPlayerDialog from "@/components/players/credit-player-dialog";
+import DebitPlayerDialog from "@/components/players/debit-player-dialog";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -94,6 +95,13 @@ export default function PlayerDetailPage({ params }: PageProps) {
               <SMSDialog msisdn={player.msisdn}/>
               {hasPermission(PERMISSIONS.BATCHES_PROCESS) && (
                 <CreditPlayerDialog
+                  playerId={id}
+                  msisdn={player.msisdn}
+                  playerName={player.name}
+                />
+              )}
+              {hasPermission(PERMISSIONS.PLAYERS_WRITE) && (
+                <DebitPlayerDialog
                   playerId={id}
                   msisdn={player.msisdn}
                   playerName={player.name}

@@ -20,6 +20,7 @@ model User {
   batchesRejected Batch[]     @relation("UserRejectedBatches")
   promoUploaded   Promo[]     @relation("UserUploadedPromos")
   creditsIssued   CreditLog[] @relation("UserCreditedPlayers")
+  debitsIssued    DebitLog[]  @relation("UserDebitedPlayers")
 }
 
 model Customer {
@@ -99,6 +100,22 @@ model CreditLog {
   creditedBy   User   @relation("UserCreditedPlayers", fields: [creditedById], references: [id], onDelete: SetNull)
 }
 
+model DebitLog {
+  id            String           @id @default(uuid())
+  playerId      String
+  msisdn        String
+  amount        Float
+  subject       String
+  description   String?
+  status        ProcessingStatus
+  debitResponse Json?
+  errorMessage  String?
+  debitedAt     DateTime         @default(now())
+
+  debitedById String
+  debitedBy   User   @relation("UserDebitedPlayers", fields: [debitedById], references: [id], onDelete: SetNull)
+}
+
 model Permissions {
   id         String @id @default(uuid())
   user_id    String
@@ -128,5 +145,6 @@ enum BatchStatus {
 enum ProcessingStatus {
   PENDING
   CREDITED
+  DEBITED
   FAILED
 }

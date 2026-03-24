@@ -1,4 +1,4 @@
-import { CreditRequest, SMSRequest } from '@/types/crediting';
+import { CreditRequest, DebitRequest, SMSRequest } from '@/types/crediting';
 import { adminConsole } from './console';
 
 class PaymentProcessor {
@@ -65,6 +65,49 @@ class PaymentProcessor {
         } catch (error) {
             console.error('Error crediting user:', JSON.stringify(error, null, 2));
             throw new Error(`Failed to credit user: ${error}`);
+        }
+    }
+
+    async debitUser(data: DebitRequest) {
+        try {
+            const { access, baseURL } = await adminConsole.getAuth();
+            const debitUrl = `${baseURL}/api/v1/console/wallets/debit/`;
+
+            const headers = {
+                Authorization: `Bearer ${access}`,
+                'Content-Type': 'application/json',
+            };
+
+            console.log('Debit API Request:', {
+                url: debitUrl,
+                data: data,
+            });
+
+            const response = await fetch(debitUrl, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify(data),
+            });
+
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                const text = await response.text();
+                console.error('Debit API returned non-JSON response:', {
+                    status: response.status,
+                    contentType,
+                    body: text.substring(0, 200),
+                });
+                throw new Error(
+                    `Debit API returned ${response.status}: Expected JSON but got ${contentType}`
+                );
+            }
+
+            const result = await response.json();
+
+            return { ok: response.ok, status: response.status, data: result };
+        } catch (error) {
+            console.error('Error debiting user:', JSON.stringify(error, null, 2));
+            throw new Error(`Failed to debit user: ${error}`);
         }
     }
 
