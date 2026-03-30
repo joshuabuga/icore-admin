@@ -4,6 +4,8 @@ import useSWR from 'swr';
 import useSWRMutation from 'swr/mutation';
 import { fetcher } from '@/lib/fetcher';
 import { UserListItem, UserDetail, Transaction } from '@/types/users';
+import { Payin } from '@/types/payins';
+import { Payout } from '@/types/payouts';
 
 export interface PlayersParams {
     search?: string;
@@ -99,6 +101,74 @@ export function usePlayerTransactions(params: TransactionsParams) {
 
     return {
         transactions: data?.data || [],
+        totalRows: data?.totalRows || 0,
+        isLoading,
+        error,
+        refetch: mutate,
+    };
+}
+
+interface DepositsResponse {
+    data: Payin[];
+    totalRows: number;
+}
+
+export function usePlayerDeposits(playerId: string | null, params: PlayersParams = {}) {
+    const searchParams = new URLSearchParams();
+    if (params.search) searchParams.set('search', params.search);
+    searchParams.set('page_size', (params.page_size ?? 10).toString());
+    searchParams.set('page', (params.page ?? 1).toString());
+    searchParams.set('sortBy', params.sortBy ?? 'id');
+    searchParams.set('sortDesc', (params.sortDesc ?? true).toString());
+    if (params.date_after) searchParams.set('date_after', params.date_after);
+    if (params.date_before) searchParams.set('date_before', params.date_before);
+
+    const queryString = `?${searchParams.toString()}`;
+
+    const { data, error, isLoading, mutate } = useSWR<DepositsResponse>(
+        playerId ? `/api/players/${playerId}/deposits${queryString}` : null,
+        fetcher,
+        {
+            revalidateOnFocus: false,
+        }
+    );
+    console.log(data)
+    return {
+        deposits: data?.data || [],
+        totalRows: data?.totalRows || 0,
+        isLoading,
+        error,
+        refetch: mutate,
+    };
+}
+
+interface WithdrawalsResponse {
+    data: Payout[];
+    totalRows: number;
+}
+
+export function usePlayerWithdrawals(playerId: string | null, params: PlayersParams = {}) {
+    const searchParams = new URLSearchParams();
+    if (params.search) searchParams.set('search', params.search);
+    searchParams.set('page_size', (params.page_size ?? 10).toString());
+    searchParams.set('page', (params.page ?? 1).toString());
+    searchParams.set('sortBy', params.sortBy ?? 'id');
+    searchParams.set('sortDesc', (params.sortDesc ?? true).toString());
+    if (params.date_after) searchParams.set('date_after', params.date_after);
+    if (params.date_before) searchParams.set('date_before', params.date_before);
+
+    const queryString = `?${searchParams.toString()}`;
+
+    const { data, error, isLoading, mutate } = useSWR<WithdrawalsResponse>(
+        playerId ? `/api/players/${playerId}/withdrawals${queryString}` : null,
+        fetcher,
+        {
+            revalidateOnFocus: false,
+        }
+    );
+
+    return {
+        withdrawals: data?.data || [],
         totalRows: data?.totalRows || 0,
         isLoading,
         error,

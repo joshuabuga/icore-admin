@@ -4,10 +4,13 @@ import { use, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Phone, Calendar, Wallet, Shield } from "lucide-react";
 
-import { usePlayer, usePlayerTransactions } from "@/hooks/use-players";
+import { usePlayer, usePlayerTransactions, usePlayerDeposits, usePlayerWithdrawals } from "@/hooks/use-players";
 import { usePermissions } from "@/hooks/use-permissions";
 import { DataTable } from "@/components/shared/data-table";
 import { transactionsColumns } from "@/components/players/transactions-columns";
+import { depositsColumns } from "@/components/cashflow/deposits-columns";
+import { withdrawalsColumns } from "@/components/cashflow/withdrawals-columns";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,28 +29,79 @@ export default function PlayerDetailPage({ params }: PageProps) {
   const { player, isLoading: playerLoading, error: playerError } = usePlayer(id);
   const { hasPermission, PERMISSIONS } = usePermissions();
 
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
+  const [activeTab, setActiveTab] = useState("transactions");
+
+  // Transactions state
+  const [txSearch, setTxSearch] = useState("");
+  const [txPage, setTxPage] = useState(1);
+  const [txPageSize, setTxPageSize] = useState(10);
+  const [txDateRange, setTxDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
     from: undefined,
     to: undefined,
   });
 
-  // Convert dates to ISO datetime strings for API (IsoDateTimeFromToRangeFilter expects datetime format)
-  const dateAfter = dateRange.from ? `${dateRange.from.toISOString().split('T')[0]}T00:00:00Z` : undefined;
-  const dateBefore = dateRange.to ? `${dateRange.to.toISOString().split('T')[0]}T23:59:59Z` : undefined;
+  // Deposits state
+  const [depSearch, setDepSearch] = useState("");
+  const [depPage, setDepPage] = useState(1);
+  const [depPageSize, setDepPageSize] = useState(10);
+  const [depDateRange, setDepDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
+    from: undefined,
+    to: undefined,
+  });
 
-  const { transactions, totalRows, isLoading: transactionsLoading } = usePlayerTransactions({
+  // Withdrawals state
+  const [wdSearch, setWdSearch] = useState("");
+  const [wdPage, setWdPage] = useState(1);
+  const [wdPageSize, setWdPageSize] = useState(10);
+  const [wdDateRange, setWdDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
+    from: undefined,
+    to: undefined,
+  });
+
+  // Convert dates to ISO datetime strings for API
+  const txDateAfter = txDateRange.from ? `${txDateRange.from.toISOString().split('T')[0]}T00:00:00Z` : undefined;
+  const txDateBefore = txDateRange.to ? `${txDateRange.to.toISOString().split('T')[0]}T23:59:59Z` : undefined;
+  const depDateAfter = depDateRange.from ? `${depDateRange.from.toISOString().split('T')[0]}T00:00:00Z` : undefined;
+  const depDateBefore = depDateRange.to ? `${depDateRange.to.toISOString().split('T')[0]}T23:59:59Z` : undefined;
+  const wdDateAfter = wdDateRange.from ? `${wdDateRange.from.toISOString().split('T')[0]}T00:00:00Z` : undefined;
+  const wdDateBefore = wdDateRange.to ? `${wdDateRange.to.toISOString().split('T')[0]}T23:59:59Z` : undefined;
+
+  const { transactions, totalRows: txTotalRows, isLoading: transactionsLoading } = usePlayerTransactions({
     wallet_id: player?.wallet_id ? String(player.wallet_id) : undefined,
-    search: search || undefined,
-    page,
-    page_size: pageSize,
+    search: txSearch || undefined,
+    page: txPage,
+    page_size: txPageSize,
     sortBy: "id",
     sortDesc: true,
-    date_after: dateAfter,
-    date_before: dateBefore,
+    date_after: txDateAfter,
+    date_before: txDateBefore,
   });
+
+  const { deposits, totalRows: depTotalRows, isLoading: depositsLoading } = usePlayerDeposits(
+    activeTab === "deposits" ? id : null,
+    {
+      search: depSearch || undefined,
+      page: depPage,
+      page_size: depPageSize,
+      sortBy: "id",
+      sortDesc: true,
+      date_after: depDateAfter,
+      date_before: depDateBefore,
+    }
+  );
+
+  const { withdrawals, totalRows: wdTotalRows, isLoading: withdrawalsLoading } = usePlayerWithdrawals(
+    activeTab === "withdrawals" ? id : null,
+    {
+      search: wdSearch || undefined,
+      page: wdPage,
+      page_size: wdPageSize,
+      sortBy: "id",
+      sortDesc: true,
+      date_after: wdDateAfter,
+      date_before: wdDateBefore,
+    }
+  );
 
   if (playerError) {
     return (
@@ -222,43 +276,122 @@ export default function PlayerDetailPage({ params }: PageProps) {
         </Card>
       </div>
 
-      {/* Transactions Table */}
-      <div className="space-y-4">
-        <div>
-          <h2 className="text-xl font-semibold">Transactions</h2>
-          <p className="text-sm text-muted-foreground">
-            Transaction history for this player
-          </p>
-        </div>
+      {/* Tabbed Tables */}
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList>
+          <TabsTrigger value="transactions">Transactions</TabsTrigger>
+          <TabsTrigger value="deposits">Deposits</TabsTrigger>
+          <TabsTrigger value="withdrawals">Withdrawals</TabsTrigger>
+        </TabsList>
 
-        <DataTable
-          columns={transactionsColumns}
-          data={transactions}
-          isLoading={transactionsLoading || playerLoading}
-          searchPlaceholder="Search transactions..."
-          showDateFilter={true}
-          mobileHiddenColumns={["initial_balance", "final_balance", "details"]}
-          tabletHiddenColumns={["details"]}
-          serverSide={true}
-          totalRows={totalRows}
-          page={page}
-          pageSize={pageSize}
-          onSearchChange={(value) => {
-            setSearch(value);
-            setPage(1);
-          }}
-          onPageChange={setPage}
-          onPageSizeChange={(value) => {
-            setPageSize(value);
-            setPage(1);
-          }}
-          dateRange={dateRange}
-          onDateRangeChange={(range) => {
-            setDateRange(range);
-            setPage(1);
-          }}
-        />
-      </div>
+        <TabsContent value="transactions" className="space-y-4">
+          <div>
+            <h2 className="text-xl font-semibold">Transactions</h2>
+            <p className="text-sm text-muted-foreground">
+              Transaction history for this player
+            </p>
+          </div>
+          <DataTable
+            columns={transactionsColumns}
+            data={transactions}
+            isLoading={transactionsLoading || playerLoading}
+            searchPlaceholder="Search transactions..."
+            showDateFilter={true}
+            mobileHiddenColumns={["initial_balance", "final_balance", "details"]}
+            tabletHiddenColumns={["details"]}
+            serverSide={true}
+            totalRows={txTotalRows}
+            page={txPage}
+            pageSize={txPageSize}
+            onSearchChange={(value) => {
+              setTxSearch(value);
+              setTxPage(1);
+            }}
+            onPageChange={setTxPage}
+            onPageSizeChange={(value) => {
+              setTxPageSize(value);
+              setTxPage(1);
+            }}
+            dateRange={txDateRange}
+            onDateRangeChange={(range) => {
+              setTxDateRange(range);
+              setTxPage(1);
+            }}
+          />
+        </TabsContent>
+
+        <TabsContent value="deposits" className="space-y-4">
+          <div>
+            <h2 className="text-xl font-semibold">Deposits</h2>
+            <p className="text-sm text-muted-foreground">
+              Deposit history for this player
+            </p>
+          </div>
+          <DataTable
+            columns={depositsColumns}
+            data={deposits}
+            isLoading={depositsLoading || playerLoading}
+            searchPlaceholder="Search deposits..."
+            showDateFilter={true}
+            mobileHiddenColumns={["transaction_ref", "short_code", "method"]}
+            tabletHiddenColumns={["short_code"]}
+            serverSide={true}
+            totalRows={depTotalRows}
+            page={depPage}
+            pageSize={depPageSize}
+            onSearchChange={(value) => {
+              setDepSearch(value);
+              setDepPage(1);
+            }}
+            onPageChange={setDepPage}
+            onPageSizeChange={(value) => {
+              setDepPageSize(value);
+              setDepPage(1);
+            }}
+            dateRange={depDateRange}
+            onDateRangeChange={(range) => {
+              setDepDateRange(range);
+              setDepPage(1);
+            }}
+          />
+        </TabsContent>
+
+        <TabsContent value="withdrawals" className="space-y-4">
+          <div>
+            <h2 className="text-xl font-semibold">Withdrawals</h2>
+            <p className="text-sm text-muted-foreground">
+              Withdrawal history for this player
+            </p>
+          </div>
+          <DataTable
+            columns={withdrawalsColumns}
+            data={withdrawals}
+            isLoading={withdrawalsLoading || playerLoading}
+            searchPlaceholder="Search withdrawals..."
+            showDateFilter={true}
+            mobileHiddenColumns={["mpesa_transaction_id", "details", "method"]}
+            tabletHiddenColumns={["details"]}
+            serverSide={true}
+            totalRows={wdTotalRows}
+            page={wdPage}
+            pageSize={wdPageSize}
+            onSearchChange={(value) => {
+              setWdSearch(value);
+              setWdPage(1);
+            }}
+            onPageChange={setWdPage}
+            onPageSizeChange={(value) => {
+              setWdPageSize(value);
+              setWdPage(1);
+            }}
+            dateRange={wdDateRange}
+            onDateRangeChange={(range) => {
+              setWdDateRange(range);
+              setWdPage(1);
+            }}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

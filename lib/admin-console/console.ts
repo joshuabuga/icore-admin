@@ -219,6 +219,70 @@ class AdminConsole {
     }
   }
 
+  async fetchPlayerDeposits(userId: string, params: FetchParams = {}): Promise<PaginatedResponse<Payin>> {
+    try {
+      const { access, baseURL } = await this.getAuth();
+      const searchParams = new URLSearchParams();
+      searchParams.set('user_id', userId);
+      if (params.search) searchParams.set('search', params.search);
+      searchParams.set('page_size', (params.page_size ?? 10).toString());
+      searchParams.set('page', (params.page ?? 1).toString());
+      if (params.sortBy) searchParams.set('ordering', params.sortDesc ? `-${params.sortBy}` : params.sortBy);
+      if (params.date_after) searchParams.set('date_after', params.date_after);
+      if (params.date_before) searchParams.set('date_before', params.date_before);
+
+      const response = await fetch(`${baseURL}/api/v1/console/wallets/deposits/?${searchParams.toString()}`, {
+        method: 'GET',
+        headers: this.getHeaders(access),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetchPlayerDeposits: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      return {
+        data: result.data,
+        totalRows: result.count || 0,
+      };
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async fetchPlayerWithdrawals(userId: string, params: FetchParams = {}): Promise<PaginatedResponse<Payout>> {
+    try {
+      const { access, baseURL } = await this.getAuth();
+      const searchParams = new URLSearchParams();
+      searchParams.set('user_id', userId);
+      if (params.search) searchParams.set('search', params.search);
+      searchParams.set('page_size', (params.page_size ?? 10).toString());
+      searchParams.set('page', (params.page ?? 1).toString());
+      if (params.sortBy) searchParams.set('ordering', params.sortDesc ? `-${params.sortBy}` : params.sortBy);
+      if (params.date_after) searchParams.set('date_after', params.date_after);
+      if (params.date_before) searchParams.set('date_before', params.date_before);
+
+      const response = await fetch(`${baseURL}/api/v1/console/wallets/withdrawals/?${searchParams.toString()}`, {
+        method: 'GET',
+        headers: this.getHeaders(access),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetchPlayerWithdrawals: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      return {
+        data: result.data,
+        totalRows: result.count || 0,
+      };
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
   async fetchDeposits(params: FetchParams = {}): Promise<PaginatedResponse<Payin>> {
     try {
       const { access, baseURL } = await this.getAuth();
