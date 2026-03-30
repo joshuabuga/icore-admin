@@ -2,7 +2,7 @@
 
 import { use, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Phone, Calendar, Wallet, Shield } from "lucide-react";
+import { ArrowLeft, Phone, Calendar, Wallet, Shield, ArrowDownToLine } from "lucide-react";
 
 import { usePlayer, usePlayerTransactions, usePlayerDeposits, usePlayerWithdrawals } from "@/hooks/use-players";
 import { usePermissions } from "@/hooks/use-permissions";
@@ -19,6 +19,7 @@ import { formatCurrency, formatDate, formatPhone } from "@/lib/utils/table-utils
 import SMSDialog from "@/components/sms/sms-dialog";
 import CreditPlayerDialog from "@/components/players/credit-player-dialog";
 import DebitPlayerDialog from "@/components/players/debit-player-dialog";
+import WithdrawalLimitDialog from "@/components/players/withdrawal-limit-dialog";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -26,7 +27,7 @@ interface PageProps {
 
 export default function PlayerDetailPage({ params }: PageProps) {
   const { id } = use(params);
-  const { player, isLoading: playerLoading, error: playerError } = usePlayer(id);
+  const { player, isLoading: playerLoading, error: playerError, refetch: refetchPlayer } = usePlayer(id);
   const { hasPermission, PERMISSIONS } = usePermissions();
 
   const [activeTab, setActiveTab] = useState("transactions");
@@ -177,7 +178,7 @@ export default function PlayerDetailPage({ params }: PageProps) {
       </div>
 
       {/* Player Info Cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         {/* Contact Info */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -271,6 +272,40 @@ export default function PlayerDetailPage({ params }: PageProps) {
                   {formatDate(player?.last_login)}
                 </div>
               </>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Daily Withdrawal Limit */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Withdrawal Limit</CardTitle>
+            <ArrowDownToLine className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            {playerLoading ? (
+              <Skeleton className="h-6 w-24" />
+            ) : (
+              <div className="flex items-center gap-2">
+                <div>
+                  <div className="text-lg font-bold">
+                    {player?.daily_withdrawal_limit
+                      ? formatCurrency(player.daily_withdrawal_limit)
+                      : "KES 30,000"}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {player?.daily_withdrawal_limit ? "Custom limit" : "Global default"}
+                  </p>
+                </div>
+                {hasPermission(PERMISSIONS.PLAYERS_WRITE) && (
+                  <WithdrawalLimitDialog
+                    playerId={id}
+                    playerName={player?.name}
+                    currentLimit={player?.daily_withdrawal_limit ?? null}
+                    onSuccess={() => refetchPlayer()}
+                  />
+                )}
+              </div>
             )}
           </CardContent>
         </Card>

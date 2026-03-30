@@ -258,6 +258,16 @@ export function createPlayerColumns(
       },
     },
     {
+      accessorKey: "daily_withdrawal_limit",
+      header: "Daily W/D Limit",
+      cell: ({ row }) => {
+        const limit = row.getValue("daily_withdrawal_limit") as string | null;
+        return limit ? formatCurrency(limit) : (
+          <span className="text-muted-foreground">Default</span>
+        );
+      },
+    },
+    {
       accessorKey: "is_payout_locked",
       header: "Payout",
       cell: ({ row }) => {

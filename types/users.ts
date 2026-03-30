@@ -36,6 +36,7 @@ export interface UserDetail {
   is_payout_locked: boolean;
   is_wagering_exempt: boolean;
   wallet_id: number;
+  daily_withdrawal_limit: string | null;
   created_at: string;
   platform: string;
   last_login: string;
@@ -58,6 +59,7 @@ export interface UserListItem {
   last_login: string;
   is_payout_locked: boolean;
   is_wagering_exempt: boolean;
+  daily_withdrawal_limit: string | null;
   bets: number;
 }
 

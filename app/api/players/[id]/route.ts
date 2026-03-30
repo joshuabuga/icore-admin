@@ -92,7 +92,7 @@ export async function PATCH(
 
         const { id } = await params;
         const body = await request.json();
-        const updatedPlayer = await adminConsole.updateUser(id, body);
+        const updatedPlayer = await adminConsole.patchUser(id, body);
         return NextResponse.json(updatedPlayer);
     } catch (error) {
         console.error('Error updating player:', error);

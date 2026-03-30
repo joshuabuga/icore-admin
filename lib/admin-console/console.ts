@@ -356,6 +356,27 @@ class AdminConsole {
   }
 
   /*** Update Functions ***/
+  async patchUser(id: string, data: Partial<UserDetail>): Promise<UserDetail> {
+    try {
+      const { access, baseURL } = await this.getAuth();
+      const response = await fetch(`${baseURL}/api/v1/console/users/${id}/`, {
+        method: 'PATCH',
+        headers: this.getHeaders(access),
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to patchUser: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      return result.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
   async updateUser(id:string, data:UserDetail):Promise<UserDetail> {
     try {
       const { access, baseURL } = await this.getAuth();
