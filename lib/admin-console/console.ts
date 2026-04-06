@@ -287,7 +287,7 @@ class AdminConsole {
   async fetchDeposits(params: FetchParams = {}): Promise<PaginatedResponse<Payin>> {
     try {
       const { access, baseURL } = await this.getAuth();
-      const queryString = this.buildQueryString(params, 'created_at');
+      const queryString = this.buildQueryString(params, 'date');
       const response = await fetch(`${baseURL}/api/v1/console/payments/payins/${queryString}`, {
         method: 'GET',
         headers: this.getHeaders(access),
@@ -311,7 +311,7 @@ class AdminConsole {
   async fetchWithdrawals(params: FetchParams = {}): Promise<PaginatedResponse<Payout>> {
     try {
       const { access, baseURL } = await this.getAuth();
-      const queryString = this.buildQueryString(params, 'created_at');
+      const queryString = this.buildQueryString(params, 'date');
       const response = await fetch(`${baseURL}/api/v1/console/payments/payouts/${queryString}`, {
         method: 'GET',
         headers: this.getHeaders(access),

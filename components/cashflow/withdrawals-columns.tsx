@@ -7,10 +7,16 @@ import { Badge } from "@/components/ui/badge";
 import { formatDateTime, formatCurrency, formatPhone } from "@/lib/utils/table-utils";
 
 // Payout status badge component
-function PayoutStatusBadge({ status }: { status: number }) {
+function PayoutStatusBadge({ status, details }: { status: number; details?: string }) {
+  const isReversed = details?.startsWith("Reversed:");
+
+  if (isReversed) {
+    return <Badge variant="destructive">Reversed</Badge>;
+  }
+
   const variants: Record<number, "default" | "secondary" | "destructive"> = {
-    0: "secondary", // pending
-    1: "default",   // success
+    0: "secondary",   // pending
+    1: "default",     // success/disbursed
     2: "destructive", // failed
   };
 
@@ -73,7 +79,12 @@ export const withdrawalsColumns: ColumnDef<Payout>[] = [
   {
     accessorKey: "status",
     header: "Status",
-    cell: ({ row }) => <PayoutStatusBadge status={row.getValue("status")} />,
+    cell: ({ row }) => (
+      <PayoutStatusBadge
+        status={row.getValue("status")}
+        details={row.getValue("details")}
+      />
+    ),
   },
   {
     accessorKey: "method",
