@@ -21,7 +21,7 @@ import {
   LogIn,
   TrendingUp,
   Activity,
-  DollarSign, CreditCard,
+  DollarSign, CreditCard, Share2,
 } from "lucide-react"
 import Image from "next/image"
 
@@ -95,10 +95,18 @@ const navigationItems = [
     icon: Gamepad,
   },
   {
-    title:"Tpay",
-    url:"/tpay",
+    title: "Tpay",
+    url: "/tpay",
     icon: CreditCard,
-},
+  },
+  // {
+  //   title: "Affiliate",
+  //   icon: Share2,
+  //   items: [
+  //     { title: "Affiliates", url: "/affiliate", icon: Users },
+  //     { title: "Payout Requests", url: "/affiliate/payout-requests", icon: ArrowUpFromLine },
+  //   ],
+  // },
   {
     title: "Staff",
     url: "/staff",

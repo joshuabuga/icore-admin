@@ -48,7 +48,10 @@ function fillDailyData(
     const end = new Date(endDate + "T00:00:00");
 
     while (current <= end) {
-        const dateStr = current.toISOString().split("T")[0];
+        const y = current.getFullYear();
+        const m = String(current.getMonth() + 1).padStart(2, "0");
+        const d = String(current.getDate()).padStart(2, "0");
+        const dateStr = `${y}-${m}-${d}`;
         result.push({
             date: dateStr,
             label: current.toLocaleDateString("en-US", { day: "numeric", month: "short" }),

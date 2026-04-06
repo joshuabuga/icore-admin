@@ -39,6 +39,10 @@ export const PERMISSIONS = {
     // TPay
     TPAY_READ: 'tpay:read',
     TPAY_WRITE: 'tpay:write',
+
+    // Affiliate
+    AFFILIATE_READ: 'affiliate:read',
+    AFFILIATE_WRITE: 'affiliate:write',
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -73,6 +77,8 @@ export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
         PERMISSIONS.SUMMARY_READ,
         PERMISSIONS.ANALYTICS_READ,
         PERMISSIONS.PLAYERS_READ,
+        PERMISSIONS.AFFILIATE_READ,
+        PERMISSIONS.AFFILIATE_WRITE,
     ],
 
     admin: Object.values(PERMISSIONS).filter(

@@ -131,7 +131,8 @@ export function DataTable<TData, TValue>({
     updateVisibility();
     window.addEventListener("resize", updateVisibility);
     return () => window.removeEventListener("resize", updateVisibility);
-  }, [mobileHiddenColumns, tabletHiddenColumns]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mobileHiddenColumns.join(','), tabletHiddenColumns.join(',')]);
 
   // Filter data by date range (only for client-side filtering)
   // Skip filtering when in server-side mode as the API handles filtering

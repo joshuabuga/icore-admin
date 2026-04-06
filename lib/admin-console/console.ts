@@ -1,4 +1,5 @@
 import { AccessTokenResponse } from "@/types/accessToken";
+import { AffiliateListItem, AffiliateDetail, AffiliatePayoutRequest } from "@/types/affiliate";
 import {
   DailyFlowEntry,
   DailyFTDVolume,
@@ -446,6 +447,97 @@ class AdminConsole {
         throw new Error(`Failed to updateGameThumbnail: ${response.statusText}`);
       }
 
+      const result = await response.json();
+      return result.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  /** Affiliate methods **/
+  async fetchAffiliates(params: FetchParams = {}): Promise<PaginatedResponse<AffiliateListItem>> {
+    try {
+      const { access, baseURL } = await this.getAuth();
+      const queryString = this.buildQueryString(params);
+      const response = await fetch(`${baseURL}/api/v1/console/affiliate/${queryString}`, {
+        method: 'GET',
+        headers: this.getHeaders(access),
+      });
+      if (!response.ok) throw new Error(`Failed to fetchAffiliates: ${response.statusText}`);
+      const result = await response.json();
+      return { data: result.data, totalRows: result.paginator?.length || 0 };
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async fetchAffiliate(id: string): Promise<AffiliateDetail> {
+    try {
+      const { access, baseURL } = await this.getAuth();
+      const response = await fetch(`${baseURL}/api/v1/console/affiliate/${id}/`, {
+        method: 'GET',
+        headers: this.getHeaders(access),
+      });
+      if (!response.ok) throw new Error(`Failed to fetchAffiliate: ${response.statusText}`);
+      const result = await response.json();
+      return result.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async fetchAffiliatePayoutRequests(params: FetchParams = {}): Promise<PaginatedResponse<AffiliatePayoutRequest>> {
+    try {
+      const { access, baseURL } = await this.getAuth();
+      const searchParams = new URLSearchParams();
+      if (params.search) searchParams.set('search', params.search);
+      searchParams.set('page_size', (params.page_size ?? 10).toString());
+      searchParams.set('page', (params.page ?? 1).toString());
+      const response = await fetch(`${baseURL}/api/v1/console/affiliate/payout-requests/?${searchParams}`, {
+        method: 'GET',
+        headers: this.getHeaders(access),
+      });
+      if (!response.ok) throw new Error(`Failed to fetchAffiliatePayoutRequests: ${response.statusText}`);
+      const result = await response.json();
+      return { data: result.data, totalRows: result.paginator?.length || 0 };
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async patchAffiliatePayoutRequest(id: string, action: 'approve' | 'reject', notes?: string, approvedBy?: string): Promise<AffiliatePayoutRequest> {
+    try {
+      const { access, baseURL } = await this.getAuth();
+      const response = await fetch(`${baseURL}/api/v1/console/affiliate/payout-requests/${id}/`, {
+        method: 'PATCH',
+        headers: this.getHeaders(access),
+        body: JSON.stringify({ action, notes: notes ?? '', approved_by: approvedBy ?? '' }),
+      });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.detail || `Failed to patch payout request: ${response.statusText}`);
+      }
+      const result = await response.json();
+      return result.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async patchAffiliate(id: string, data: Partial<AffiliateListItem>): Promise<AffiliateListItem> {
+    try {
+      const { access, baseURL } = await this.getAuth();
+      const response = await fetch(`${baseURL}/api/v1/console/affiliate/${id}/`, {
+        method: 'PATCH',
+        headers: this.getHeaders(access),
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) throw new Error(`Failed to patchAffiliate: ${response.statusText}`);
       const result = await response.json();
       return result.data;
     } catch (error) {
