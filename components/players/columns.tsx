@@ -27,12 +27,19 @@ import {
 } from "@/components/ui/alert-dialog";
 import { formatDate, formatCurrency, formatPhone } from "@/lib/utils/table-utils";
 
+// Permission flags for player actions
+export interface PlayerActionPermissions {
+  canWrite?: boolean;
+  canExemption?: boolean;
+}
+
 // Action handlers type
 export interface PlayerActionHandlers {
   onToggleActive: (player: UserListItem) => Promise<void>;
   onTogglePayout: (player: UserListItem) => Promise<void>;
   onToggleWageringExemption: (player: UserListItem) => Promise<void>;
   isUpdating?: boolean;
+  permissions?: PlayerActionPermissions;
 }
 
 // Actions cell component with confirmation dialogs
@@ -43,6 +50,7 @@ function PlayerActionsCell({
   player: UserListItem;
   handlers: PlayerActionHandlers;
 }) {
+  const perms = handlers.permissions || {};
   const router = useRouter();
   const [showSuspendDialog, setShowSuspendDialog] = useState(false);
   const [showPayoutDialog, setShowPayoutDialog] = useState(false);
@@ -95,19 +103,25 @@ function PlayerActionsCell({
             <Eye className="mr-2 h-4 w-4" />
             View details
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => setShowSuspendDialog(true)}>
-            <Ban className="mr-2 h-4 w-4" />
-            {player.is_active ? "Suspend user" : "Activate user"}
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setShowPayoutDialog(true)}>
-            <Wallet className="mr-2 h-4 w-4" />
-            {player.is_payout_locked ? "Enable payout" : "Disable payout"}
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setShowWageringDialog(true)}>
-            <Receipt className="mr-2 h-4 w-4" />
-            {player.is_wagering_exempt ? "Remove exemption" : "Add exemption"}
-          </DropdownMenuItem>
+          {perms.canWrite !== false && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => setShowSuspendDialog(true)}>
+                <Ban className="mr-2 h-4 w-4" />
+                {player.is_active ? "Suspend user" : "Activate user"}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setShowPayoutDialog(true)}>
+                <Wallet className="mr-2 h-4 w-4" />
+                {player.is_payout_locked ? "Enable payout" : "Disable payout"}
+              </DropdownMenuItem>
+            </>
+          )}
+          {perms.canExemption !== false && (
+            <DropdownMenuItem onClick={() => setShowWageringDialog(true)}>
+              <Receipt className="mr-2 h-4 w-4" />
+              {player.is_wagering_exempt ? "Remove exemption" : "Add exemption"}
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
 

@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { useAuth } from "@clerk/nextjs";
 
 import { useStaff, useStaffMutations, StaffMember } from "@/hooks/use-staff";
+import { usePermissions } from "@/hooks/use-permissions";
 import { DataTable } from "@/components/shared/data-table";
 import {
   createStaffColumns,
@@ -17,6 +18,7 @@ export default function StaffPage() {
   const { staff, isLoading, error, refetch } = useStaff();
   const { updateStaff, deleteStaff, isUpdating, isDeleting } =
     useStaffMutations();
+  const { hasPermission, PERMISSIONS } = usePermissions();
 
   const [editingStaff, setEditingStaff] = useState<StaffMember | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -59,14 +61,17 @@ export default function StaffPage() {
     [deleteStaff, refetch]
   );
 
+  const canWriteStaff = hasPermission(PERMISSIONS.STAFF_WRITE);
+
   const actionHandlers: StaffActionHandlers = useMemo(
     () => ({
       onEdit: handleEdit,
       onDelete: handleDelete,
       isDeleting,
       currentUserId: userId || undefined,
+      canWrite: canWriteStaff,
     }),
-    [handleEdit, handleDelete, isDeleting, userId]
+    [handleEdit, handleDelete, isDeleting, userId, canWriteStaff]
   );
 
   const columns = useMemo(

@@ -48,75 +48,100 @@ import {
 } from "@/components/ui/collapsible"
 import ThemeToggle from "@/components/providers/ThemeToggle"
 import { EnvironmentSwitcher } from "@/components/layout/environment-switcher"
+import { usePermissions } from "@/hooks/use-permissions"
+import { PERMISSIONS } from "@/lib/permissions"
+import type { LucideIcon } from "lucide-react"
 
-const navigationItems = [
+interface NavSubItem {
+  title: string
+  url: string
+  icon: LucideIcon
+  requiredPermission?: string | string[]
+}
+
+interface NavItem {
+  title: string
+  icon: LucideIcon
+  url?: string
+  items?: NavSubItem[]
+  requiredPermission?: string | string[]
+}
+
+const navigationItems: NavItem[] = [
   {
     title: "Dashboards",
     icon: LayoutDashboard,
-    items : [
-      { title: "Summary", url: "/summary/legacy", icon: DatabaseBackup },
-      { title: "Graph Analytics", url: "/analytics", icon: BarChart3 },
-      { title: "Financial Flow", url: "/analytics/financial", icon: DollarSign },
-      { title: "Growth", url: "/analytics/growth", icon: TrendingUp },
-      { title: "Engagement & Games", url: "/analytics/engagement", icon: Activity },
-    ]
+    items: [
+      { title: "Summary", url: "/summary/legacy", icon: DatabaseBackup, requiredPermission: PERMISSIONS.SUMMARY_READ },
+      { title: "Graph Analytics", url: "/analytics", icon: BarChart3, requiredPermission: PERMISSIONS.ANALYTICS_READ },
+      { title: "Financial Flow", url: "/analytics/financial", icon: DollarSign, requiredPermission: PERMISSIONS.ANALYTICS_READ },
+      { title: "Growth", url: "/analytics/growth", icon: TrendingUp, requiredPermission: PERMISSIONS.ANALYTICS_READ },
+      { title: "Engagement & Games", url: "/analytics/engagement", icon: Activity, requiredPermission: PERMISSIONS.ANALYTICS_READ },
+    ],
   },
   {
     title: "Players",
     url: "/players",
     icon: Users,
+    requiredPermission: PERMISSIONS.PLAYERS_READ,
   },
   {
     title: "Cashflow",
     icon: Wallet,
     items: [
-      { title: "Deposits", url: "/cashflow/deposits", icon: ArrowDownToLine },
-      { title: "Withdrawals", url: "/cashflow/withdrawals", icon: ArrowUpFromLine },
-      { title: "Credit", url:"/payments/crediting",icon:Plus },
-      { title: "Payments", url:"/payments/batch",icon:ArrowUpFromLine },
+      { title: "Deposits", url: "/cashflow/deposits", icon: ArrowDownToLine, requiredPermission: PERMISSIONS.CASHFLOW_READ },
+      { title: "Withdrawals", url: "/cashflow/withdrawals", icon: ArrowUpFromLine, requiredPermission: PERMISSIONS.CASHFLOW_READ },
+      { title: "Credit", url: "/payments/crediting", icon: Plus, requiredPermission: PERMISSIONS.CASHFLOW_WRITE },
+      { title: "Payments", url: "/payments/batch", icon: ArrowUpFromLine, requiredPermission: PERMISSIONS.BATCHES_READ },
     ],
   },
   {
     title: "Promos",
     icon: Megaphone,
     items: [
-      { title: "New Promo", url: "/promos", icon: Plus },
-      { title: "Saved Promos", url: "/promos/saved", icon: Edit },
+      { title: "New Promo", url: "/promos", icon: Plus, requiredPermission: PERMISSIONS.PROMOS_WRITE },
+      { title: "Saved Promos", url: "/promos/saved", icon: Edit, requiredPermission: PERMISSIONS.PROMOS_READ },
     ],
   },
   // {
   //   title: "Bonus Engine",
   //   url: "/bonus-engine",
   //   icon: Gift,
+  //   requiredPermission: PERMISSIONS.BONUS_READ,
   // },
   {
     title: "Games",
     url: "/games",
     icon: Gamepad,
+    requiredPermission: PERMISSIONS.GAMES_READ,
   },
   {
     title: "Tpay",
     url: "/tpay",
     icon: CreditCard,
+    requiredPermission: PERMISSIONS.TPAY_READ,
   },
   // {
   //   title: "Affiliate",
   //   icon: Share2,
+  //   requiredPermission: PERMISSIONS.AFFILIATE_READ,
   //   items: [
-  //     { title: "Affiliates", url: "/affiliate", icon: Users },
-  //     { title: "Payout Requests", url: "/affiliate/payout-requests", icon: ArrowUpFromLine },
+  //     { title: "Affiliates", url: "/affiliate", icon: Users, requiredPermission: PERMISSIONS.AFFILIATE_READ },
+  //     { title: "Payout Requests", url: "/affiliate/payout-requests", icon: ArrowUpFromLine, requiredPermission: PERMISSIONS.AFFILIATE_READ },
   //   ],
   // },
   {
     title: "Staff",
     url: "/staff",
     icon: UserCog,
+    requiredPermission: PERMISSIONS.STAFF_READ,
   },
 ]
 
 export function AppSidebar() {
   const pathname = usePathname()
   const { isSignedIn, user } = useUser()
+  const { hasPermission, hasAnyPermission, isLoading: permissionsLoading } = usePermissions()
 
   const isActive = (url: string) => {
     if (url === "/") return pathname === url
@@ -126,6 +151,28 @@ export function AppSidebar() {
   const isParentActive = (items: { url: string }[]) => {
     return items.some((item) => isActive(item.url))
   }
+
+  const canAccess = (requiredPermission?: string | string[]): boolean => {
+    if (!requiredPermission) return true
+    if (permissionsLoading) return false
+    if (Array.isArray(requiredPermission)) {
+      return hasAnyPermission(requiredPermission)
+    }
+    return hasPermission(requiredPermission)
+  }
+
+  // Filter navigation items based on permissions
+  const filteredItems = navigationItems
+    .map((item) => {
+      if (item.items) {
+        const visibleChildren = item.items.filter((sub) => canAccess(sub.requiredPermission))
+        if (visibleChildren.length === 0) return null
+        return { ...item, items: visibleChildren }
+      }
+      if (!canAccess(item.requiredPermission)) return null
+      return item
+    })
+    .filter((item): item is NavItem => item !== null)
 
   return (
     <Sidebar collapsible="icon">
@@ -152,7 +199,7 @@ export function AppSidebar() {
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navigationItems.map((item) =>
+              {filteredItems.map((item) =>
                 item.items ? (
                   <Collapsible
                     key={item.title}
@@ -191,10 +238,10 @@ export function AppSidebar() {
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       asChild
-                      isActive={isActive(item.url)}
+                      isActive={isActive(item.url!)}
                       tooltip={item.title}
                     >
-                      <Link href={item.url}>
+                      <Link href={item.url!}>
                         <item.icon />
                         <span>{item.title}</span>
                       </Link>

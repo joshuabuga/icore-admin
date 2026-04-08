@@ -1,7 +1,11 @@
 import csv from 'csv-parser';
+import { requireAuth, isAuthError, PERMISSIONS } from '@/lib/api-auth';
 
 
 export async function POST(req: Request) {
+  const authResult = await requireAuth(PERMISSIONS.BATCHES_READ);
+  if (isAuthError(authResult)) return authResult;
+
   // Handle CSV upload and extraction of data
   const formData = await req.formData();
   const file = formData.get('file') as File;

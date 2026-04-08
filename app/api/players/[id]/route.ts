@@ -82,16 +82,37 @@ export async function PATCH(
         }
 
         const userPerms = user.permissions.map(p => p.permission);
+        const { id } = await params;
+        const body = await request.json();
 
-        if (!hasPermission(user.role, userPerms, PERMISSIONS.PLAYERS_WRITE)) {
+        // Check granular permissions based on which fields are being updated
+        const fieldPermissions: Record<string, string> = {
+            is_wagering_exempt: PERMISSIONS.PLAYERS_EXEMPTION,
+            daily_withdrawal_limit: PERMISSIONS.PLAYERS_DAILY_LIMIT,
+        };
+
+        for (const field of Object.keys(body)) {
+            const requiredPerm = fieldPermissions[field];
+            if (requiredPerm) {
+                if (!hasPermission(user.role, userPerms, requiredPerm)) {
+                    return NextResponse.json(
+                        { error: `Forbidden. You do not have permission to update '${field}'.` },
+                        { status: 403 }
+                    );
+                }
+            }
+        }
+
+        // For all other fields, require general players:write
+        const granularFields = new Set(Object.keys(fieldPermissions));
+        const hasOtherFields = Object.keys(body).some(f => !granularFields.has(f));
+        if (hasOtherFields && !hasPermission(user.role, userPerms, PERMISSIONS.PLAYERS_WRITE)) {
             return NextResponse.json(
                 { error: 'Forbidden. You do not have permission to update players.' },
                 { status: 403 }
             );
         }
 
-        const { id } = await params;
-        const body = await request.json();
         const updatedPlayer = await adminConsole.patchUser(id, body);
         return NextResponse.json(updatedPlayer);
     } catch (error) {

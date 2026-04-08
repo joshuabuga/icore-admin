@@ -48,6 +48,11 @@ const PERMISSION_GROUPS = [
     permissions: [
       { value: PERMISSIONS.PLAYERS_READ, label: "View Players" },
       { value: PERMISSIONS.PLAYERS_WRITE, label: "Edit Players" },
+      { value: PERMISSIONS.PLAYERS_CREDIT, label: "Credit Players" },
+      { value: PERMISSIONS.PLAYERS_DEBIT, label: "Debit Players" },
+      { value: PERMISSIONS.PLAYERS_SMS, label: "SMS Players" },
+      { value: PERMISSIONS.PLAYERS_DAILY_LIMIT, label: "Set Daily Withdrawal Limit" },
+      { value: PERMISSIONS.PLAYERS_EXEMPTION, label: "Toggle Wagering Exemption" },
     ],
   },
   {
@@ -110,6 +115,13 @@ const PERMISSION_GROUPS = [
     permissions: [
       { value: PERMISSIONS.TPAY_READ, label: "View TPay" },
       { value: PERMISSIONS.TPAY_WRITE, label: "Manage TPay" },
+    ],
+  },
+  {
+    label: "Affiliate",
+    permissions: [
+      { value: PERMISSIONS.AFFILIATE_READ, label: "View Affiliates" },
+      { value: PERMISSIONS.AFFILIATE_WRITE, label: "Manage Affiliates" },
     ],
   },
 ];

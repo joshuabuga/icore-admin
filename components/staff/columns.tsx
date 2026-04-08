@@ -30,6 +30,7 @@ export interface StaffActionHandlers {
   onDelete: (staff: StaffMember) => Promise<void>;
   isDeleting?: boolean;
   currentUserId?: string;
+  canWrite?: boolean;
 }
 
 const roleColors: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
@@ -61,6 +62,7 @@ function StaffActionsCell({
   const [isLoading, setIsLoading] = useState(false);
 
   const isCurrentUser = handlers.currentUserId === staff.id;
+  const canWrite = handlers.canWrite !== false;
 
   const handleDelete = async () => {
     setIsLoading(true);
@@ -71,6 +73,8 @@ function StaffActionsCell({
       setShowDeleteDialog(false);
     }
   };
+
+  if (!canWrite) return null;
 
   return (
     <>

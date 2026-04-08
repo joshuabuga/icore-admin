@@ -32,7 +32,7 @@ export async function POST(
 
         const userPerms = user.permissions.map(p => p.permission);
 
-        if (!hasPermission(user.role, userPerms, PERMISSIONS.BATCHES_PROCESS)) {
+        if (!hasPermission(user.role, userPerms, PERMISSIONS.PLAYERS_CREDIT)) {
             return NextResponse.json(
                 { error: 'Forbidden. You do not have permission to credit players.' },
                 { status: 403 }

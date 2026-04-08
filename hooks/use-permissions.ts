@@ -22,8 +22,8 @@ export function usePermissions() {
         '/api/auth/permissions',
         fetcher,
         {
-            revalidateOnFocus: false,
-            dedupingInterval: 60000,
+            revalidateOnFocus: true,
+            dedupingInterval: 5000,
         }
     );
 

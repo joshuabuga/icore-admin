@@ -73,8 +73,38 @@ export async function POST(request: Request) {
     }
 }
 
-export async function GET(request: Request) {
+export async function GET() {
     try {
+        const { userId } = await auth();
+
+        if (!userId) {
+            return NextResponse.json(
+                { error: 'Unauthorized. Please sign in.' },
+                { status: 401 }
+            );
+        }
+
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            include: { permissions: true },
+        });
+
+        if (!user) {
+            return NextResponse.json(
+                { error: 'User not found.' },
+                { status: 401 }
+            );
+        }
+
+        const userPerms = user.permissions.map((p: { permission: string }) => p.permission);
+
+        if (!hasPermission(user.role, userPerms, PERMISSIONS.PROMOS_READ)) {
+            return NextResponse.json(
+                { error: 'Forbidden. You do not have permission to view promos.' },
+                { status: 403 }
+            );
+        }
+
         const promos = await prisma.promo.findMany();
         return NextResponse.json(promos);
     } catch (error) {

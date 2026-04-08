@@ -4,6 +4,7 @@ import { useMemo, useCallback, useState } from "react";
 import { toast } from "sonner";
 
 import { usePlayers, usePlayerMutations } from "@/hooks/use-players";
+import { usePermissions } from "@/hooks/use-permissions";
 import { DataTable } from "@/components/shared/data-table";
 import {
   createPlayerColumns,
@@ -35,6 +36,7 @@ export default function PlayersPage() {
     date_before: dateBefore,
   });
   const { updatePlayer, isUpdating } = usePlayerMutations();
+  const { hasPermission, PERMISSIONS } = usePermissions();
 
   // Action handlers
   const handleToggleActive = useCallback(
@@ -109,8 +111,12 @@ export default function PlayersPage() {
       onTogglePayout: handleTogglePayout,
       onToggleWageringExemption: handleToggleWageringExemption,
       isUpdating,
+      permissions: {
+        canWrite: hasPermission(PERMISSIONS.PLAYERS_WRITE),
+        canExemption: hasPermission(PERMISSIONS.PLAYERS_EXEMPTION),
+      },
     }),
-    [handleToggleActive, handleTogglePayout, handleToggleWageringExemption, isUpdating]
+    [handleToggleActive, handleTogglePayout, handleToggleWageringExemption, isUpdating, hasPermission, PERMISSIONS]
   );
 
   const columns = useMemo(

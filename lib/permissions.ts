@@ -4,6 +4,11 @@ export const PERMISSIONS = {
     // Players
     PLAYERS_READ: 'players:read',
     PLAYERS_WRITE: 'players:write',
+    PLAYERS_CREDIT: 'players:credit',
+    PLAYERS_DEBIT: 'players:debit',
+    PLAYERS_SMS: 'players:sms',
+    PLAYERS_DAILY_LIMIT: 'players:daily-limit',
+    PLAYERS_EXEMPTION: 'players:exemption',
 
     // Finance/Cashflow
     CASHFLOW_READ: 'cashflow:read',
@@ -48,16 +53,22 @@ export const PERMISSIONS = {
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
 
 export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
-    user: [],
+    // Base role — can only view the summary dashboard
+    user: [
+        PERMISSIONS.SUMMARY_READ,
+    ],
 
+    // Customer service — player-focused operations
     cs: [
         PERMISSIONS.PLAYERS_READ,
         PERMISSIONS.PLAYERS_WRITE,
+        PERMISSIONS.PLAYERS_SMS,
         PERMISSIONS.SUMMARY_READ,
         PERMISSIONS.ANALYTICS_READ,
         PERMISSIONS.CASHFLOW_READ,
     ],
 
+    // Marketing — promos, bonuses, and campaign analytics
     marketing: [
         PERMISSIONS.PROMOS_READ,
         PERMISSIONS.PROMOS_WRITE,
@@ -66,25 +77,32 @@ export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
         PERMISSIONS.SUMMARY_READ,
         PERMISSIONS.ANALYTICS_READ,
         PERMISSIONS.PLAYERS_READ,
+        PERMISSIONS.CASHFLOW_READ,
     ],
 
+    // Finance — cashflow, payments, and affiliates
     finance: [
         PERMISSIONS.CASHFLOW_READ,
         PERMISSIONS.CASHFLOW_WRITE,
         PERMISSIONS.BATCHES_READ,
         PERMISSIONS.BATCHES_APPROVE,
         PERMISSIONS.BATCHES_PROCESS,
+        PERMISSIONS.PLAYERS_CREDIT,
+        PERMISSIONS.PLAYERS_DEBIT,
         PERMISSIONS.SUMMARY_READ,
         PERMISSIONS.ANALYTICS_READ,
         PERMISSIONS.PLAYERS_READ,
+        PERMISSIONS.TPAY_WRITE,
         PERMISSIONS.AFFILIATE_READ,
         PERMISSIONS.AFFILIATE_WRITE,
     ],
 
+    // Admin — read-heavy + player write-heavy, no tpay:write, no staff:write
     admin: Object.values(PERMISSIONS).filter(
-        p => p !== PERMISSIONS.STAFF_WRITE
+        p => p !== PERMISSIONS.STAFF_WRITE && p !== PERMISSIONS.TPAY_WRITE
     ),
 
+    // Super admin — unrestricted access
     super_admin: Object.values(PERMISSIONS),
 };
 

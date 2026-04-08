@@ -1,19 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
 import {uploadFile, uploadImage, uploadCSV, uploadPromoImage, generateSignedUploadUrl} from '@/lib/storage';
+import { requireAuth, requireAnyPermission, isAuthError, PERMISSIONS } from '@/lib/api-auth';
 
 
 export async function GET(request: NextRequest) {
     try {
-        const { userId } = await auth();
-        if (!userId) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
         const { searchParams } = new URL(request.url);
+        const type = searchParams.get('type'); // 'promo-main', 'promo-carousel', etc.
+
+        // Check permission based on upload type
+        const isPromoUpload = type === 'promo-main' || type === 'promo-carousel';
+        const authResult = isPromoUpload
+            ? await requireAuth(PERMISSIONS.PROMOS_WRITE)
+            : await requireAnyPermission([PERMISSIONS.PROMOS_WRITE, PERMISSIONS.BATCHES_READ, PERMISSIONS.PLAYERS_WRITE]);
+        if (isAuthError(authResult)) return authResult;
+
         const fileName = searchParams.get('fileName');
         const contentType = searchParams.get('contentType');
-        const type = searchParams.get('type'); // 'promo-main', 'promo-carousel', etc.
         const promoId = searchParams.get('promoId');
         const folder = searchParams.get('folder');
 
@@ -52,14 +55,23 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
     try {
-        const { userId } = await auth();
-        if (!userId) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
         const formData = await request.formData();
-        const file = formData.get('file') as File | null;
         const type = formData.get('type') as string | null; // 'image', 'csv', 'promo-main', 'promo-carousel', or 'file'
+
+        // Check permission based on upload type
+        const isPromoUpload = type === 'promo-main' || type === 'promo-carousel';
+        const isCsvUpload = type === 'csv';
+        let authResult;
+        if (isPromoUpload) {
+            authResult = await requireAuth(PERMISSIONS.PROMOS_WRITE);
+        } else if (isCsvUpload) {
+            authResult = await requireAuth(PERMISSIONS.BATCHES_READ);
+        } else {
+            authResult = await requireAnyPermission([PERMISSIONS.PROMOS_WRITE, PERMISSIONS.BATCHES_READ, PERMISSIONS.PLAYERS_WRITE]);
+        }
+        if (isAuthError(authResult)) return authResult;
+
+        const file = formData.get('file') as File | null;
         const folder = formData.get('folder') as string | null;
         const promoId = formData.get('promoId') as string | null;
 

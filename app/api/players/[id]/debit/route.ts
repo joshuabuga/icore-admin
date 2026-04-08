@@ -32,7 +32,7 @@ export async function POST(
 
         const userPerms = user.permissions.map(p => p.permission);
 
-        if (!hasPermission(user.role, userPerms, PERMISSIONS.PLAYERS_WRITE)) {
+        if (!hasPermission(user.role, userPerms, PERMISSIONS.PLAYERS_DEBIT)) {
             return NextResponse.json(
                 { error: 'Forbidden. You do not have permission to debit players.' },
                 { status: 403 }

@@ -147,15 +147,17 @@ export default function PlayerDetailPage({ params }: PageProps) {
           </div>
           {player?.msisdn && (
             <div className="flex gap-2">
-              <SMSDialog msisdn={player.msisdn}/>
-              {hasPermission(PERMISSIONS.BATCHES_PROCESS) && (
+              {hasPermission(PERMISSIONS.PLAYERS_SMS) && (
+                <SMSDialog msisdn={player.msisdn}/>
+              )}
+              {hasPermission(PERMISSIONS.PLAYERS_CREDIT) && (
                 <CreditPlayerDialog
                   playerId={id}
                   msisdn={player.msisdn}
                   playerName={player.name}
                 />
               )}
-              {hasPermission(PERMISSIONS.PLAYERS_WRITE) && (
+              {hasPermission(PERMISSIONS.PLAYERS_DEBIT) && (
                 <DebitPlayerDialog
                   playerId={id}
                   msisdn={player.msisdn}
@@ -297,7 +299,7 @@ export default function PlayerDetailPage({ params }: PageProps) {
                     {player?.daily_withdrawal_limit ? "Custom limit" : "Global default"}
                   </p>
                 </div>
-                {hasPermission(PERMISSIONS.PLAYERS_WRITE) && (
+                {hasPermission(PERMISSIONS.PLAYERS_DAILY_LIMIT) && (
                   <WithdrawalLimitDialog
                     playerId={id}
                     playerName={player?.name}

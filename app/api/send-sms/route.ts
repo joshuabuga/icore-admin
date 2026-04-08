@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
 
         const userPerms = user.permissions.map((p: { permission: string }) => p.permission);
 
-        if (!hasPermission(user.role, userPerms, PERMISSIONS.PLAYERS_WRITE)) {
+        if (!hasPermission(user.role, userPerms, PERMISSIONS.PLAYERS_SMS)) {
             return NextResponse.json(
                 { message: 'Forbidden. You do not have permission to send SMS.' },
                 { status: 403 }
