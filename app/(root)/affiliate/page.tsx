@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useAffiliates } from "@/hooks/use-affiliate";
 import { DataTable } from "@/components/shared/data-table";
-import { affiliatesColumns } from "@/components/affiliate/affiliates-columns";
+import { createAffiliatesColumns } from "@/components/affiliate/affiliates-columns";
 
 export default function AffiliatePage() {
     const [search, setSearch] = useState("");
@@ -40,7 +40,7 @@ export default function AffiliatePage() {
             </div>
 
             <DataTable
-                columns={affiliatesColumns}
+                columns={createAffiliatesColumns(refetch)}
                 data={affiliates}
                 isLoading={isLoading}
                 searchPlaceholder="Search by phone..."

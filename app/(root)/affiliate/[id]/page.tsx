@@ -16,6 +16,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { ApprovePayoutDialog } from "@/components/affiliate/approve-payout-dialog";
+import { EditAffiliateDialog } from "@/components/affiliate/edit-affiliate-dialog";
 import { AffiliateCommission, AffiliatePayoutRequest } from "@/types/affiliate";
 
 function StatusBadge({ status }: { status: string }) {
@@ -67,13 +68,14 @@ export default function AffiliateDetailPage({ params }: { params: Promise<{ id: 
                 <Link href="/affiliate" className="text-muted-foreground hover:text-foreground">
                     <ArrowLeft className="size-5" />
                 </Link>
-                <div>
+                <div className="flex-1">
                     <h1 className="text-2xl font-bold tracking-tight">
                         {formatPhone(affiliate.msisdn)}
                     </h1>
                     <p className="text-muted-foreground font-mono text-sm">{affiliate.affiliate_code}</p>
                 </div>
                 <StatusBadge status={affiliate.status} />
+                <EditAffiliateDialog affiliate={affiliate} onDone={refetch} />
             </div>
 
             {/* Wallet stats */}
@@ -104,6 +106,8 @@ export default function AffiliateDetailPage({ params }: { params: Promise<{ id: 
                     <div><span className="text-muted-foreground">Commission rate:</span> {affiliate.commission_rate}%</div>
                     <div><span className="text-muted-foreground">Model:</span> {affiliate.commission_model}</div>
                     <div><span className="text-muted-foreground">Min payout:</span> {formatCurrency(affiliate.min_payout_amount)}</div>
+                    <div><span className="text-muted-foreground">Max payout:</span> {affiliate.max_payout_amount ? formatCurrency(affiliate.max_payout_amount) : "No cap"}</div>
+                    <div><span className="text-muted-foreground">Hold days:</span> {affiliate.hold_days ?? "Global default"}</div>
                     <div><span className="text-muted-foreground">Players:</span> {affiliate.total_players}</div>
                     <div><span className="text-muted-foreground">Joined:</span> {formatDateTime(affiliate.created_at)}</div>
                 </CardContent>

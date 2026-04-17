@@ -77,6 +77,36 @@ export function useAffiliatePayoutRequests(params: AffiliateParams = {}) {
     };
 }
 
+export interface AffiliateEditFields {
+    status?: 'active' | 'inactive' | 'suspended';
+    commission_rate?: number;
+    commission_model?: 'ggr_share' | 'revenue_share';
+    min_payout_amount?: number;
+    max_payout_amount?: number | null;
+    hold_days?: number | null;
+}
+
+export async function patchAffiliate(id: number, data: AffiliateEditFields) {
+    const res = await fetch(`/api/affiliate/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || 'Failed to update affiliate');
+    }
+
+    await globalMutate(
+        (key) => typeof key === 'string' && key.startsWith('/api/affiliate'),
+        undefined,
+        { revalidate: true },
+    );
+
+    return res.json();
+}
+
 export async function actionPayoutRequest(id: number, action: 'approve' | 'reject', notes?: string) {
     const res = await fetch(`/api/affiliate/payout-requests/${id}`, {
         method: 'PATCH',

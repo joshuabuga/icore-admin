@@ -4,6 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { AffiliateListItem } from "@/types/affiliate";
 import { Badge } from "@/components/ui/badge";
+import { EditAffiliateDialog } from "@/components/affiliate/edit-affiliate-dialog";
 import { formatCurrency, formatPhone, formatDateTime } from "@/lib/utils/table-utils";
 
 function AffiliateStatusBadge({ status }: { status: AffiliateListItem['status'] }) {
@@ -15,7 +16,8 @@ function AffiliateStatusBadge({ status }: { status: AffiliateListItem['status'] 
     return <Badge variant={variants[status] ?? "secondary"}>{status}</Badge>;
 }
 
-export const affiliatesColumns: ColumnDef<AffiliateListItem>[] = [
+export function createAffiliatesColumns(onRefetch: () => void): ColumnDef<AffiliateListItem>[] {
+    return [
     {
         accessorKey: "msisdn",
         header: "Phone",
@@ -71,4 +73,12 @@ export const affiliatesColumns: ColumnDef<AffiliateListItem>[] = [
         header: "Joined",
         cell: ({ row }) => formatDateTime(row.getValue("created_at")),
     },
-];
+    {
+        id: "actions",
+        header: "",
+        cell: ({ row }) => (
+            <EditAffiliateDialog affiliate={row.original} onDone={onRefetch} />
+        ),
+    },
+    ];
+}

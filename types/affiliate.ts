@@ -13,6 +13,8 @@ export interface AffiliateListItem {
     commission_rate: string;
     commission_model: 'ggr_share' | 'revenue_share';
     min_payout_amount: string;
+    max_payout_amount: string | null;
+    hold_days: number | null;
     wallet: AffiliateWallet;
     total_players: number;
     total_commission: number;

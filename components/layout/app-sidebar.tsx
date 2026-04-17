@@ -121,15 +121,20 @@ const navigationItems: NavItem[] = [
     icon: CreditCard,
     requiredPermission: PERMISSIONS.TPAY_READ,
   },
-  // {
-  //   title: "Affiliate",
-  //   icon: Share2,
-  //   requiredPermission: PERMISSIONS.AFFILIATE_READ,
-  //   items: [
-  //     { title: "Affiliates", url: "/affiliate", icon: Users, requiredPermission: PERMISSIONS.AFFILIATE_READ },
-  //     { title: "Payout Requests", url: "/affiliate/payout-requests", icon: ArrowUpFromLine, requiredPermission: PERMISSIONS.AFFILIATE_READ },
-  //   ],
-  // },
+  {
+    title: "Affiliate",
+    icon: Share2,
+    requiredPermission: PERMISSIONS.AFFILIATE_READ,
+    items: [
+      {title: "Affiliates", url: "/affiliate", icon: Users, requiredPermission: PERMISSIONS.AFFILIATE_READ},
+      {
+        title: "Payout Requests",
+        url: "/affiliate/payout-requests",
+        icon: ArrowUpFromLine,
+        requiredPermission: PERMISSIONS.AFFILIATE_READ
+      },
+    ],
+  },
   {
     title: "Staff",
     url: "/staff",
