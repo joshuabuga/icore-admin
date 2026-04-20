@@ -1,5 +1,5 @@
 import { AccessTokenResponse } from "@/types/accessToken";
-import { AffiliateListItem, AffiliateDetail, AffiliatePayoutRequest } from "@/types/affiliate";
+import { AffiliateListItem, AffiliateDetail, AffiliatePayoutRequest, AffiliateSummary, AffiliateCommissionAnalyticsEntry } from "@/types/affiliate";
 import {
   DailyFlowEntry,
   DailyFTDVolume,
@@ -523,6 +523,40 @@ class AdminConsole {
       }
       const result = await response.json();
       return result.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async fetchAffiliateSummary(): Promise<AffiliateSummary> {
+    try {
+      const { access, baseURL } = await this.getAuth();
+      const response = await fetch(`${baseURL}/api/v1/console/affiliate/summary/`, {
+        method: 'GET',
+        headers: this.getHeaders(access),
+      });
+      if (!response.ok) throw new Error(`Failed to fetchAffiliateSummary: ${response.statusText}`);
+      const result = await response.json();
+      return (result?.data ?? result) as AffiliateSummary;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async fetchAffiliateCommissionAnalytics(id: string, params: { start_date: string; end_date: string }): Promise<AffiliateCommissionAnalyticsEntry[]> {
+    try {
+      const { access, baseURL } = await this.getAuth();
+      const qs = new URLSearchParams(params).toString();
+      const response = await fetch(`${baseURL}/api/v1/console/affiliate/${id}/commission-analytics/?${qs}`, {
+        method: 'GET',
+        headers: this.getHeaders(access),
+      });
+      if (!response.ok) throw new Error(`Failed to fetchAffiliateCommissionAnalytics: ${response.statusText}`);
+      const result = await response.json();
+      console.dir(result.data)
+      return (result?.data ?? result) as AffiliateCommissionAnalyticsEntry[];
     } catch (error) {
       console.error(error);
       throw error;

@@ -27,10 +27,15 @@ import {
 interface Props {
     affiliate: AffiliateListItem;
     onDone?: () => void;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
+    hideTrigger?: boolean;
 }
 
-export function EditAffiliateDialog({ affiliate, onDone }: Props) {
-    const [open, setOpen] = useState(false);
+export function EditAffiliateDialog({ affiliate, onDone, open: openProp, onOpenChange, hideTrigger }: Props) {
+    const [internalOpen, setInternalOpen] = useState(false);
+    const open = openProp ?? internalOpen;
+    const setOpen = onOpenChange ?? setInternalOpen;
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
@@ -65,12 +70,14 @@ export function EditAffiliateDialog({ affiliate, onDone }: Props) {
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2">
-                    <Settings className="size-4" />
-                    Edit
-                </Button>
-            </DialogTrigger>
+            {!hideTrigger && (
+                <DialogTrigger asChild>
+                    <Button variant="outline" size="sm" className="gap-2">
+                        <Settings className="size-4" />
+                        Edit
+                    </Button>
+                </DialogTrigger>
+            )}
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle>Edit Affiliate</DialogTitle>

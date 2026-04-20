@@ -1,12 +1,13 @@
 "use client";
 
-import { use } from "react";
+import { use, useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { useAffiliate } from "@/hooks/use-affiliate";
+import { useAffiliate, useAffiliateCommissionAnalytics } from "@/hooks/use-affiliate";
 import { formatCurrency, formatPhone, formatDateTime } from "@/lib/utils/table-utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
     Table,
     TableBody,
@@ -15,9 +16,39 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import {
+    ChartConfig,
+    ChartContainer,
+    ChartTooltip,
+    ChartTooltipContent,
+} from "@/components/ui/chart";
 import { ApprovePayoutDialog } from "@/components/affiliate/approve-payout-dialog";
 import { EditAffiliateDialog } from "@/components/affiliate/edit-affiliate-dialog";
 import { AffiliateCommission, AffiliatePayoutRequest } from "@/types/affiliate";
+
+type DatePreset = "7" | "30" | "90";
+
+function getDateRange(preset: DatePreset) {
+    const end = new Date();
+    const start = new Date();
+    start.setDate(end.getDate() - Number(preset));
+    return {
+        startDate: start.toISOString().split("T")[0],
+        endDate: end.toISOString().split("T")[0],
+    };
+}
+
+const commissionChartConfig = {
+    commission_amount: { label: "Commission (KES)", color: "hsl(142, 71%, 45%)" },
+} satisfies ChartConfig;
 
 function StatusBadge({ status }: { status: string }) {
     const variants: Record<string, "default" | "secondary" | "destructive"> = {
@@ -37,6 +68,18 @@ function StatusBadge({ status }: { status: string }) {
 export default function AffiliateDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
     const { affiliate, isLoading, error, refetch } = useAffiliate(id);
+    const [preset, setPreset] = useState<DatePreset>("30");
+    const { startDate, endDate } = useMemo(() => getDateRange(preset), [preset]);
+    const { data: analyticsData, isLoading: analyticsLoading } = useAffiliateCommissionAnalytics(id, startDate, endDate);
+
+    const chartData = useMemo(() =>
+        analyticsData.map(e => ({
+            ...e,
+            label: new Date(e.date + "T00:00:00").toLocaleDateString("en-US", { day: "numeric", month: "short" }),
+            commission_amount: parseFloat(e.commission_amount),
+        })),
+        [analyticsData],
+    );
 
     if (isLoading) {
         return (
@@ -59,7 +102,10 @@ export default function AffiliateDetailPage({ params }: { params: Promise<{ id: 
         );
     }
 
-    const pendingPayouts = affiliate.payout_requests.filter(r => r.status === "pending");
+    const players = affiliate.players ?? [];
+    const commissions = affiliate.commissions ?? [];
+    const payoutRequests = affiliate.payout_requests ?? [];
+    const pendingPayouts = payoutRequests.filter(r => r.status === "pending");
 
     return (
         <div className="space-y-6">
@@ -97,6 +143,40 @@ export default function AffiliateDetailPage({ params }: { params: Promise<{ id: 
                 ))}
             </div>
 
+            {/* Commission trend chart */}
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle className="text-sm">Commission Trend</CardTitle>
+                    <Select value={preset} onValueChange={(v) => setPreset(v as DatePreset)}>
+                        <SelectTrigger className="w-[140px] h-8 text-xs">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="7">Last 7 days</SelectItem>
+                            <SelectItem value="30">Last 30 days</SelectItem>
+                            <SelectItem value="90">Last 90 days</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </CardHeader>
+                <CardContent>
+                    {analyticsLoading ? (
+                        <Skeleton className="h-[220px] w-full" />
+                    ) : chartData.length === 0 ? (
+                        <p className="py-8 text-center text-sm text-muted-foreground">No commission data for this period.</p>
+                    ) : (
+                        <ChartContainer config={commissionChartConfig} className="h-[220px] w-full">
+                            <BarChart data={chartData} margin={{ top: 8 }} accessibilityLayer>
+                                <CartesianGrid vertical={false} />
+                                <XAxis dataKey="label" tickLine={false} axisLine={false} tickMargin={8} fontSize={11} />
+                                <YAxis tickLine={false} axisLine={false} tickMargin={8} fontSize={11} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`} />
+                                <ChartTooltip content={<ChartTooltipContent formatter={(value) => `KES ${Number(value).toLocaleString()}`} />} />
+                                <Bar dataKey="commission_amount" fill="hsl(142, 71%, 45%)" radius={[4, 4, 0, 0]} />
+                            </BarChart>
+                        </ChartContainer>
+                    )}
+                </CardContent>
+            </Card>
+
             {/* Config info */}
             <Card>
                 <CardHeader>
@@ -114,11 +194,11 @@ export default function AffiliateDetailPage({ params }: { params: Promise<{ id: 
             </Card>
 
             {/* Pending payout requests */}
-            {pendingPayouts.length > 0 && (
+            {pendingPayouts?.length > 0 && (
                 <Card className="border-yellow-500/40">
                     <CardHeader>
                         <CardTitle className="text-sm">
-                            Pending Payout Requests ({pendingPayouts.length})
+                            Pending Payout Requests ({pendingPayouts?.length})
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="p-0">
@@ -132,7 +212,7 @@ export default function AffiliateDetailPage({ params }: { params: Promise<{ id: 
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {pendingPayouts.map((r: AffiliatePayoutRequest) => (
+                                {pendingPayouts?.map((r: AffiliatePayoutRequest) => (
                                     <TableRow key={r.id}>
                                         <TableCell className="font-mono text-sm">#{r.id}</TableCell>
                                         <TableCell className="font-semibold">{formatCurrency(r.amount)}</TableCell>
@@ -151,10 +231,10 @@ export default function AffiliateDetailPage({ params }: { params: Promise<{ id: 
             {/* Referred players */}
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-sm">Referred Players ({affiliate.players.length})</CardTitle>
+                    <CardTitle className="text-sm">Referred Players ({affiliate.players?.length})</CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
-                    {affiliate.players.length === 0 ? (
+                    {affiliate.players?.length === 0 ? (
                         <p className="p-4 text-sm text-muted-foreground">No players yet.</p>
                     ) : (
                         <Table>
@@ -166,7 +246,7 @@ export default function AffiliateDetailPage({ params }: { params: Promise<{ id: 
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {affiliate.players.map(p => (
+                                {affiliate.players?.map(p => (
                                     <TableRow key={p.id}>
                                         <TableCell>{formatPhone(p.msisdn)}</TableCell>
                                         <TableCell><StatusBadge status={p.status} /></TableCell>
@@ -182,10 +262,10 @@ export default function AffiliateDetailPage({ params }: { params: Promise<{ id: 
             {/* Commissions */}
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-sm">Commission History ({affiliate.commissions.length})</CardTitle>
+                    <CardTitle className="text-sm">Commission History ({affiliate.commissions?.length})</CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
-                    {affiliate.commissions.length === 0 ? (
+                    {affiliate.commissions?.length === 0 ? (
                         <p className="p-4 text-sm text-muted-foreground">No commissions yet.</p>
                     ) : (
                         <Table>
@@ -199,7 +279,7 @@ export default function AffiliateDetailPage({ params }: { params: Promise<{ id: 
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {affiliate.commissions.map((c: AffiliateCommission) => (
+                                {affiliate.commissions?.map((c: AffiliateCommission) => (
                                     <TableRow key={c.id}>
                                         <TableCell>{c.commission_date}</TableCell>
                                         <TableCell>{formatPhone(c.player_msisdn)}</TableCell>
@@ -220,7 +300,7 @@ export default function AffiliateDetailPage({ params }: { params: Promise<{ id: 
                     <CardTitle className="text-sm">All Payout Requests</CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
-                    {affiliate.payout_requests.length === 0 ? (
+                    {affiliate.payout_requests?.length === 0 ? (
                         <p className="p-4 text-sm text-muted-foreground">No payout requests yet.</p>
                     ) : (
                         <Table>
@@ -235,7 +315,7 @@ export default function AffiliateDetailPage({ params }: { params: Promise<{ id: 
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {affiliate.payout_requests.map((r: AffiliatePayoutRequest) => (
+                                {affiliate.payout_requests?.map((r: AffiliatePayoutRequest) => (
                                     <TableRow key={r.id}>
                                         <TableCell className="font-mono text-xs">#{r.id}</TableCell>
                                         <TableCell className="font-semibold">{formatCurrency(r.amount)}</TableCell>

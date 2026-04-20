@@ -18,7 +18,21 @@ export interface AffiliateListItem {
     wallet: AffiliateWallet;
     total_players: number;
     total_commission: number;
+    total_ggr: number;
     created_at: string;
+}
+
+export interface AffiliateSummary {
+    total_active: number;
+    total_commission_paid_out: string;
+    total_pending: string;
+    total_players_referred: number;
+}
+
+export interface AffiliateCommissionAnalyticsEntry {
+    date: string;
+    commission_amount: string;
+    ggr_amount: string;
 }
 
 export interface AffiliatePlayer {

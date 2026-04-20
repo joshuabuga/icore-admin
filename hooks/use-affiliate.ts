@@ -2,7 +2,7 @@
 
 import useSWR, { mutate as globalMutate } from 'swr';
 import { fetcher } from '@/lib/fetcher';
-import { AffiliateListItem, AffiliateDetail, AffiliatePayoutRequest } from '@/types/affiliate';
+import { AffiliateListItem, AffiliateDetail, AffiliatePayoutRequest, AffiliateSummary, AffiliateCommissionAnalyticsEntry } from '@/types/affiliate';
 
 export interface AffiliateParams {
     search?: string;
@@ -75,6 +75,23 @@ export function useAffiliatePayoutRequests(params: AffiliateParams = {}) {
         error,
         refetch: mutate,
     };
+}
+
+export function useAffiliateSummary() {
+    const { data, error, isLoading, mutate } = useSWR<AffiliateSummary>(
+        '/api/affiliate/summary',
+        fetcher,
+        { revalidateOnFocus: false },
+    );
+    return { summary: data ?? null, isLoading, error, refetch: mutate };
+}
+
+export function useAffiliateCommissionAnalytics(id: string | null, startDate: string, endDate: string) {
+    const key = id ? `/api/affiliate/${id}/analytics?start_date=${startDate}&end_date=${endDate}` : null;
+    const { data, error, isLoading } = useSWR<AffiliateCommissionAnalyticsEntry[]>(key, fetcher, {
+        revalidateOnFocus: false,
+    });
+    return { data: data ?? [], isLoading, error };
 }
 
 export interface AffiliateEditFields {

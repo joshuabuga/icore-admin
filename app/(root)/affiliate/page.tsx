@@ -1,15 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { useAffiliates } from "@/hooks/use-affiliate";
+import { useAffiliates, useAffiliateSummary } from "@/hooks/use-affiliate";
 import { DataTable } from "@/components/shared/data-table";
 import { createAffiliatesColumns } from "@/components/affiliate/affiliates-columns";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatCurrency } from "@/lib/utils/table-utils";
 
 export default function AffiliatePage() {
     const [search, setSearch] = useState("");
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
 
+    const { summary } = useAffiliateSummary();
     const { affiliates, totalRows, isLoading, error, refetch } = useAffiliates({
         search: search || undefined,
         page,
@@ -39,6 +42,24 @@ export default function AffiliatePage() {
                 <p className="text-muted-foreground">All affiliate accounts and their performance.</p>
             </div>
 
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                {[
+                    { label: "Active Affiliates", value: summary?.total_active != null ? String(summary.total_active) : "—" },
+                    { label: "Total Paid Out", value: summary ? formatCurrency(summary.total_commission_paid_out) : "—" },
+                    { label: "Total Pending", value: summary ? formatCurrency(summary.total_pending) : "—" },
+                    { label: "Players Referred", value: summary?.total_players_referred != null ? String(summary.total_players_referred) : "—" },
+                ].map(stat => (
+                    <Card key={stat.label}>
+                        <CardHeader className="pb-1 pt-4">
+                            <CardTitle className="text-xs font-medium text-muted-foreground">{stat.label}</CardTitle>
+                        </CardHeader>
+                        <CardContent className="pb-4">
+                            <p className="text-lg font-bold">{stat.value}</p>
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
+
             <DataTable
                 columns={createAffiliatesColumns(refetch)}
                 data={affiliates}
@@ -51,8 +72,8 @@ export default function AffiliatePage() {
                 onSearchChange={(value) => { setSearch(value); setPage(1); }}
                 onPageChange={setPage}
                 onPageSizeChange={(value) => { setPageSize(value); setPage(1); }}
-                mobileHiddenColumns={["total_commission", "pending_balance", "created_at"]}
-                tabletHiddenColumns={["created_at"]}
+                mobileHiddenColumns={["total_commission", "total_ggr", "pending_balance", "created_at"]}
+                tabletHiddenColumns={["total_ggr", "created_at"]}
             />
         </div>
     );
