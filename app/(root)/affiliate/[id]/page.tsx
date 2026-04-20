@@ -130,7 +130,7 @@ export default function AffiliateDetailPage({ params }: { params: Promise<{ id: 
                     { label: "Pending", value: formatCurrency(affiliate.wallet?.pending_balance) },
                     { label: "Available", value: formatCurrency(affiliate.wallet?.available_balance) },
                     { label: "Paid Out", value: formatCurrency(affiliate.wallet?.paid_out_balance) },
-                    { label: "Total Earned", value: formatCurrency(String(affiliate.total_commission)) },
+                    { label: "Total Earned", value: formatCurrency(affiliate.total_commission) },
                 ].map(stat => (
                     <Card key={stat.label}>
                         <CardHeader className="pb-1 pt-4">

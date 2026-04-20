@@ -482,7 +482,7 @@ class AdminConsole {
       });
       if (!response.ok) throw new Error(`Failed to fetchAffiliate: ${response.statusText}`);
       const result = await response.json();
-      return result.data;
+      return (result?.data?.data ?? result?.data ?? result) as AffiliateDetail;
     } catch (error) {
       console.error(error);
       throw error;
@@ -573,7 +573,7 @@ class AdminConsole {
       });
       if (!response.ok) throw new Error(`Failed to patchAffiliate: ${response.statusText}`);
       const result = await response.json();
-      return result.data;
+      return (result?.data?.data ?? result?.data ?? result) as AffiliateListItem;
     } catch (error) {
       console.error(error);
       throw error;

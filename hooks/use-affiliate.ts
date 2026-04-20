@@ -91,6 +91,7 @@ export function useAffiliateCommissionAnalytics(id: string | null, startDate: st
     const { data, error, isLoading } = useSWR<AffiliateCommissionAnalyticsEntry[]>(key, fetcher, {
         revalidateOnFocus: false,
     });
+    console.dir(data)
     return { data: data ?? [], isLoading, error };
 }
 
