@@ -752,6 +752,115 @@ class AdminConsole {
       throw error;
     }
   }
+
+  // ── Promotions ─────────────────────────────────────────────────────────────
+
+  async getPromos(params?: { search?: string; page?: number }): Promise<any> {
+    const { access, baseURL } = await this.getAuth();
+    const qs = new URLSearchParams();
+    if (params?.search) qs.set('search', params.search);
+    if (params?.page) qs.set('page', String(params.page));
+    const response = await fetch(`${baseURL}/api/v1/console/promotions/?${qs}`, {
+      headers: this.getHeaders(access),
+    });
+    if (!response.ok) throw new Error(`getPromos: ${response.statusText}`);
+    return response.json();
+  }
+
+  async getPromo(id: number): Promise<any> {
+    const { access, baseURL } = await this.getAuth();
+    const response = await fetch(`${baseURL}/api/v1/console/promotions/${id}/`, {
+      headers: this.getHeaders(access),
+    });
+    if (!response.ok) throw new Error(`getPromo: ${response.statusText}`);
+    return response.json();
+  }
+
+  async createPromo(data: Record<string, unknown>): Promise<any> {
+    const { access, baseURL } = await this.getAuth();
+    const response = await fetch(`${baseURL}/api/v1/console/promotions/`, {
+      method: 'POST',
+      headers: this.getHeaders(access),
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw err;
+    }
+    return response.json();
+  }
+
+  async updatePromo(id: number, data: Record<string, unknown>): Promise<any> {
+    const { access, baseURL } = await this.getAuth();
+    const response = await fetch(`${baseURL}/api/v1/console/promotions/${id}/`, {
+      method: 'PATCH',
+      headers: this.getHeaders(access),
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw err;
+    }
+    return response.json();
+  }
+
+  async deletePromo(id: number): Promise<void> {
+    const { access, baseURL } = await this.getAuth();
+    const response = await fetch(`${baseURL}/api/v1/console/promotions/${id}/`, {
+      method: 'DELETE',
+      headers: this.getHeaders(access),
+    });
+    if (!response.ok) throw new Error(`deletePromo: ${response.statusText}`);
+  }
+
+  async getPromoCodes(params?: { promo?: number; search?: string }): Promise<any> {
+    const { access, baseURL } = await this.getAuth();
+    const qs = new URLSearchParams();
+    if (params?.promo) qs.set('promo', String(params.promo));
+    if (params?.search) qs.set('search', params.search);
+    const response = await fetch(`${baseURL}/api/v1/console/promotions/codes/?${qs}`, {
+      headers: this.getHeaders(access),
+    });
+    if (!response.ok) throw new Error(`getPromoCodes: ${response.statusText}`);
+    return response.json();
+  }
+
+  async createPromoCode(data: Record<string, unknown>): Promise<any> {
+    const { access, baseURL } = await this.getAuth();
+    const response = await fetch(`${baseURL}/api/v1/console/promotions/codes/`, {
+      method: 'POST',
+      headers: this.getHeaders(access),
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw err;
+    }
+    return response.json();
+  }
+
+  async updatePromoCode(id: number, data: Record<string, unknown>): Promise<any> {
+    const { access, baseURL } = await this.getAuth();
+    const response = await fetch(`${baseURL}/api/v1/console/promotions/codes/${id}/`, {
+      method: 'PATCH',
+      headers: this.getHeaders(access),
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw err;
+    }
+    return response.json();
+  }
+
+  async deletePromoCode(id: number): Promise<void> {
+    const { access, baseURL } = await this.getAuth();
+    const response = await fetch(`${baseURL}/api/v1/console/promotions/codes/${id}/`, {
+      method: 'DELETE',
+      headers: this.getHeaders(access),
+    });
+    if (!response.ok) throw new Error(`deletePromoCode: ${response.statusText}`);
+  }
 }
 
 export const adminConsole = new AdminConsole();

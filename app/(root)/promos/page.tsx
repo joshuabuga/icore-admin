@@ -1,9 +1,5 @@
-import PromoEditor from "@/components/shared/editor/PromoEditor";
+import PromoList from '@/components/promotions/PromoList';
 
-export default function CreatePromoPage() {
-    return (
-        <main className="flex-1 space-y-4 p-8 pt-6">
-            <PromoEditor task="create" />
-        </main>
-    )
+export default function PromosPage() {
+    return <PromoList />;
 }

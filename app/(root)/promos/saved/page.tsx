@@ -1,10 +1,5 @@
-import SavedPromos from "@/components/promos/SavedPromos";
-
-
-
+import { redirect } from 'next/navigation';
 
 export default function Page() {
-    return (
-        <SavedPromos />
-    )
+    redirect('/promos');
 }
