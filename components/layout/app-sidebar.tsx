@@ -21,7 +21,7 @@ import {
   LogIn,
   TrendingUp,
   Activity,
-  DollarSign, CreditCard, Share2,
+  DollarSign, CreditCard, Share2, Settings, Percent,
 } from "lucide-react"
 import Image from "next/image"
 
@@ -140,6 +140,14 @@ const navigationItems: NavItem[] = [
     url: "/staff",
     icon: UserCog,
     requiredPermission: PERMISSIONS.STAFF_READ,
+  },
+  {
+    title: "Settings",
+    icon: Settings,
+    requiredPermission: PERMISSIONS.TAX_CONFIG_READ,
+    items: [
+      { title: "Tax Config", url: "/settings", icon: Percent, requiredPermission: PERMISSIONS.TAX_CONFIG_READ },
+    ],
   },
 ]
 

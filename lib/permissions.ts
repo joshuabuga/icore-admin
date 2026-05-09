@@ -48,6 +48,10 @@ export const PERMISSIONS = {
     // Affiliate
     AFFILIATE_READ: 'affiliate:read',
     AFFILIATE_WRITE: 'affiliate:write',
+
+    // Tax Config
+    TAX_CONFIG_READ: 'tax-config:read',
+    TAX_CONFIG_WRITE: 'tax-config:write',
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -95,6 +99,8 @@ export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
         PERMISSIONS.TPAY_WRITE,
         PERMISSIONS.AFFILIATE_READ,
         PERMISSIONS.AFFILIATE_WRITE,
+        PERMISSIONS.TAX_CONFIG_READ,
+        PERMISSIONS.TAX_CONFIG_WRITE,
     ],
 
     // Admin — read-heavy + player write-heavy, no tpay:write, no staff:write

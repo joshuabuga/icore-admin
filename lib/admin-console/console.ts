@@ -861,6 +861,30 @@ class AdminConsole {
     });
     if (!response.ok) throw new Error(`deletePromoCode: ${response.statusText}`);
   }
+
+  async fetchTaxConfig() {
+    const { access, baseURL } = await this.getAuth();
+    const response = await fetch(`${baseURL}/api/v1/console/payments/tax-config/`, {
+      method: 'GET',
+      headers: this.getHeaders(access),
+    });
+    if (!response.ok) throw new Error(`fetchTaxConfig: ${response.statusText}`);
+    return response.json();
+  }
+
+  async updateTaxConfig(data: Record<string, unknown>) {
+    const { access, baseURL } = await this.getAuth();
+    const response = await fetch(`${baseURL}/api/v1/console/payments/tax-config/`, {
+      method: 'PATCH',
+      headers: this.getHeaders(access),
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw err;
+    }
+    return response.json();
+  }
 }
 
 export const adminConsole = new AdminConsole();
