@@ -254,18 +254,33 @@ export default function PromoForm({ promoId }: Props) {
                                 />
                             </div>
                         ) : (
-                            <div className="space-y-2">
-                                <Label htmlFor="bonus_award_ratio">Ratio (0.10 = 10%)</Label>
-                                <Input
-                                    id="bonus_award_ratio"
-                                    type="number"
-                                    min={0}
-                                    max={1}
-                                    step="0.01"
-                                    value={form.bonus_award_ratio ?? '0'}
-                                    onChange={e => set('bonus_award_ratio', e.target.value)}
-                                />
-                            </div>
+                            <>
+                                <div className="space-y-2">
+                                    <Label htmlFor="bonus_award_ratio">Ratio (0.10 = 10%)</Label>
+                                    <Input
+                                        id="bonus_award_ratio"
+                                        type="number"
+                                        min={0}
+                                        max={1}
+                                        step="0.01"
+                                        value={form.bonus_award_ratio ?? '0'}
+                                        onChange={e => set('bonus_award_ratio', e.target.value)}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="bonus_amount">Cap (KES)</Label>
+                                    <Input
+                                        id="bonus_amount"
+                                        type="number"
+                                        min={0}
+                                        step="0.01"
+                                        placeholder="0 = no cap"
+                                        value={form.bonus_amount ?? '0'}
+                                        onChange={e => set('bonus_amount', e.target.value)}
+                                    />
+                                    <p className="text-xs text-muted-foreground">Maximum bonus per award. e.g. 1000 caps Karibu at KES 1,000.</p>
+                                </div>
+                            </>
                         )}
                     </div>
                 </CardContent>
