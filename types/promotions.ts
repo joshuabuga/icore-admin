@@ -4,6 +4,9 @@ export interface PromoRules {
     min_account_age_days?: number;
     active_days_of_week?: number[];  // 0=Mon … 6=Sun
     max_uses_per_user?: number;
+    cooldown_hours?: number;          // re-award lockout window per user
+    before_hour?: number;             // local hour 0-23 (exclusive upper bound)
+    after_hour?: number;              // local hour 0-23 (inclusive lower bound)
     excluded_users?: number[];
 }
 
@@ -64,6 +67,7 @@ export interface PromoCode {
 export const PROMO_TYPES = [
     { value: 'welcome_bonus', label: 'Welcome Bonus' },
     { value: 'first_deposit_bonus', label: 'First Deposit Bonus' },
+    { value: 'deposit_bonus', label: 'Deposit Bonus (generic)' },
     { value: 'recurring_bonus', label: 'Recurring Bonus' },
     { value: 'weekly_bonus', label: 'Weekly Bonus' },
     { value: 'super_sunday_bonus', label: 'Super Sunday Bonus' },

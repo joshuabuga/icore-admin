@@ -14,6 +14,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
+import { DateTimePicker } from '@/components/ui/datetime-picker';
 import type { Promo, PromoRules } from '@/types/promotions';
 import { PROMO_TYPES, BONUS_AWARD_TYPES, DAYS_OF_WEEK } from '@/types/promotions';
 
@@ -55,7 +56,11 @@ export default function PromoForm({ promoId }: Props) {
                 if (!r.ok) throw new Error('Not found');
                 return r.json();
             })
-            .then(data => { setForm({ ...EMPTY, ...data }); setLoading(false); })
+            .then(json => {
+                const promo = json && typeof json === 'object' && 'data' in json ? json.data : json;
+                setForm({ ...EMPTY, ...promo, rules: { ...(promo?.rules ?? {}) } });
+                setLoading(false);
+            })
             .catch(() => { toast.error('Failed to load promo'); setLoading(false); });
     }, [promoId]);
 
@@ -107,7 +112,8 @@ export default function PromoForm({ promoId }: Props) {
                 const err = await res.json().catch(() => ({}));
                 throw err;
             }
-            const saved: Promo = await res.json();
+            const json = await res.json();
+            const saved: Promo = json && typeof json === 'object' && 'data' in json ? json.data : json;
             toast.success(isEdit ? 'Promo updated' : 'Promo created');
             router.push(`/promos/${saved.id}`);
         } catch (err: any) {
@@ -316,20 +322,20 @@ export default function PromoForm({ promoId }: Props) {
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="active_from">Active From</Label>
-                            <Input
+                            <DateTimePicker
                                 id="active_from"
-                                type="datetime-local"
-                                value={form.active_from?.slice(0, 16) ?? ''}
-                                onChange={e => set('active_from', e.target.value ? new Date(e.target.value).toISOString() : null)}
+                                value={form.active_from ?? null}
+                                onChange={v => set('active_from', v)}
+                                placeholder="No start date"
                             />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="active_to">Active To</Label>
-                            <Input
+                            <DateTimePicker
                                 id="active_to"
-                                type="datetime-local"
-                                value={form.active_to?.slice(0, 16) ?? ''}
-                                onChange={e => set('active_to', e.target.value ? new Date(e.target.value).toISOString() : null)}
+                                value={form.active_to ?? null}
+                                onChange={v => set('active_to', v)}
+                                placeholder="No end date"
                             />
                         </div>
                     </div>
@@ -382,6 +388,72 @@ export default function PromoForm({ promoId }: Props) {
                             value={form.rules?.min_account_age_days ?? ''}
                             onChange={e => setRule('min_account_age_days', e.target.value ? Number(e.target.value) : undefined)}
                         />
+                    </div>
+
+                    <Separator />
+
+                    {/* Per-user limits */}
+                    <div className="grid grid-cols-2 gap-4 max-w-xl">
+                        <div className="space-y-2">
+                            <Label htmlFor="max_uses_per_user">Max Uses Per User</Label>
+                            <Input
+                                id="max_uses_per_user"
+                                type="number"
+                                min={0}
+                                placeholder="Blank = unlimited"
+                                value={form.rules?.max_uses_per_user ?? ''}
+                                onChange={e => setRule('max_uses_per_user', e.target.value ? Number(e.target.value) : undefined)}
+                            />
+                            <p className="text-xs text-muted-foreground">Lifetime cap per user. e.g. 1 for one-time bonuses.</p>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="cooldown_hours">Cooldown (hours)</Label>
+                            <Input
+                                id="cooldown_hours"
+                                type="number"
+                                min={0}
+                                placeholder="Blank = no cooldown"
+                                value={form.rules?.cooldown_hours ?? ''}
+                                onChange={e => setRule('cooldown_hours', e.target.value ? Number(e.target.value) : undefined)}
+                            />
+                            <p className="text-xs text-muted-foreground">Lockout window after award. 24 = once per day.</p>
+                        </div>
+                    </div>
+
+                    <Separator />
+
+                    {/* Time-of-day window */}
+                    <div className="space-y-2">
+                        <p className="font-medium text-sm">Time of Day Window</p>
+                        <p className="text-xs text-muted-foreground">
+                            Local hours (0-23). Leave blank to allow any time. Example: Early Bird = before 10.
+                        </p>
+                        <div className="grid grid-cols-2 gap-4 max-w-xl">
+                            <div className="space-y-2">
+                                <Label htmlFor="after_hour">After Hour (≥)</Label>
+                                <Input
+                                    id="after_hour"
+                                    type="number"
+                                    min={0}
+                                    max={23}
+                                    placeholder="e.g. 18 for after 6pm"
+                                    value={form.rules?.after_hour ?? ''}
+                                    onChange={e => setRule('after_hour', e.target.value !== '' ? Number(e.target.value) : undefined)}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="before_hour">Before Hour (&lt;)</Label>
+                                <Input
+                                    id="before_hour"
+                                    type="number"
+                                    min={0}
+                                    max={23}
+                                    placeholder="e.g. 10 for before 10am"
+                                    value={form.rules?.before_hour ?? ''}
+                                    onChange={e => setRule('before_hour', e.target.value !== '' ? Number(e.target.value) : undefined)}
+                                />
+                            </div>
+                        </div>
                     </div>
 
                     <Separator />
