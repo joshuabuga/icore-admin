@@ -286,7 +286,7 @@ class AdminConsole {
 
   async requeuePayout(payoutId: number): Promise<{ message: string }> {
     const { access, baseURL } = await this.getAuth();
-    const response = await fetch(`${baseURL}/api/v1/console/payouts/${payoutId}/requeue/`, {
+    const response = await fetch(`${baseURL}/api/v1/console/payments/payouts/${payoutId}/requeue/`, {
       method: 'GET',
       headers: this.getHeaders(access),
     });
