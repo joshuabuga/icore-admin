@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ColumnDef } from "@tanstack/react-table";
 import { RotateCw } from "lucide-react";
 import { toast } from "sonner";
@@ -38,6 +39,7 @@ function PayoutStatusBadge({ status, details }: { status: number; details?: stri
 
 function RetryButton({ payout }: { payout: Payout }) {
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleRetry = async () => {
     setLoading(true);
@@ -49,6 +51,7 @@ function RetryButton({ payout }: { payout: Payout }) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Requeue failed");
       toast.success(data.message || "Payout requeued");
+      router.refresh();
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Requeue failed");
     } finally {
