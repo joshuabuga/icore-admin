@@ -284,6 +284,17 @@ class AdminConsole {
     }
   }
 
+  async requeuePayout(payoutId: number): Promise<{ message: string }> {
+    const { access, baseURL } = await this.getAuth();
+    const response = await fetch(`${baseURL}/api/v1/console/payouts/${payoutId}/requeue/`, {
+      method: 'GET',
+      headers: this.getHeaders(access),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data?.message || 'Requeue failed');
+    return data;
+  }
+
   async fetchDeposits(params: FetchParams = {}): Promise<PaginatedResponse<Payin>> {
     try {
       const { access, baseURL } = await this.getAuth();

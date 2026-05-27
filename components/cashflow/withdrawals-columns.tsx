@@ -1,12 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
+import { RotateCw } from "lucide-react";
+import { toast } from "sonner";
 
 import { Payout } from "@/types/payouts";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { formatDateTime, formatCurrency, formatPhone } from "@/lib/utils/table-utils";
 
-// Payout status badge component
 function PayoutStatusBadge({ status, details }: { status: number; details?: string }) {
   const isReversed = details?.startsWith("Reversed:");
 
@@ -15,9 +18,9 @@ function PayoutStatusBadge({ status, details }: { status: number; details?: stri
   }
 
   const variants: Record<number, "default" | "secondary" | "destructive"> = {
-    0: "secondary",   // pending
-    1: "default",     // success/disbursed
-    2: "destructive", // failed
+    0: "secondary",
+    1: "default",
+    2: "destructive",
   };
 
   const labels: Record<number, string> = {
@@ -30,6 +33,40 @@ function PayoutStatusBadge({ status, details }: { status: number; details?: stri
     <Badge variant={variants[status] ?? "secondary"}>
       {labels[status] ?? `Status ${status}`}
     </Badge>
+  );
+}
+
+function RetryButton({ payout }: { payout: Payout }) {
+  const [loading, setLoading] = useState(false);
+
+  const handleRetry = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `/api/players/${payout.user}/withdrawals/${payout.id}/requeue`,
+        { method: "POST" }
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Requeue failed");
+      toast.success(data.message || "Payout requeued");
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Requeue failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      className="gap-1.5"
+      onClick={handleRetry}
+      disabled={loading}
+    >
+      <RotateCw className={`h-3 w-3 ${loading ? "animate-spin" : ""}`} />
+      Retry
+    </Button>
   );
 }
 
@@ -111,5 +148,15 @@ export const withdrawalsColumns: ColumnDef<Payout>[] = [
     accessorKey: "created_at",
     header: "Date",
     cell: ({ row }) => formatDateTime(row.getValue("created_at")),
+  },
+  {
+    id: "actions",
+    header: "",
+    cell: ({ row }) => {
+      const payout = row.original;
+      const isPending = payout.status === 0 && !payout.mpesa_transaction_id;
+      if (!isPending) return null;
+      return <RetryButton payout={payout} />;
+    },
   },
 ];
