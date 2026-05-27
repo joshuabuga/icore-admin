@@ -126,8 +126,10 @@ export default function PromoCodesManager({ promoId }: Props) {
             setShowDialog(false);
             load();
         } catch (err: any) {
-            const msg = typeof err === 'object'
-                ? Object.entries(err).map(([k, v]) => `${k}: ${v}`).join(', ')
+            const msg = err && typeof err === 'object'
+                ? Object.entries(err)
+                    .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`)
+                    .join(' | ')
                 : 'Save failed';
             toast.error(msg);
         } finally {

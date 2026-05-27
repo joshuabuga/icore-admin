@@ -117,8 +117,10 @@ export default function PromoForm({ promoId }: Props) {
             toast.success(isEdit ? 'Promo updated' : 'Promo created');
             router.push(`/promos/${saved.id}`);
         } catch (err: any) {
-            const msg = typeof err === 'object'
-                ? Object.entries(err).map(([k, v]) => `${k}: ${v}`).join(', ')
+            const msg = err && typeof err === 'object'
+                ? Object.entries(err)
+                    .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`)
+                    .join(' | ')
                 : 'Save failed';
             toast.error(msg);
         } finally {
