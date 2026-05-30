@@ -6852,6 +6852,7 @@ export namespace Prisma {
     smsStatus: string | null
     errorMessage: string | null
     creditedAt: Date | null
+    walletType: string | null
     creditedById: string | null
   }
 
@@ -6866,6 +6867,7 @@ export namespace Prisma {
     smsStatus: string | null
     errorMessage: string | null
     creditedAt: Date | null
+    walletType: string | null
     creditedById: string | null
   }
 
@@ -6881,6 +6883,7 @@ export namespace Prisma {
     smsStatus: number
     errorMessage: number
     creditedAt: number
+    walletType: number
     creditedById: number
     _all: number
   }
@@ -6905,6 +6908,7 @@ export namespace Prisma {
     smsStatus?: true
     errorMessage?: true
     creditedAt?: true
+    walletType?: true
     creditedById?: true
   }
 
@@ -6919,6 +6923,7 @@ export namespace Prisma {
     smsStatus?: true
     errorMessage?: true
     creditedAt?: true
+    walletType?: true
     creditedById?: true
   }
 
@@ -6934,6 +6939,7 @@ export namespace Prisma {
     smsStatus?: true
     errorMessage?: true
     creditedAt?: true
+    walletType?: true
     creditedById?: true
     _all?: true
   }
@@ -7036,6 +7042,7 @@ export namespace Prisma {
     smsStatus: string | null
     errorMessage: string | null
     creditedAt: Date
+    walletType: string
     creditedById: string
     _count: CreditLogCountAggregateOutputType | null
     _avg: CreditLogAvgAggregateOutputType | null
@@ -7070,6 +7077,7 @@ export namespace Prisma {
     smsStatus?: boolean
     errorMessage?: boolean
     creditedAt?: boolean
+    walletType?: boolean
     creditedById?: boolean
     creditedBy?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["creditLog"]>
@@ -7086,6 +7094,7 @@ export namespace Prisma {
     smsStatus?: boolean
     errorMessage?: boolean
     creditedAt?: boolean
+    walletType?: boolean
     creditedById?: boolean
     creditedBy?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["creditLog"]>
@@ -7102,6 +7111,7 @@ export namespace Prisma {
     smsStatus?: boolean
     errorMessage?: boolean
     creditedAt?: boolean
+    walletType?: boolean
     creditedById?: boolean
   }
 
@@ -7129,6 +7139,7 @@ export namespace Prisma {
       smsStatus: string | null
       errorMessage: string | null
       creditedAt: Date
+      walletType: string
       creditedById: string
     }, ExtArgs["result"]["creditLog"]>
     composites: {}
@@ -7535,6 +7546,7 @@ export namespace Prisma {
     readonly smsStatus: FieldRef<"CreditLog", 'String'>
     readonly errorMessage: FieldRef<"CreditLog", 'String'>
     readonly creditedAt: FieldRef<"CreditLog", 'DateTime'>
+    readonly walletType: FieldRef<"CreditLog", 'String'>
     readonly creditedById: FieldRef<"CreditLog", 'String'>
   }
     
@@ -7898,6 +7910,7 @@ export namespace Prisma {
     status: $Enums.ProcessingStatus | null
     errorMessage: string | null
     debitedAt: Date | null
+    walletType: string | null
     debitedById: string | null
   }
 
@@ -7911,6 +7924,7 @@ export namespace Prisma {
     status: $Enums.ProcessingStatus | null
     errorMessage: string | null
     debitedAt: Date | null
+    walletType: string | null
     debitedById: string | null
   }
 
@@ -7925,6 +7939,7 @@ export namespace Prisma {
     debitResponse: number
     errorMessage: number
     debitedAt: number
+    walletType: number
     debitedById: number
     _all: number
   }
@@ -7948,6 +7963,7 @@ export namespace Prisma {
     status?: true
     errorMessage?: true
     debitedAt?: true
+    walletType?: true
     debitedById?: true
   }
 
@@ -7961,6 +7977,7 @@ export namespace Prisma {
     status?: true
     errorMessage?: true
     debitedAt?: true
+    walletType?: true
     debitedById?: true
   }
 
@@ -7975,6 +7992,7 @@ export namespace Prisma {
     debitResponse?: true
     errorMessage?: true
     debitedAt?: true
+    walletType?: true
     debitedById?: true
     _all?: true
   }
@@ -8076,6 +8094,7 @@ export namespace Prisma {
     debitResponse: JsonValue | null
     errorMessage: string | null
     debitedAt: Date
+    walletType: string
     debitedById: string
     _count: DebitLogCountAggregateOutputType | null
     _avg: DebitLogAvgAggregateOutputType | null
@@ -8109,6 +8128,7 @@ export namespace Prisma {
     debitResponse?: boolean
     errorMessage?: boolean
     debitedAt?: boolean
+    walletType?: boolean
     debitedById?: boolean
     debitedBy?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["debitLog"]>
@@ -8124,6 +8144,7 @@ export namespace Prisma {
     debitResponse?: boolean
     errorMessage?: boolean
     debitedAt?: boolean
+    walletType?: boolean
     debitedById?: boolean
     debitedBy?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["debitLog"]>
@@ -8139,6 +8160,7 @@ export namespace Prisma {
     debitResponse?: boolean
     errorMessage?: boolean
     debitedAt?: boolean
+    walletType?: boolean
     debitedById?: boolean
   }
 
@@ -8165,6 +8187,7 @@ export namespace Prisma {
       debitResponse: Prisma.JsonValue | null
       errorMessage: string | null
       debitedAt: Date
+      walletType: string
       debitedById: string
     }, ExtArgs["result"]["debitLog"]>
     composites: {}
@@ -8570,6 +8593,7 @@ export namespace Prisma {
     readonly debitResponse: FieldRef<"DebitLog", 'Json'>
     readonly errorMessage: FieldRef<"DebitLog", 'String'>
     readonly debitedAt: FieldRef<"DebitLog", 'DateTime'>
+    readonly walletType: FieldRef<"DebitLog", 'String'>
     readonly debitedById: FieldRef<"DebitLog", 'String'>
   }
     
@@ -9908,6 +9932,7 @@ export namespace Prisma {
     smsStatus: 'smsStatus',
     errorMessage: 'errorMessage',
     creditedAt: 'creditedAt',
+    walletType: 'walletType',
     creditedById: 'creditedById'
   };
 
@@ -9925,6 +9950,7 @@ export namespace Prisma {
     debitResponse: 'debitResponse',
     errorMessage: 'errorMessage',
     debitedAt: 'debitedAt',
+    walletType: 'walletType',
     debitedById: 'debitedById'
   };
 
@@ -10505,6 +10531,7 @@ export namespace Prisma {
     smsStatus?: StringNullableFilter<"CreditLog"> | string | null
     errorMessage?: StringNullableFilter<"CreditLog"> | string | null
     creditedAt?: DateTimeFilter<"CreditLog"> | Date | string
+    walletType?: StringFilter<"CreditLog"> | string
     creditedById?: StringFilter<"CreditLog"> | string
     creditedBy?: XOR<UserRelationFilter, UserWhereInput>
   }
@@ -10521,6 +10548,7 @@ export namespace Prisma {
     smsStatus?: SortOrderInput | SortOrder
     errorMessage?: SortOrderInput | SortOrder
     creditedAt?: SortOrder
+    walletType?: SortOrder
     creditedById?: SortOrder
     creditedBy?: UserOrderByWithRelationInput
   }
@@ -10540,6 +10568,7 @@ export namespace Prisma {
     smsStatus?: StringNullableFilter<"CreditLog"> | string | null
     errorMessage?: StringNullableFilter<"CreditLog"> | string | null
     creditedAt?: DateTimeFilter<"CreditLog"> | Date | string
+    walletType?: StringFilter<"CreditLog"> | string
     creditedById?: StringFilter<"CreditLog"> | string
     creditedBy?: XOR<UserRelationFilter, UserWhereInput>
   }, "id">
@@ -10556,6 +10585,7 @@ export namespace Prisma {
     smsStatus?: SortOrderInput | SortOrder
     errorMessage?: SortOrderInput | SortOrder
     creditedAt?: SortOrder
+    walletType?: SortOrder
     creditedById?: SortOrder
     _count?: CreditLogCountOrderByAggregateInput
     _avg?: CreditLogAvgOrderByAggregateInput
@@ -10579,6 +10609,7 @@ export namespace Prisma {
     smsStatus?: StringNullableWithAggregatesFilter<"CreditLog"> | string | null
     errorMessage?: StringNullableWithAggregatesFilter<"CreditLog"> | string | null
     creditedAt?: DateTimeWithAggregatesFilter<"CreditLog"> | Date | string
+    walletType?: StringWithAggregatesFilter<"CreditLog"> | string
     creditedById?: StringWithAggregatesFilter<"CreditLog"> | string
   }
 
@@ -10596,6 +10627,7 @@ export namespace Prisma {
     debitResponse?: JsonNullableFilter<"DebitLog">
     errorMessage?: StringNullableFilter<"DebitLog"> | string | null
     debitedAt?: DateTimeFilter<"DebitLog"> | Date | string
+    walletType?: StringFilter<"DebitLog"> | string
     debitedById?: StringFilter<"DebitLog"> | string
     debitedBy?: XOR<UserRelationFilter, UserWhereInput>
   }
@@ -10611,6 +10643,7 @@ export namespace Prisma {
     debitResponse?: SortOrderInput | SortOrder
     errorMessage?: SortOrderInput | SortOrder
     debitedAt?: SortOrder
+    walletType?: SortOrder
     debitedById?: SortOrder
     debitedBy?: UserOrderByWithRelationInput
   }
@@ -10629,6 +10662,7 @@ export namespace Prisma {
     debitResponse?: JsonNullableFilter<"DebitLog">
     errorMessage?: StringNullableFilter<"DebitLog"> | string | null
     debitedAt?: DateTimeFilter<"DebitLog"> | Date | string
+    walletType?: StringFilter<"DebitLog"> | string
     debitedById?: StringFilter<"DebitLog"> | string
     debitedBy?: XOR<UserRelationFilter, UserWhereInput>
   }, "id">
@@ -10644,6 +10678,7 @@ export namespace Prisma {
     debitResponse?: SortOrderInput | SortOrder
     errorMessage?: SortOrderInput | SortOrder
     debitedAt?: SortOrder
+    walletType?: SortOrder
     debitedById?: SortOrder
     _count?: DebitLogCountOrderByAggregateInput
     _avg?: DebitLogAvgOrderByAggregateInput
@@ -10666,6 +10701,7 @@ export namespace Prisma {
     debitResponse?: JsonNullableWithAggregatesFilter<"DebitLog">
     errorMessage?: StringNullableWithAggregatesFilter<"DebitLog"> | string | null
     debitedAt?: DateTimeWithAggregatesFilter<"DebitLog"> | Date | string
+    walletType?: StringWithAggregatesFilter<"DebitLog"> | string
     debitedById?: StringWithAggregatesFilter<"DebitLog"> | string
   }
 
@@ -11138,6 +11174,7 @@ export namespace Prisma {
     smsStatus?: string | null
     errorMessage?: string | null
     creditedAt?: Date | string
+    walletType?: string
     creditedBy: UserCreateNestedOneWithoutCreditsIssuedInput
   }
 
@@ -11153,6 +11190,7 @@ export namespace Prisma {
     smsStatus?: string | null
     errorMessage?: string | null
     creditedAt?: Date | string
+    walletType?: string
     creditedById: string
   }
 
@@ -11168,6 +11206,7 @@ export namespace Prisma {
     smsStatus?: NullableStringFieldUpdateOperationsInput | string | null
     errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
     creditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    walletType?: StringFieldUpdateOperationsInput | string
     creditedBy?: UserUpdateOneRequiredWithoutCreditsIssuedNestedInput
   }
 
@@ -11183,6 +11222,7 @@ export namespace Prisma {
     smsStatus?: NullableStringFieldUpdateOperationsInput | string | null
     errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
     creditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    walletType?: StringFieldUpdateOperationsInput | string
     creditedById?: StringFieldUpdateOperationsInput | string
   }
 
@@ -11198,6 +11238,7 @@ export namespace Prisma {
     smsStatus?: string | null
     errorMessage?: string | null
     creditedAt?: Date | string
+    walletType?: string
     creditedById: string
   }
 
@@ -11213,6 +11254,7 @@ export namespace Prisma {
     smsStatus?: NullableStringFieldUpdateOperationsInput | string | null
     errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
     creditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    walletType?: StringFieldUpdateOperationsInput | string
   }
 
   export type CreditLogUncheckedUpdateManyInput = {
@@ -11227,6 +11269,7 @@ export namespace Prisma {
     smsStatus?: NullableStringFieldUpdateOperationsInput | string | null
     errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
     creditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    walletType?: StringFieldUpdateOperationsInput | string
     creditedById?: StringFieldUpdateOperationsInput | string
   }
 
@@ -11241,6 +11284,7 @@ export namespace Prisma {
     debitResponse?: NullableJsonNullValueInput | InputJsonValue
     errorMessage?: string | null
     debitedAt?: Date | string
+    walletType?: string
     debitedBy: UserCreateNestedOneWithoutDebitsIssuedInput
   }
 
@@ -11255,6 +11299,7 @@ export namespace Prisma {
     debitResponse?: NullableJsonNullValueInput | InputJsonValue
     errorMessage?: string | null
     debitedAt?: Date | string
+    walletType?: string
     debitedById: string
   }
 
@@ -11269,6 +11314,7 @@ export namespace Prisma {
     debitResponse?: NullableJsonNullValueInput | InputJsonValue
     errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
     debitedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    walletType?: StringFieldUpdateOperationsInput | string
     debitedBy?: UserUpdateOneRequiredWithoutDebitsIssuedNestedInput
   }
 
@@ -11283,6 +11329,7 @@ export namespace Prisma {
     debitResponse?: NullableJsonNullValueInput | InputJsonValue
     errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
     debitedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    walletType?: StringFieldUpdateOperationsInput | string
     debitedById?: StringFieldUpdateOperationsInput | string
   }
 
@@ -11297,6 +11344,7 @@ export namespace Prisma {
     debitResponse?: NullableJsonNullValueInput | InputJsonValue
     errorMessage?: string | null
     debitedAt?: Date | string
+    walletType?: string
     debitedById: string
   }
 
@@ -11311,6 +11359,7 @@ export namespace Prisma {
     debitResponse?: NullableJsonNullValueInput | InputJsonValue
     errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
     debitedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    walletType?: StringFieldUpdateOperationsInput | string
   }
 
   export type DebitLogUncheckedUpdateManyInput = {
@@ -11324,6 +11373,7 @@ export namespace Prisma {
     debitResponse?: NullableJsonNullValueInput | InputJsonValue
     errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
     debitedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    walletType?: StringFieldUpdateOperationsInput | string
     debitedById?: StringFieldUpdateOperationsInput | string
   }
 
@@ -11991,6 +12041,7 @@ export namespace Prisma {
     smsStatus?: SortOrder
     errorMessage?: SortOrder
     creditedAt?: SortOrder
+    walletType?: SortOrder
     creditedById?: SortOrder
   }
 
@@ -12009,6 +12060,7 @@ export namespace Prisma {
     smsStatus?: SortOrder
     errorMessage?: SortOrder
     creditedAt?: SortOrder
+    walletType?: SortOrder
     creditedById?: SortOrder
   }
 
@@ -12023,6 +12075,7 @@ export namespace Prisma {
     smsStatus?: SortOrder
     errorMessage?: SortOrder
     creditedAt?: SortOrder
+    walletType?: SortOrder
     creditedById?: SortOrder
   }
 
@@ -12052,6 +12105,7 @@ export namespace Prisma {
     debitResponse?: SortOrder
     errorMessage?: SortOrder
     debitedAt?: SortOrder
+    walletType?: SortOrder
     debitedById?: SortOrder
   }
 
@@ -12069,6 +12123,7 @@ export namespace Prisma {
     status?: SortOrder
     errorMessage?: SortOrder
     debitedAt?: SortOrder
+    walletType?: SortOrder
     debitedById?: SortOrder
   }
 
@@ -12082,6 +12137,7 @@ export namespace Prisma {
     status?: SortOrder
     errorMessage?: SortOrder
     debitedAt?: SortOrder
+    walletType?: SortOrder
     debitedById?: SortOrder
   }
 
@@ -13091,6 +13147,7 @@ export namespace Prisma {
     smsStatus?: string | null
     errorMessage?: string | null
     creditedAt?: Date | string
+    walletType?: string
   }
 
   export type CreditLogUncheckedCreateWithoutCreditedByInput = {
@@ -13105,6 +13162,7 @@ export namespace Prisma {
     smsStatus?: string | null
     errorMessage?: string | null
     creditedAt?: Date | string
+    walletType?: string
   }
 
   export type CreditLogCreateOrConnectWithoutCreditedByInput = {
@@ -13128,6 +13186,7 @@ export namespace Prisma {
     debitResponse?: NullableJsonNullValueInput | InputJsonValue
     errorMessage?: string | null
     debitedAt?: Date | string
+    walletType?: string
   }
 
   export type DebitLogUncheckedCreateWithoutDebitedByInput = {
@@ -13141,6 +13200,7 @@ export namespace Prisma {
     debitResponse?: NullableJsonNullValueInput | InputJsonValue
     errorMessage?: string | null
     debitedAt?: Date | string
+    walletType?: string
   }
 
   export type DebitLogCreateOrConnectWithoutDebitedByInput = {
@@ -13291,6 +13351,7 @@ export namespace Prisma {
     smsStatus?: StringNullableFilter<"CreditLog"> | string | null
     errorMessage?: StringNullableFilter<"CreditLog"> | string | null
     creditedAt?: DateTimeFilter<"CreditLog"> | Date | string
+    walletType?: StringFilter<"CreditLog"> | string
     creditedById?: StringFilter<"CreditLog"> | string
   }
 
@@ -13324,6 +13385,7 @@ export namespace Prisma {
     debitResponse?: JsonNullableFilter<"DebitLog">
     errorMessage?: StringNullableFilter<"DebitLog"> | string | null
     debitedAt?: DateTimeFilter<"DebitLog"> | Date | string
+    walletType?: StringFilter<"DebitLog"> | string
     debitedById?: StringFilter<"DebitLog"> | string
   }
 
@@ -14024,6 +14086,7 @@ export namespace Prisma {
     smsStatus?: string | null
     errorMessage?: string | null
     creditedAt?: Date | string
+    walletType?: string
   }
 
   export type DebitLogCreateManyDebitedByInput = {
@@ -14037,6 +14100,7 @@ export namespace Prisma {
     debitResponse?: NullableJsonNullValueInput | InputJsonValue
     errorMessage?: string | null
     debitedAt?: Date | string
+    walletType?: string
   }
 
   export type PermissionsUpdateWithoutUserInput = {
@@ -14188,6 +14252,7 @@ export namespace Prisma {
     smsStatus?: NullableStringFieldUpdateOperationsInput | string | null
     errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
     creditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    walletType?: StringFieldUpdateOperationsInput | string
   }
 
   export type CreditLogUncheckedUpdateWithoutCreditedByInput = {
@@ -14202,6 +14267,7 @@ export namespace Prisma {
     smsStatus?: NullableStringFieldUpdateOperationsInput | string | null
     errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
     creditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    walletType?: StringFieldUpdateOperationsInput | string
   }
 
   export type CreditLogUncheckedUpdateManyWithoutCreditedByInput = {
@@ -14216,6 +14282,7 @@ export namespace Prisma {
     smsStatus?: NullableStringFieldUpdateOperationsInput | string | null
     errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
     creditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    walletType?: StringFieldUpdateOperationsInput | string
   }
 
   export type DebitLogUpdateWithoutDebitedByInput = {
@@ -14229,6 +14296,7 @@ export namespace Prisma {
     debitResponse?: NullableJsonNullValueInput | InputJsonValue
     errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
     debitedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    walletType?: StringFieldUpdateOperationsInput | string
   }
 
   export type DebitLogUncheckedUpdateWithoutDebitedByInput = {
@@ -14242,6 +14310,7 @@ export namespace Prisma {
     debitResponse?: NullableJsonNullValueInput | InputJsonValue
     errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
     debitedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    walletType?: StringFieldUpdateOperationsInput | string
   }
 
   export type DebitLogUncheckedUpdateManyWithoutDebitedByInput = {
@@ -14255,6 +14324,7 @@ export namespace Prisma {
     debitResponse?: NullableJsonNullValueInput | InputJsonValue
     errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
     debitedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    walletType?: StringFieldUpdateOperationsInput | string
   }
 
   export type CustomerCreateManyBatchInput = {

@@ -19,6 +19,8 @@ import { formatCurrency, formatDate, formatPhone } from "@/lib/utils/table-utils
 import SMSDialog from "@/components/sms/sms-dialog";
 import CreditPlayerDialog from "@/components/players/credit-player-dialog";
 import DebitPlayerDialog from "@/components/players/debit-player-dialog";
+import BonusCreditPlayerDialog from "@/components/players/bonus-credit-player-dialog";
+import BonusDebitPlayerDialog from "@/components/players/bonus-debit-player-dialog";
 import WithdrawalLimitDialog from "@/components/players/withdrawal-limit-dialog";
 
 interface PageProps {
@@ -159,6 +161,20 @@ export default function PlayerDetailPage({ params }: PageProps) {
               )}
               {hasPermission(PERMISSIONS.PLAYERS_DEBIT) && (
                 <DebitPlayerDialog
+                  playerId={id}
+                  msisdn={player.msisdn}
+                  playerName={player.name}
+                />
+              )}
+              {hasPermission(PERMISSIONS.PLAYERS_CREDIT) && (
+                <BonusCreditPlayerDialog
+                  playerId={id}
+                  msisdn={player.msisdn}
+                  playerName={player.name}
+                />
+              )}
+              {hasPermission(PERMISSIONS.PLAYERS_DEBIT) && (
+                <BonusDebitPlayerDialog
                   playerId={id}
                   msisdn={player.msisdn}
                   playerName={player.name}

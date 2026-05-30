@@ -33,6 +33,7 @@ const EMPTY_CODE = {
     name: '',
     campaign_tag: '',
     bonus_amount_override: '',
+    wagering_multiplier_override: '',
     min_deposit: '0',
     max_uses: '',
     max_uses_per_user: 1,
@@ -84,6 +85,7 @@ export default function PromoCodesManager({ promoId }: Props) {
             name: code.name,
             campaign_tag: code.campaign_tag,
             bonus_amount_override: code.bonus_amount_override ?? '',
+            wagering_multiplier_override: code.wagering_multiplier_override ?? '',
             min_deposit: code.min_deposit,
             max_uses: code.max_uses != null ? String(code.max_uses) : '',
             max_uses_per_user: code.max_uses_per_user,
@@ -106,6 +108,7 @@ export default function PromoCodesManager({ promoId }: Props) {
             promo: promoId,
             max_uses: form.max_uses ? Number(form.max_uses) : null,
             bonus_amount_override: form.bonus_amount_override || null,
+            wagering_multiplier_override: form.wagering_multiplier_override !== '' ? Number(form.wagering_multiplier_override) : null,
             active_from: form.active_from ? new Date(form.active_from).toISOString() : null,
             active_to: form.active_to ? new Date(form.active_to).toISOString() : null,
         };
@@ -206,6 +209,7 @@ export default function PromoCodesManager({ promoId }: Props) {
                             <TableHead>Code</TableHead>
                             <TableHead>Name / Campaign</TableHead>
                             <TableHead>Bonus Override</TableHead>
+                            <TableHead>Wagering</TableHead>
                             <TableHead>Min Deposit</TableHead>
                             <TableHead>Uses</TableHead>
                             <TableHead>Context</TableHead>
@@ -216,7 +220,7 @@ export default function PromoCodesManager({ promoId }: Props) {
                     <TableBody>
                         {codes.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={8} className="text-center py-10 text-muted-foreground">
+                                <TableCell colSpan={9} className="text-center py-10 text-muted-foreground">
                                     No codes yet.{' '}
                                     <button onClick={openCreate} className="underline">Create one.</button>
                                 </TableCell>
@@ -242,6 +246,11 @@ export default function PromoCodesManager({ promoId }: Props) {
                                 <TableCell>
                                     {c.bonus_amount_override
                                         ? `KES ${Number(c.bonus_amount_override).toLocaleString()}`
+                                        : <span className="text-muted-foreground text-xs">From promo</span>}
+                                </TableCell>
+                                <TableCell>
+                                    {c.wagering_multiplier_override != null
+                                        ? `${Number(c.wagering_multiplier_override)}×`
                                         : <span className="text-muted-foreground text-xs">From promo</span>}
                                 </TableCell>
                                 <TableCell>KES {Number(c.min_deposit).toLocaleString()}</TableCell>
@@ -338,6 +347,21 @@ export default function PromoCodesManager({ promoId }: Props) {
                                 />
                             </div>
                             <div className="space-y-2">
+                                <Label>Wagering Multiplier</Label>
+                                <Input
+                                    type="number"
+                                    min={0}
+                                    step="0.5"
+                                    placeholder="Leave blank to use promo setting"
+                                    value={form.wagering_multiplier_override}
+                                    onChange={e => set('wagering_multiplier_override', e.target.value)}
+                                />
+                                <p className="text-xs text-muted-foreground">Times bonus must be wagered. 0 = no requirement.</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-4">
+                            <div className="space-y-2">
                                 <Label>Min Deposit (KES)</Label>
                                 <Input
                                     type="number"
@@ -346,9 +370,6 @@ export default function PromoCodesManager({ promoId }: Props) {
                                     onChange={e => set('min_deposit', e.target.value)}
                                 />
                             </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label>Max Uses (total)</Label>
                                 <Input

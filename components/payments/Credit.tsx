@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useCSV } from "@/hooks/useCSV";
-import { CustomersToBeCredited } from "@/types/crediting";
+import { CustomersToBeCredited, BonusBulkCreditResult } from "@/types/crediting";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -10,8 +10,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Upload, FileText, Users, DollarSign, Check, X, Loader2, Download } from "lucide-react";
+import { Upload, FileText, Users, DollarSign, Check, X, Loader2, Download, Gift, Banknote } from "lucide-react";
 import { toast } from "sonner";
+
+type WalletType = "cash" | "bonus";
 
 export default function CreditingSection() {
     const {
@@ -24,9 +26,11 @@ export default function CreditingSection() {
         file,
     } = useCSV();
 
+    const [walletType, setWalletType] = useState<WalletType>("cash");
     const [particulars, setParticulars] = useState("");
     const [isProcessing, setIsProcessing] = useState(false);
     const [processed, setProcessed] = useState(false);
+    const [bonusResults, setBonusResults] = useState<{ credited: number; total: number; results: BonusBulkCreditResult[] } | null>(null);
 
     const handleUpload = async () => {
         if (!file) {
@@ -66,34 +70,58 @@ export default function CreditingSection() {
 
         setIsProcessing(true);
         try {
-            const batchData = {
-                particulars: particulars.trim(),
-                recipients: creditedCustomers,
-                total_amount: calculateTotalAmount(),
-                batch_no: `BATCH${Date.now()}`,
-            };
+            if (walletType === "bonus") {
+                const items = creditedCustomers.map((c: CustomersToBeCredited) => ({
+                    msisdn: c.phoneNumber,
+                    amount: Number(c.amount),
+                    subject: particulars.trim(),
+                    description: particulars.trim(),
+                }));
 
-            const response = await fetch('/api/process-batch-payment', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(batchData),
-            });
+                const response = await fetch('/api/cashflow/bonus-bulk-credit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ items }),
+                });
 
-            if (response.ok) {
                 const result = await response.json();
-                setProcessed(true);
-                toast.success(`Batch payment initiated successfully! Batch No: ${result.batch_no}`);
-                // Clear form
-                setCreditedCustomers([]);
-                setParticulars("");
+
+                if (response.ok) {
+                    setBonusResults(result);
+                    setProcessed(true);
+                    toast.success(`Bonus credit complete: ${result.credited}/${result.total} credited`);
+                    setCreditedCustomers([]);
+                    setParticulars("");
+                } else {
+                    toast.error(result.error || "Failed to process bonus bulk credit");
+                }
             } else {
-                const errorData = await response.json();
-                toast.error(errorData.message || "Failed to process batch payment");
+                const batchData = {
+                    particulars: particulars.trim(),
+                    recipients: creditedCustomers,
+                    total_amount: calculateTotalAmount(),
+                    batch_no: `BATCH${Date.now()}`,
+                };
+
+                const response = await fetch('/api/process-batch-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(batchData),
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    setProcessed(true);
+                    toast.success(`Batch payment initiated successfully! Batch No: ${result.batch_no}`);
+                    setCreditedCustomers([]);
+                    setParticulars("");
+                } else {
+                    const errorData = await response.json();
+                    toast.error(errorData.message || "Failed to process batch payment");
+                }
             }
         } catch (err) {
-            console.error("Error processing batch payment:", err);
+            console.error("Error processing payments:", err);
             toast.error("An error occurred while processing the payment");
         } finally {
             setIsProcessing(false);
@@ -104,10 +132,41 @@ export default function CreditingSection() {
         setCreditedCustomers([]);
         setParticulars("");
         setProcessed(false);
+        setBonusResults(null);
     };
 
     return (
         <div className="space-y-4 md:space-y-6 px-2 sm:px-0">
+            {/* Wallet Type Selector */}
+            <Card>
+                <CardHeader className="space-y-2 p-4 sm:p-6">
+                    <CardTitle className="text-base sm:text-lg">Credit Wallet Type</CardTitle>
+                    <CardDescription className="text-xs sm:text-sm">
+                        Select which wallet to credit. Cash credits require approval; bonus credits are processed immediately.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+                    <div className="flex gap-3">
+                        <Button
+                            variant={walletType === "cash" ? "default" : "outline"}
+                            onClick={() => { setWalletType("cash"); handleReset(); }}
+                            className="flex-1"
+                        >
+                            <Banknote className="mr-2 h-4 w-4" />
+                            Cash Wallet
+                        </Button>
+                        <Button
+                            variant={walletType === "bonus" ? "default" : "outline"}
+                            onClick={() => { setWalletType("bonus"); handleReset(); }}
+                            className="flex-1"
+                        >
+                            <Gift className="mr-2 h-4 w-4" />
+                            Bonus Wallet
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
+
             {/* Upload Section */}
             <Card>
                 <CardHeader className="space-y-2 p-4 sm:p-6">
@@ -244,8 +303,12 @@ export default function CreditingSection() {
                                 ) : (
                                     <>
                                         <Check className="mr-2 h-4 w-4" />
-                                        <span className="hidden sm:inline">Process Batch Payment</span>
-                                        <span className="sm:hidden">Process Payment</span>
+                                        <span className="hidden sm:inline">
+                                            {walletType === "bonus" ? "Credit Bonus Wallets" : "Process Batch Payment"}
+                                        </span>
+                                        <span className="sm:hidden">
+                                            {walletType === "bonus" ? "Credit Bonus" : "Process Payment"}
+                                        </span>
                                     </>
                                 )}
                             </Button>
@@ -264,7 +327,7 @@ export default function CreditingSection() {
             )}
 
             {/* Success Message */}
-            {processed && (
+            {processed && walletType === "cash" && (
                 <Card className="border-green-200 bg-green-50">
                     <CardContent className="p-4 sm:pt-6">
                         <div className="flex items-start sm:items-center space-x-2 text-green-800">
@@ -274,6 +337,43 @@ export default function CreditingSection() {
                         <p className="text-xs sm:text-sm text-green-700 mt-2 ml-6 sm:ml-7">
                             The payment batch is now pending approval and can be viewed in the Payment Batches section.
                         </p>
+                    </CardContent>
+                </Card>
+            )}
+
+            {/* Bonus Bulk Credit Results */}
+            {processed && walletType === "bonus" && bonusResults && (
+                <Card className="border-green-200 bg-green-50">
+                    <CardHeader className="p-4 sm:p-6 pb-2">
+                        <CardTitle className="flex items-center gap-2 text-base text-green-800">
+                            <Check className="h-4 w-4" />
+                            Bonus Credit Complete
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-4 sm:p-6 pt-0 space-y-3">
+                        <div className="flex gap-4 text-sm text-green-700">
+                            <span>Credited: <strong>{bonusResults.credited}</strong></span>
+                            <span>Total: <strong>{bonusResults.total}</strong></span>
+                            {bonusResults.total - bonusResults.credited > 0 && (
+                                <span className="text-red-600">Failed: <strong>{bonusResults.total - bonusResults.credited}</strong></span>
+                            )}
+                        </div>
+                        {bonusResults.results.filter(r => r.status === "error").length > 0 && (
+                            <div className="space-y-1">
+                                <p className="text-xs font-medium text-red-700">Failed items:</p>
+                                <div className="max-h-40 overflow-y-auto space-y-1">
+                                    {bonusResults.results.filter(r => r.status === "error").map((r, i) => (
+                                        <div key={i} className="text-xs text-red-600 bg-red-50 rounded px-2 py-1">
+                                            {r.msisdn}: {r.detail}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                        <Button variant="outline" size="sm" onClick={handleReset} className="mt-2">
+                            <X className="mr-2 h-3 w-3" />
+                            Reset
+                        </Button>
                     </CardContent>
                 </Card>
             )}

@@ -189,6 +189,7 @@ exports.Prisma.CreditLogScalarFieldEnum = {
   smsStatus: 'smsStatus',
   errorMessage: 'errorMessage',
   creditedAt: 'creditedAt',
+  walletType: 'walletType',
   creditedById: 'creditedById'
 };
 
@@ -203,6 +204,7 @@ exports.Prisma.DebitLogScalarFieldEnum = {
   debitResponse: 'debitResponse',
   errorMessage: 'errorMessage',
   debitedAt: 'debitedAt',
+  walletType: 'walletType',
   debitedById: 'debitedById'
 };
 

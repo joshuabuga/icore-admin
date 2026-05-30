@@ -18,6 +18,7 @@ export interface Promo {
     bonus_amount: string;
     bonus_awards_type: string;
     bonus_award_ratio: string;
+    wagering_multiplier: string;
     min_claim_payin: string;
     min_claim_odds: string;
     min_claim_stake: string;
@@ -49,6 +50,7 @@ export interface PromoCode {
     campaign_tag: string;
     promo: number | null;
     bonus_amount_override: string | null;
+    wagering_multiplier_override: string | null;
     min_deposit: string;
     max_uses: number | null;
     max_uses_per_user: number;

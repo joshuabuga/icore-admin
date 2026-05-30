@@ -1,4 +1,4 @@
-import { CreditRequest, DebitRequest, SMSRequest } from '@/types/crediting';
+import { CreditRequest, DebitRequest, SMSRequest, BonusCreditRequest, BonusDebitRequest, BonusBulkCreditRequest, BonusBulkCreditResponse } from '@/types/crediting';
 import { adminConsole } from './console';
 
 class PaymentProcessor {
@@ -108,6 +108,84 @@ class PaymentProcessor {
         } catch (error) {
             console.error('Error debiting user:', JSON.stringify(error, null, 2));
             throw new Error(`Failed to debit user: ${error}`);
+        }
+    }
+
+    async bonusCreditUser(data: BonusCreditRequest) {
+        try {
+            const { access, baseURL } = await adminConsole.getAuth();
+            const url = `${baseURL}/api/v1/console/wallets/bonus-credit/`;
+            const headers = {
+                Authorization: `Bearer ${access}`,
+                'Content-Type': 'application/json',
+            };
+            const response = await fetch(url, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify(data),
+            });
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                const text = await response.text();
+                throw new Error(`Bonus credit API returned ${response.status}: Expected JSON but got ${contentType}. Body: ${text.substring(0, 200)}`);
+            }
+            const result = await response.json();
+            return { ok: response.ok, status: response.status, data: result };
+        } catch (error) {
+            console.error('Error bonus-crediting user:', error);
+            throw new Error(`Failed to bonus-credit user: ${error}`);
+        }
+    }
+
+    async bonusDebitUser(data: BonusDebitRequest) {
+        try {
+            const { access, baseURL } = await adminConsole.getAuth();
+            const url = `${baseURL}/api/v1/console/wallets/bonus-debit/`;
+            const headers = {
+                Authorization: `Bearer ${access}`,
+                'Content-Type': 'application/json',
+            };
+            const response = await fetch(url, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify(data),
+            });
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                const text = await response.text();
+                throw new Error(`Bonus debit API returned ${response.status}: Expected JSON but got ${contentType}. Body: ${text.substring(0, 200)}`);
+            }
+            const result = await response.json();
+            return { ok: response.ok, status: response.status, data: result };
+        } catch (error) {
+            console.error('Error bonus-debiting user:', error);
+            throw new Error(`Failed to bonus-debit user: ${error}`);
+        }
+    }
+
+    async bonusBulkCredit(data: BonusBulkCreditRequest): Promise<{ ok: boolean; status: number; data: BonusBulkCreditResponse }> {
+        try {
+            const { access, baseURL } = await adminConsole.getAuth();
+            const url = `${baseURL}/api/v1/console/wallets/bonus-bulk-credit/`;
+            const headers = {
+                Authorization: `Bearer ${access}`,
+                'Content-Type': 'application/json',
+            };
+            const response = await fetch(url, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify(data),
+            });
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                const text = await response.text();
+                throw new Error(`Bonus bulk credit API returned ${response.status}: Expected JSON but got ${contentType}. Body: ${text.substring(0, 200)}`);
+            }
+            const result = await response.json();
+            return { ok: response.ok, status: response.status, data: result };
+        } catch (error) {
+            console.error('Error bulk bonus-crediting users:', error);
+            throw new Error(`Failed to bulk bonus-credit users: ${error}`);
         }
     }
 

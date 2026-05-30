@@ -29,6 +29,7 @@ const EMPTY: Partial<Promo> = {
     bonus_amount: '0',
     bonus_awards_type: 'fixed',
     bonus_award_ratio: '0',
+    wagering_multiplier: '0',
     min_claim_payin: '100',
     min_claim_odds: '0',
     min_claim_stake: '100',
@@ -284,6 +285,21 @@ export default function PromoForm({ promoId }: Props) {
                                 </div>
                             </>
                         )}
+                    </div>
+                    <div className="space-y-2 max-w-xs">
+                        <Label htmlFor="wagering_multiplier">Wagering Multiplier</Label>
+                        <Input
+                            id="wagering_multiplier"
+                            type="number"
+                            min={0}
+                            step="0.01"
+                            placeholder="0 = no wagering requirement"
+                            value={form.wagering_multiplier ?? '0'}
+                            onChange={e => set('wagering_multiplier', e.target.value)}
+                        />
+                        <p className="text-xs text-muted-foreground">
+                            Times bonus must be wagered before withdrawal. e.g. 3 = player must bet 3× the bonus amount.
+                        </p>
                     </div>
                 </CardContent>
             </Card>

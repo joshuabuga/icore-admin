@@ -102,6 +102,57 @@ export interface DebitResponse {
     available_balance: string;
 }
 
+export interface BonusCreditRequest {
+    msisdn: string;
+    amount: number;
+    subject: string;
+    description: string;
+}
+
+export interface BonusDebitRequest {
+    msisdn: string;
+    amount: string;
+    subject: string;
+    description: string;
+}
+
+export interface BonusBulkCreditItem {
+    msisdn: string;
+    amount: number;
+    subject: string;
+    description?: string;
+}
+
+export interface BonusBulkCreditRequest {
+    items: BonusBulkCreditItem[];
+}
+
+export interface BonusCreditResponse {
+    msisdn: string;
+    amount_credited: string;
+    bonus_balance: string;
+}
+
+export interface BonusDebitResponse {
+    msisdn: string;
+    amount_debited: string;
+    bonus_balance: string;
+}
+
+export interface BonusBulkCreditResult {
+    msisdn: string;
+    status: 'ok' | 'error';
+    amount_credited?: string;
+    bonus_balance?: string;
+    detail?: string;
+}
+
+export interface BonusBulkCreditResponse {
+    results: BonusBulkCreditResult[];
+    credited: number;
+    total: number;
+}
+
 export interface SMSRequest {
     phone: string;
     amount: number;
