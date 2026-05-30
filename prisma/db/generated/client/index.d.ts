@@ -7043,7 +7043,7 @@ export namespace Prisma {
     errorMessage: string | null
     creditedAt: Date
     walletType: string
-    creditedById: string
+    creditedById: string | null
     _count: CreditLogCountAggregateOutputType | null
     _avg: CreditLogAvgAggregateOutputType | null
     _sum: CreditLogSumAggregateOutputType | null
@@ -7079,7 +7079,7 @@ export namespace Prisma {
     creditedAt?: boolean
     walletType?: boolean
     creditedById?: boolean
-    creditedBy?: boolean | UserDefaultArgs<ExtArgs>
+    creditedBy?: boolean | CreditLog$creditedByArgs<ExtArgs>
   }, ExtArgs["result"]["creditLog"]>
 
   export type CreditLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -7096,7 +7096,7 @@ export namespace Prisma {
     creditedAt?: boolean
     walletType?: boolean
     creditedById?: boolean
-    creditedBy?: boolean | UserDefaultArgs<ExtArgs>
+    creditedBy?: boolean | CreditLog$creditedByArgs<ExtArgs>
   }, ExtArgs["result"]["creditLog"]>
 
   export type CreditLogSelectScalar = {
@@ -7116,16 +7116,16 @@ export namespace Prisma {
   }
 
   export type CreditLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    creditedBy?: boolean | UserDefaultArgs<ExtArgs>
+    creditedBy?: boolean | CreditLog$creditedByArgs<ExtArgs>
   }
   export type CreditLogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    creditedBy?: boolean | UserDefaultArgs<ExtArgs>
+    creditedBy?: boolean | CreditLog$creditedByArgs<ExtArgs>
   }
 
   export type $CreditLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "CreditLog"
     objects: {
-      creditedBy: Prisma.$UserPayload<ExtArgs>
+      creditedBy: Prisma.$UserPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7140,7 +7140,7 @@ export namespace Prisma {
       errorMessage: string | null
       creditedAt: Date
       walletType: string
-      creditedById: string
+      creditedById: string | null
     }, ExtArgs["result"]["creditLog"]>
     composites: {}
   }
@@ -7505,7 +7505,7 @@ export namespace Prisma {
    */
   export interface Prisma__CreditLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    creditedBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    creditedBy<T extends CreditLog$creditedByArgs<ExtArgs> = {}>(args?: Subset<T, CreditLog$creditedByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7863,6 +7863,21 @@ export namespace Prisma {
      * Filter which CreditLogs to delete
      */
     where?: CreditLogWhereInput
+  }
+
+  /**
+   * CreditLog.creditedBy
+   */
+  export type CreditLog$creditedByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
   }
 
   /**
@@ -10532,8 +10547,8 @@ export namespace Prisma {
     errorMessage?: StringNullableFilter<"CreditLog"> | string | null
     creditedAt?: DateTimeFilter<"CreditLog"> | Date | string
     walletType?: StringFilter<"CreditLog"> | string
-    creditedById?: StringFilter<"CreditLog"> | string
-    creditedBy?: XOR<UserRelationFilter, UserWhereInput>
+    creditedById?: StringNullableFilter<"CreditLog"> | string | null
+    creditedBy?: XOR<UserNullableRelationFilter, UserWhereInput> | null
   }
 
   export type CreditLogOrderByWithRelationInput = {
@@ -10549,7 +10564,7 @@ export namespace Prisma {
     errorMessage?: SortOrderInput | SortOrder
     creditedAt?: SortOrder
     walletType?: SortOrder
-    creditedById?: SortOrder
+    creditedById?: SortOrderInput | SortOrder
     creditedBy?: UserOrderByWithRelationInput
   }
 
@@ -10569,8 +10584,8 @@ export namespace Prisma {
     errorMessage?: StringNullableFilter<"CreditLog"> | string | null
     creditedAt?: DateTimeFilter<"CreditLog"> | Date | string
     walletType?: StringFilter<"CreditLog"> | string
-    creditedById?: StringFilter<"CreditLog"> | string
-    creditedBy?: XOR<UserRelationFilter, UserWhereInput>
+    creditedById?: StringNullableFilter<"CreditLog"> | string | null
+    creditedBy?: XOR<UserNullableRelationFilter, UserWhereInput> | null
   }, "id">
 
   export type CreditLogOrderByWithAggregationInput = {
@@ -10586,7 +10601,7 @@ export namespace Prisma {
     errorMessage?: SortOrderInput | SortOrder
     creditedAt?: SortOrder
     walletType?: SortOrder
-    creditedById?: SortOrder
+    creditedById?: SortOrderInput | SortOrder
     _count?: CreditLogCountOrderByAggregateInput
     _avg?: CreditLogAvgOrderByAggregateInput
     _max?: CreditLogMaxOrderByAggregateInput
@@ -10610,7 +10625,7 @@ export namespace Prisma {
     errorMessage?: StringNullableWithAggregatesFilter<"CreditLog"> | string | null
     creditedAt?: DateTimeWithAggregatesFilter<"CreditLog"> | Date | string
     walletType?: StringWithAggregatesFilter<"CreditLog"> | string
-    creditedById?: StringWithAggregatesFilter<"CreditLog"> | string
+    creditedById?: StringNullableWithAggregatesFilter<"CreditLog"> | string | null
   }
 
   export type DebitLogWhereInput = {
@@ -11175,7 +11190,7 @@ export namespace Prisma {
     errorMessage?: string | null
     creditedAt?: Date | string
     walletType?: string
-    creditedBy: UserCreateNestedOneWithoutCreditsIssuedInput
+    creditedBy?: UserCreateNestedOneWithoutCreditsIssuedInput
   }
 
   export type CreditLogUncheckedCreateInput = {
@@ -11191,7 +11206,7 @@ export namespace Prisma {
     errorMessage?: string | null
     creditedAt?: Date | string
     walletType?: string
-    creditedById: string
+    creditedById?: string | null
   }
 
   export type CreditLogUpdateInput = {
@@ -11207,7 +11222,7 @@ export namespace Prisma {
     errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
     creditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     walletType?: StringFieldUpdateOperationsInput | string
-    creditedBy?: UserUpdateOneRequiredWithoutCreditsIssuedNestedInput
+    creditedBy?: UserUpdateOneWithoutCreditsIssuedNestedInput
   }
 
   export type CreditLogUncheckedUpdateInput = {
@@ -11223,7 +11238,7 @@ export namespace Prisma {
     errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
     creditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     walletType?: StringFieldUpdateOperationsInput | string
-    creditedById?: StringFieldUpdateOperationsInput | string
+    creditedById?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CreditLogCreateManyInput = {
@@ -11239,7 +11254,7 @@ export namespace Prisma {
     errorMessage?: string | null
     creditedAt?: Date | string
     walletType?: string
-    creditedById: string
+    creditedById?: string | null
   }
 
   export type CreditLogUpdateManyMutationInput = {
@@ -11270,7 +11285,7 @@ export namespace Prisma {
     errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
     creditedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     walletType?: StringFieldUpdateOperationsInput | string
-    creditedById?: StringFieldUpdateOperationsInput | string
+    creditedById?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type DebitLogCreateInput = {
@@ -12024,11 +12039,6 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
-  export type UserRelationFilter = {
-    is?: UserWhereInput
-    isNot?: UserWhereInput
-  }
-
   export type CreditLogCountOrderByAggregateInput = {
     id?: SortOrder
     playerId?: SortOrder
@@ -12092,6 +12102,11 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type UserRelationFilter = {
+    is?: UserWhereInput
+    isNot?: UserWhereInput
   }
 
   export type DebitLogCountOrderByAggregateInput = {
@@ -12645,10 +12660,12 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type UserUpdateOneRequiredWithoutCreditsIssuedNestedInput = {
+  export type UserUpdateOneWithoutCreditsIssuedNestedInput = {
     create?: XOR<UserCreateWithoutCreditsIssuedInput, UserUncheckedCreateWithoutCreditsIssuedInput>
     connectOrCreate?: UserCreateOrConnectWithoutCreditsIssuedInput
     upsert?: UserUpsertWithoutCreditsIssuedInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCreditsIssuedInput, UserUpdateWithoutCreditsIssuedInput>, UserUncheckedUpdateWithoutCreditsIssuedInput>
   }
@@ -13352,7 +13369,7 @@ export namespace Prisma {
     errorMessage?: StringNullableFilter<"CreditLog"> | string | null
     creditedAt?: DateTimeFilter<"CreditLog"> | Date | string
     walletType?: StringFilter<"CreditLog"> | string
-    creditedById?: StringFilter<"CreditLog"> | string
+    creditedById?: StringNullableFilter<"CreditLog"> | string | null
   }
 
   export type DebitLogUpsertWithWhereUniqueWithoutDebitedByInput = {

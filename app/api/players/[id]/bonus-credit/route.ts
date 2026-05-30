@@ -96,21 +96,25 @@ export async function POST(
             }
         }
 
-        await prisma.creditLog.create({
-            data: {
-                playerId: id,
-                msisdn,
-                amount: parsedAmount,
-                subject,
-                description,
-                walletType: 'bonus',
-                status: isSuccess ? 'CREDITED' : 'FAILED',
-                creditResponse: creditResponse.data,
-                smsStatus,
-                errorMessage: isSuccess ? undefined : 'Bonus credit API returned an error',
-                creditedById: userId,
-            },
-        });
+        try {
+            await prisma.creditLog.create({
+                data: {
+                    playerId: id,
+                    msisdn,
+                    amount: parsedAmount,
+                    subject,
+                    description,
+                    walletType: 'bonus',
+                    status: isSuccess ? 'CREDITED' : 'FAILED',
+                    creditResponse: creditResponse.data,
+                    smsStatus,
+                    errorMessage: isSuccess ? undefined : 'Bonus credit API returned an error',
+                    creditedById: userId,
+                },
+            });
+        } catch (logError) {
+            console.error('CreditLog write failed (credit may still have succeeded):', logError);
+        }
 
         if (!isSuccess) {
             return NextResponse.json(

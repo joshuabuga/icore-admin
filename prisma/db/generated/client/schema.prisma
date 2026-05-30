@@ -96,9 +96,9 @@ model CreditLog {
   errorMessage   String?
   creditedAt     DateTime         @default(now())
 
-  walletType   String @default("cash")
-  creditedById String
-  creditedBy   User   @relation("UserCreditedPlayers", fields: [creditedById], references: [id], onDelete: SetNull)
+  walletType   String  @default("cash")
+  creditedById String?
+  creditedBy   User?   @relation("UserCreditedPlayers", fields: [creditedById], references: [id], onDelete: SetNull)
 }
 
 model DebitLog {
