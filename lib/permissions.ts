@@ -7,6 +7,7 @@ export const PERMISSIONS = {
     PLAYERS_CREDIT: 'players:credit',
     PLAYERS_DEBIT: 'players:debit',
     PLAYERS_SMS: 'players:sms',
+    PLAYERS_WHATSAPP: 'players:whatsapp',
     PLAYERS_DAILY_LIMIT: 'players:daily-limit',
     PLAYERS_EXEMPTION: 'players:exemption',
 
@@ -67,6 +68,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
         PERMISSIONS.PLAYERS_READ,
         PERMISSIONS.PLAYERS_WRITE,
         PERMISSIONS.PLAYERS_SMS,
+        PERMISSIONS.PLAYERS_WHATSAPP,
         PERMISSIONS.SUMMARY_READ,
         PERMISSIONS.ANALYTICS_READ,
         PERMISSIONS.CASHFLOW_READ,
@@ -81,6 +83,8 @@ export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
         PERMISSIONS.SUMMARY_READ,
         PERMISSIONS.ANALYTICS_READ,
         PERMISSIONS.PLAYERS_READ,
+        PERMISSIONS.PLAYERS_SMS,
+        PERMISSIONS.PLAYERS_WHATSAPP,
         PERMISSIONS.CASHFLOW_READ,
     ],
 

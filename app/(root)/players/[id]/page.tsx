@@ -17,6 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency, formatDate, formatPhone } from "@/lib/utils/table-utils";
 import SMSDialog from "@/components/sms/sms-dialog";
+import WhatsAppDialog from "@/components/players/whatsapp-dialog";
 import CreditPlayerDialog from "@/components/players/credit-player-dialog";
 import DebitPlayerDialog from "@/components/players/debit-player-dialog";
 import BonusCreditPlayerDialog from "@/components/players/bonus-credit-player-dialog";
@@ -151,6 +152,9 @@ export default function PlayerDetailPage({ params }: PageProps) {
             <div className="flex gap-2">
               {hasPermission(PERMISSIONS.PLAYERS_SMS) && (
                 <SMSDialog msisdn={player.msisdn}/>
+              )}
+              {hasPermission(PERMISSIONS.PLAYERS_WHATSAPP) && (
+                <WhatsAppDialog msisdn={player.msisdn}/>
               )}
               {hasPermission(PERMISSIONS.PLAYERS_CREDIT) && (
                 <CreditPlayerDialog

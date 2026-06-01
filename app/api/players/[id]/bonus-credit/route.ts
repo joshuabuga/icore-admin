@@ -79,7 +79,7 @@ export async function POST(
             description,
         });
 
-        const isSuccess = creditResponse.ok && creditResponse.data?.bonus_balance !== undefined;
+        const isSuccess = creditResponse.data?.bonus_balance !== undefined;
 
         let smsStatus = 'Not sent';
         if (isSuccess && sendSms) {
@@ -122,7 +122,7 @@ export async function POST(
                     error: 'Bonus credit API returned an error.',
                     credit_response: creditResponse.data,
                 },
-                { status: creditResponse.status }
+                { status: 502 }
             );
         }
 

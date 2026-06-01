@@ -130,7 +130,7 @@ class PaymentProcessor {
                 throw new Error(`Bonus credit API returned ${response.status}: Expected JSON but got ${contentType}. Body: ${text.substring(0, 200)}`);
             }
             const result = await response.json();
-            return { ok: response.ok, status: response.status, data: result };
+            return { data: result };
         } catch (error) {
             console.error('Error bonus-crediting user:', error);
             throw new Error(`Failed to bonus-credit user: ${error}`);
