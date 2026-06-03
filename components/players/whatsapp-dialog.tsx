@@ -57,7 +57,7 @@ export default function WhatsAppDialog({ msisdn, trigger }: WhatsAppDialogProps)
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
             setError(errorMessage);
-            toast.error(`Failed to send WhatsApp message: ${errorMessage}`);
+            toast.error(errorMessage);
         } finally {
             setIsLoading(false);
         }

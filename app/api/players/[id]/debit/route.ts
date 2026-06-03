@@ -96,7 +96,7 @@ export async function POST(
         if (!debitResponse.ok) {
             const errorData = debitResponse.data;
             const errorMessage = errorData?.error
-                || (typeof errorData === 'object' ? Object.entries(errorData).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`).join('; ') : 'Debit failed');
+                || (typeof errorData === 'object' ? Object.entries(errorData).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : typeof v === 'object' ? JSON.stringify(v) : v}`).join('; ') : 'Debit failed');
 
             return NextResponse.json(
                 {

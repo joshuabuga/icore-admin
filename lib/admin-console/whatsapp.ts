@@ -27,8 +27,13 @@ class WhatsApp {
         });
 
         if (!res.ok) {
-            const body = await res.text().catch(() => res.statusText);
-            throw new Error(`WhatsApp send failed (${res.status}): ${body.substring(0, 200)}`);
+            let message = res.statusText || 'Failed to send message';
+            try {
+                const body = await res.json();
+                const detail = body.errors?.detail || body.detail || body.message;
+                if (detail) message = String(detail);
+            } catch { /* ignore parse error, use statusText */ }
+            throw new Error(message);
         }
     }
 }
