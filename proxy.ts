@@ -9,6 +9,13 @@ const allowedOrigins = [
     'https://www.tucheze.com',
 ];
 
+const isPublicRoute = createRouteMatcher([
+    '/sign-in(.*)',
+    '/sign-up(.*)',
+    '/onboarding(.*)',
+    '/unauthorized(.*)',
+]);
+
 const isProtectedRoute = createRouteMatcher([
     '/promos',
     '/promos/(.*)',
@@ -19,6 +26,12 @@ const isProtectedRoute = createRouteMatcher([
     '/payments/(.*)',
 ]);
 
+// Comma-separated allowed emails, e.g. ALLOWED_EMAILS=alice@example.com,bob@example.com
+// Leave unset to allow any authenticated Clerk user.
+const ALLOWED_EMAILS = process.env.ALLOWED_EMAILS
+    ? process.env.ALLOWED_EMAILS.split(',').map(e => e.trim().toLowerCase())
+    : null;
+
 export default clerkMiddleware(async (auth, req) => {
     const origin = req.headers.get('origin');
     const isAllowedOrigin = origin && allowedOrigins.includes(origin);
@@ -26,9 +39,7 @@ export default clerkMiddleware(async (auth, req) => {
     // Handle preflight OPTIONS request
     if (req.method === 'OPTIONS') {
         const headers = {
-            'Access-Control-Allow-Origin': isAllowedOrigin
-                ? origin
-                : allowedOrigins[0],
+            'Access-Control-Allow-Origin': isAllowedOrigin ? origin : allowedOrigins[0],
             'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
             'Access-Control-Allow-Credentials': 'true',
@@ -36,41 +47,46 @@ export default clerkMiddleware(async (auth, req) => {
         return new Response(null, { status: 204, headers });
     }
 
-    // Protect routes with Clerk and redirect to sign-in if not authenticated
+    // Public routes — no auth required
+    if (isPublicRoute(req)) {
+        return NextResponse.next();
+    }
+
+    const { userId, sessionClaims } = await auth();
+
+    // Not signed in — redirect to sign-in
+    if (!userId) {
+        const signInUrl = new URL('/sign-in', req.url);
+        signInUrl.searchParams.set('redirect_url', req.url);
+        return NextResponse.redirect(signInUrl);
+    }
+
+    // Email allowlist check
+    if (ALLOWED_EMAILS) {
+        const email = (sessionClaims?.email as string | undefined)?.toLowerCase() ?? '';
+        if (!ALLOWED_EMAILS.includes(email)) {
+            return NextResponse.redirect(new URL('/unauthorized', req.url));
+        }
+    }
+
+    // Protected routes: enforce Clerk session
     if (isProtectedRoute(req)) {
         const isGetToPromos =
             req.method === 'GET' &&
             req.nextUrl.pathname.startsWith('/api/promos');
-
         if (!isGetToPromos) {
-            const { userId } = await auth();
-
-            // If user is not authenticated, redirect to sign-in
-            if (!userId) {
-                const signInUrl = new URL('/sign-in', req.url);
-                signInUrl.searchParams.set('redirect_url', req.url);
-                return NextResponse.redirect(signInUrl);
-            }
-
-            // If authenticated, continue with protection
             await auth.protect();
         }
     }
 
-    // Set CORS headers for all other routes
+    // Set CORS headers
     const response = NextResponse.next();
     if (isAllowedOrigin) {
         response.headers.set('Access-Control-Allow-Origin', origin);
     }
     response.headers.set('Access-Control-Allow-Credentials', 'true');
-    response.headers.set(
-        'Access-Control-Allow-Methods',
-        'GET, POST, PUT, DELETE, OPTIONS'
-    );
-    response.headers.set(
-        'Access-Control-Allow-Headers',
-        'Content-Type, Authorization'
-    );
+    response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
     return response;
 });
