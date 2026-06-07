@@ -15,6 +15,7 @@ const isPublicRoute = createRouteMatcher([
     '/sign-up(.*)',
     '/onboarding(.*)',
     '/unauthorized(.*)',
+    '/api/user',  // self-guarded — handles its own auth check
 ]);
 
 const isProtectedRoute = createRouteMatcher([
