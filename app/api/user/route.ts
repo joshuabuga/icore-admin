@@ -35,18 +35,31 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+    const { userId } = await auth();
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const { user } = await request.json();
+    const email: string = user?.primaryEmailAddress?.emailAddress ?? '';
+
+    // Enforce allowlist at the API layer too
+    const allowedEmails = process.env.ALLOWED_EMAILS
+        ? process.env.ALLOWED_EMAILS.split(',').map((e: string) => e.trim().toLowerCase())
+        : null;
+    if (allowedEmails && !allowedEmails.includes(email.toLowerCase())) {
+        return NextResponse.json({ error: 'Not authorized to access this application' }, { status: 403 });
+    }
+
     try {
-        const userData = await prisma.user.create({
-            data: {
+        const userData = await prisma.user.upsert({
+            where: { id: user?.id },
+            update: {},  // existing users: no changes, just return the record
+            create: {
                 id: user?.id,
-                email: user?.primaryEmailAddress
-                    .emailAddress as unknown as string,
+                email,
                 name: `${user?.firstName} ${user?.lastName}`,
                 role: 'user',
             },
         });
-        console.log('Created user data:', userData);
         return NextResponse.json(userData);
     } catch (error) {
         console.error('Error creating user:', error);
