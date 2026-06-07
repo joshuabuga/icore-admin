@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -17,8 +19,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Tucheze - BO ",
-  description: "Tucheze Internal Backoffice for admin management of platform and players",
+  title: "Ushindi Box - BO ",
+  description: "Ushindi Box Internal Backoffice for admin management of platform and players",
   icons: {
     icon: '/logo.png',
   },
@@ -31,10 +33,14 @@ export default function RootLayout({
 }>) {
   return (
       <ClerkProvider
+          signInUrl="/sign-in"
+          signUpUrl="/sign-up"
+          signInFallbackRedirectUrl="/onboarding"
+          signUpFallbackRedirectUrl="/onboarding"
           appearance={{
               baseTheme: shadcn,
           }}>
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
