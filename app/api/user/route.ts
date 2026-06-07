@@ -1,6 +1,6 @@
 import prisma from '@/lib/prisma';
 import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
+import { auth, clerkClient } from '@clerk/nextjs/server';
 
 export async function GET() {
     try {
@@ -38,10 +38,14 @@ export async function POST(request: Request) {
     const { userId } = await auth();
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { user } = await request.json();
-    const email: string = user?.primaryEmailAddress?.emailAddress ?? '';
+    // Fetch user details from Clerk server-side — don't trust the request body for auth checks
+    const client = await clerkClient();
+    const clerkUser = await client.users.getUser(userId);
+    const email = clerkUser.emailAddresses
+        .find(e => e.id === clerkUser.primaryEmailAddressId)
+        ?.emailAddress ?? '';
 
-    // Enforce allowlist at the API layer too
+    // Enforce allowlist
     const allowedEmails = process.env.ALLOWED_EMAILS
         ? process.env.ALLOWED_EMAILS.split(',').map((e: string) => e.trim().toLowerCase())
         : null;
@@ -49,14 +53,16 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Not authorized to access this application' }, { status: 403 });
     }
 
+    const { user } = await request.json();
+
     try {
         const userData = await prisma.user.upsert({
-            where: { id: user?.id },
-            update: {},  // existing users: no changes, just return the record
+            where: { id: userId },
+            update: {},
             create: {
-                id: user?.id,
+                id: userId,
                 email,
-                name: `${user?.firstName} ${user?.lastName}`,
+                name: `${clerkUser.firstName ?? ''} ${clerkUser.lastName ?? ''}`.trim(),
                 role: 'user',
             },
         });
