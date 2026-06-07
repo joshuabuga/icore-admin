@@ -4,9 +4,10 @@ import { NextResponse } from 'next/server';
 const allowedOrigins = [
     'http://localhost:3001',
     'http://localhost:4173',
-    'https://tucheze.com',
-    'https://gonga-prd.web.app',
-    'https://www.tucheze.com',
+    'https://ushindibox.com',
+    'https://www.ushindibox.com',
+    'https://bo.ushindibox.com',
+    'https://operator.ushindibox.com',
 ];
 
 const isPublicRoute = createRouteMatcher([
