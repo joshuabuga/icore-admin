@@ -48,7 +48,7 @@ export default function OnboardingPage() {
         toast.success(`Welcome ${userData.name}! Account ready.`);
         setIsComplete(true);
 
-        setTimeout(() => { router.push("/promos"); }, 2000);
+        setTimeout(() => { router.push("/summary/legacy"); }, 2000);
 
       } catch (error) {
         toast.error(`Setup failed: ${error instanceof Error ? error.message : String(error)}`);
@@ -168,7 +168,7 @@ export default function OnboardingPage() {
                 </div>
                 
                 <Button 
-                  onClick={() => router.push("/promos")} 
+                  onClick={() => router.push("/summary/legacy")} 
                   className="w-full"
                   size="sm"
                 >
