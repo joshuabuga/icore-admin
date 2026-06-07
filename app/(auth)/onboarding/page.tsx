@@ -28,32 +28,30 @@ export default function OnboardingPage() {
       try {
         setIsLoading(true);
         setStep(1);
-        
-        // Simulate step progress
-        setTimeout(() => setStep(2), 500);
-        setTimeout(() => setStep(3), 1000);
-        
-      const response = await fetch('/api/user', {
+        setTimeout(() => setStep(2), 400);
+        setTimeout(() => setStep(3), 800);
+
+        const response = await fetch('/api/user', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ user }),
         });
-      const userData = await response.json() as UserData;
-      console.log("Received user data:", userData);
 
+        const body = await response.json();
+
+        if (!response.ok) {
+          throw new Error(body?.error ?? `Server error ${response.status}`);
+        }
+
+        const userData = body as UserData;
         setStep(4);
-        toast.success(`Welcome ${userData.name}! Your account has been created successfully!`);
+        toast.success(`Welcome ${userData.name}! Account ready.`);
         setIsComplete(true);
-        
-        // Auto redirect after 2 seconds
-        setTimeout(() => {
-          router.push("/promos");
-        }, 2000);
-        
+
+        setTimeout(() => { router.push("/promos"); }, 2000);
+
       } catch (error) {
-        toast.error(`Error creating user: ${error}`);
+        toast.error(`Setup failed: ${error instanceof Error ? error.message : String(error)}`);
         setIsComplete(true);
       } finally {
         setIsLoading(false);
@@ -83,7 +81,7 @@ export default function OnboardingPage() {
             </div>
           </div>
           <div className="space-y-2">
-            <h1 className="text-2xl sm:text-3xl font-bold">Welcome to Tucheze BackOffice</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold">Welcome to Ushindi Box BackOffice</h1>
             <p className="text-sm sm:text-base text-muted-foreground">
               Setting up your account. This will only take a moment.
             </p>
@@ -106,7 +104,7 @@ export default function OnboardingPage() {
             <CardDescription className="text-sm sm:text-base">
               {isLoading 
                 ? "Please wait while we prepare everything for you"
-                : "You're all set to start using Tucheze BackOffice"
+                : "You're all set to start using Ushindi Box BackOffice"
               }
             </CardDescription>
           </CardHeader>
