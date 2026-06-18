@@ -54,6 +54,7 @@ export async function POST(request: Request) {
     }
 
     const { user } = await request.json();
+    console.log('DATABASE_URL db:', process.env.DATABASE_URL?.split('/').pop());
 
     try {
         const userData = await prisma.user.upsert({
