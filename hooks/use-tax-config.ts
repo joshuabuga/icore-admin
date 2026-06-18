@@ -8,7 +8,7 @@ export function useTaxConfig() {
     const { data, error, isLoading, mutate } = useSWR<TaxConfig>(
         '/api/payments/tax-config',
         fetcher,
-        { revalidateOnFocus: false }
+        { revalidateOnFocus: false, shouldRetryOnError: true, errorRetryCount: 3 }
     );
 
     return {

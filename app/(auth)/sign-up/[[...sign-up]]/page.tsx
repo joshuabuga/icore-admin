@@ -27,7 +27,7 @@ export default function SignUpPage() {
                                     <CardHeader>
                                         <CardTitle>Create your account</CardTitle>
                                         <CardDescription>
-                                            Welcome to Tucheze Admin! Please fill in the details to get started.
+                                            Welcome to Ushindi Box Admin! Please fill in the details to get started.
                                         </CardDescription>
                                     </CardHeader>
                                     <CardContent className="grid gap-y-4">

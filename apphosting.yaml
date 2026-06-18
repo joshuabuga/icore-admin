@@ -1,0 +1,90 @@
+runConfig:
+  cpu: 1
+  memoryMiB: 1024
+  minInstances: 0
+  maxInstances: 2
+  concurrency: 80
+
+env:
+  - variable: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+    value: pk_live_Y2xlcmsuYm8udXNoaW5kaWJveC5jb20k
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: NEXT_PUBLIC_CLERK_SIGN_IN_URL
+    value: /sign-in
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: NEXT_PUBLIC_CLERK_SIGN_UP_URL
+    value: /sign-up
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL
+    value: /onboarding
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL
+    value: /onboarding
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: ALLOWED_EMAILS
+    value: joshuabuga@gmail.com
+    availability:
+      - RUNTIME
+
+  - variable: TUCHEZE_ADMIN_API
+    value: https://icore-admin-api-yx5tbe7wma-ey.a.run.app
+    availability:
+      - RUNTIME
+
+  - variable: TUCHEZE_ADMIN_USERNAME
+    value: admin
+    availability:
+      - RUNTIME
+
+  - variable: TUCHEZE_ADMIN_PASSWORD
+    value: Admin1234!
+    availability:
+      - RUNTIME
+
+  - variable: DATABASE_URL
+    value: postgres://cmdbuser:qwertea21@35.246.189.198:5432/icore_admin
+    availability:
+      - RUNTIME
+
+  - variable: CLERK_SECRET_KEY
+    secret: clerk-secret-key
+
+  - variable: SMS_BASE_URL
+    value: https://sms.example.com/api/send
+    availability:
+      - RUNTIME
+
+  - variable: SMS_API_KEY
+    value: dummy_sms_api_key
+    availability:
+      - RUNTIME
+
+  - variable: SMS_SENDER_ID
+    value: USHINDIBOX
+    availability:
+      - RUNTIME
+
+  - variable: SMS_CLIENT_ID
+    value: dummy_sms_client_id
+    availability:
+      - RUNTIME
+
+  - variable: GCS_BUCKET_NAME
+    value: cm-services-prod_gonga
+    availability:
+      - RUNTIME

@@ -116,7 +116,7 @@ const navigationItems: NavItem[] = [
     requiredPermission: PERMISSIONS.GAMES_READ,
   },
   {
-    title: "Tpay",
+    title: "Jpay",
     url: "/tpay",
     icon: CreditCard,
     requiredPermission: PERMISSIONS.TPAY_READ,
@@ -195,10 +195,10 @@ export function AppSidebar() {
             <SidebarMenuButton size="lg" asChild>
               <Link href="/summary">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg  text-sidebar-primary-foreground">
-                  <Image src="/logo.png" alt="Tucheze Logo" width={24} height={24} />
+                  <Image src="/logo.png" alt="Ushindi Box Logo" width={24} height={24} />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">Tucheze</span>
+                  <span className="truncate font-semibold">Ushindi Box</span>
                   <span className="truncate text-xs">Admin Console</span>
                 </div>
               </Link>

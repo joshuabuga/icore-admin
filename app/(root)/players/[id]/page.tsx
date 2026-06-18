@@ -256,9 +256,9 @@ export default function PlayerDetailPage({ params }: PageProps) {
               <Skeleton className="h-6 w-full" />
             ) : (
               <div className="space-y-1">
-                {player?.wallets?.map((wallet) => (
+                {player?.wallets?.map((wallet, idx) => (
                   <div
-                    key={wallet.id}
+                    key={`${wallet.id}-${idx}`}
                     className="flex items-center justify-between text-sm"
                   >
                     <span className="capitalize text-muted-foreground">

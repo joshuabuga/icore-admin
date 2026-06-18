@@ -130,13 +130,13 @@ export default function SettingsPage() {
 
     useEffect(() => {
         if (!config) return;
-        setDepositEnabled(config.deposit_wht_enabled);
-        setDepositRate(config.deposit_wht_rate);
-        setDepositMin(config.deposit_wht_min_amount);
+        setDepositEnabled(config.deposit_wht_enabled ?? true);
+        setDepositRate(config.deposit_wht_rate ?? "0.0500");
+        setDepositMin(config.deposit_wht_min_amount ?? "0");
         setDepositMax(config.deposit_wht_max_amount ?? "");
-        setWithdrawalEnabled(config.withdrawal_wht_enabled);
-        setWithdrawalRate(config.withdrawal_wht_rate);
-        setWithdrawalMin(config.withdrawal_wht_min_amount);
+        setWithdrawalEnabled(config.withdrawal_wht_enabled ?? true);
+        setWithdrawalRate(config.withdrawal_wht_rate ?? "0.0500");
+        setWithdrawalMin(config.withdrawal_wht_min_amount ?? "0");
         setWithdrawalMax(config.withdrawal_wht_max_amount ?? "");
         setNotes(config.notes ?? "");
     }, [config]);

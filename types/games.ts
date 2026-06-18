@@ -43,6 +43,46 @@ export interface GameDetail {
   category: GameCategory;
 }
 
+// Per-game stats — works for any game tracked via wallet transactions
+export interface GameStatsSummary {
+  identifier: string;
+  name: string;
+  is_offered: boolean;
+  created_at: string;
+  total_bets: number;
+  total_wins: number;
+  total_bet_amount: string;
+  total_win_amount: string;
+  ggr: string;
+  unique_players: number;
+}
+
+export interface GameDayStats {
+  date: string;
+  total_bets: number;
+  total_wins: number;
+  total_bet_amount: string;
+  total_win_amount: string;
+  ggr: string;
+  unique_players: number;
+}
+
+export interface GameStatsResponse {
+  game: {
+    identifier: string;
+    name: string;
+    is_offered: boolean;
+  };
+  summary: {
+    total_bets: number;
+    total_wins: number;
+    total_bet_amount: string;
+    total_win_amount: string;
+    ggr: string;
+  };
+  daily: GameDayStats[];
+}
+
 // API Response wrappers
 export interface GameDetailResponse {
   status: ApiStatus;

@@ -45,8 +45,8 @@ export function TermsAndConditionsCard({ form }: TermsAndConditionsCardProps) {
 
 <h3><strong>4. General Terms</strong></h3>
 <ul>
-<li>Tucheze reserves the right to amend, suspend, or terminate this promotion at any time without prior notice.</li>
-<li>Cashback bonuses are subject to Tucheze's general Terms and Conditions.</li>
+<li>Ushindi Box reserves the right to amend, suspend, or terminate this promotion at any time without prior notice.</li>
+<li>Cashback bonuses are subject to Ushindi Box's general Terms and Conditions.</li>
 </ul>`
         form.setValue('terms_and_conditions', template)
     }
@@ -62,7 +62,7 @@ export function TermsAndConditionsCard({ form }: TermsAndConditionsCardProps) {
 <h3><strong>Promotion Period</strong></h3>
 <ul>
 <li>Runs daily between <strong>${startTime} and ${endTime}</strong>.</li>
-<li>Tucheze reserves the right to extend or modify the campaign.</li>
+<li>Ushindi Box reserves the right to extend or modify the campaign.</li>
 </ul>
 
 <h3><strong>How to Qualify</strong></h3>
@@ -81,20 +81,20 @@ export function TermsAndConditionsCard({ form }: TermsAndConditionsCardProps) {
 <ul>
 <li><strong>${dailyWinners} winners daily!</strong> 🎉</li>
 <li>Each winner gets <strong>Ksh ${prizeAmount}</strong>.</li>
-<li>Winnings are credited to your Tucheze account within <strong>24 hours</strong>.</li>
+<li>Winnings are credited to your Ushindi Box account within <strong>24 hours</strong>.</li>
 <li>The more you play, the higher your chances!</li>
 </ul>
 
 <h3><strong>Eligibility</strong></h3>
 <ul>
-<li>Open to all <strong>registered Tucheze users</strong> who meet the criteria.</li>
+<li>Open to all <strong>registered Ushindi Box users</strong> who meet the criteria.</li>
 </ul>
 
 <h3><strong>Terms</strong></h3>
 <ul>
-<li>Subject to Tucheze's standard terms & conditions.</li>
-<li>Tucheze may amend, suspend, or terminate the promotion without prior notice.</li>
-<li>In case of disputes, Tucheze's decision is final.</li>
+<li>Subject to Ushindi Box's standard terms & conditions.</li>
+<li>Ushindi Box may amend, suspend, or terminate the promotion without prior notice.</li>
+<li>In case of disputes, Ushindi Box's decision is final.</li>
 <li>Participation implies full acceptance of these terms.</li>
 </ul>`
         form.setValue('terms_and_conditions', template)
@@ -105,7 +105,7 @@ export function TermsAndConditionsCard({ form }: TermsAndConditionsCardProps) {
 
 <h3><strong>1. Eligibility</strong></h3>
 <ul>
-<li>Open to all registered Tucheze users.</li>
+<li>Open to all registered Ushindi Box users.</li>
 <li>Minimum deposit/bet requirements apply.</li>
 </ul>
 
@@ -123,9 +123,9 @@ export function TermsAndConditionsCard({ form }: TermsAndConditionsCardProps) {
 
 <h3><strong>4. General Terms</strong></h3>
 <ul>
-<li>Tucheze reserves the right to modify or terminate this promotion.</li>
+<li>Ushindi Box reserves the right to modify or terminate this promotion.</li>
 <li>Standard terms and conditions apply.</li>
-<li>Decision of Tucheze management is final in case of disputes.</li>
+<li>Decision of Ushindi Box management is final in case of disputes.</li>
 </ul>`
         form.setValue('terms_and_conditions', template)
     }

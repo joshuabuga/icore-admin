@@ -191,7 +191,7 @@ class PaymentProcessor {
 
     async sendSMS(data: SMSRequest) {
         // Message format matching the original Python script
-        const message = `Congratulations ${data.name}! You have been awarded Ksh ${data.amount} from ${data.promo}. Cash iko kwa account.\nPlay and win BIG with Tucheze.com`;
+        const message = `Congratulations ${data.name}! You have been awarded Ksh ${data.amount} from ${data.promo}. Cash iko kwa account.\nPlay and win BIG with UshindiBox.com`;
 
         // Strip spaces, then normalize to 254 format
         const phoneNumber = data.phone.replace(/\s/g, '').replace(/^\+/, '').replace(/^0/, '254');

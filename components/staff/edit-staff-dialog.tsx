@@ -111,10 +111,10 @@ const PERMISSION_GROUPS = [
     ],
   },
   {
-    label: "TPay",
+    label: "JPay",
     permissions: [
-      { value: PERMISSIONS.TPAY_READ, label: "View TPay" },
-      { value: PERMISSIONS.TPAY_WRITE, label: "Manage TPay" },
+      { value: PERMISSIONS.TPAY_READ, label: "View JPay" },
+      { value: PERMISSIONS.TPAY_WRITE, label: "Manage JPay" },
     ],
   },
   {

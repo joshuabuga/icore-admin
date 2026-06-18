@@ -1,7 +1,8 @@
 'use client';
 
-import { Game } from '@/types/games';
+import { Game, GameStatsSummary } from '@/types/games';
 import { GameCard } from './game-card';
+import { TrackedGameCard } from './tracked-game-card';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Gamepad2 } from 'lucide-react';
@@ -12,6 +13,7 @@ interface GamesGridProps {
   onToggleOffered: (game: Game) => void;
   onEdit: (game: Game) => void;
   isUpdating?: boolean;
+  trackedGames?: GameStatsSummary[];
 }
 
 export function GamesGrid({
@@ -20,6 +22,7 @@ export function GamesGrid({
   onToggleOffered,
   onEdit,
   isUpdating,
+  trackedGames = [],
 }: GamesGridProps) {
   if (isLoading) {
     return (
@@ -41,7 +44,13 @@ export function GamesGrid({
     );
   }
 
-  if (games.length === 0) {
+  // Separate boxgame records from casino games
+  const trackedCodes = new Set(trackedGames.map(g => g.identifier));
+  const casinoGames = games.filter(g => !trackedCodes.has(g.code));
+
+  const totalCount = casinoGames.length + trackedGames.length;
+
+  if (totalCount === 0) {
     return (
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12">
@@ -56,16 +65,42 @@ export function GamesGrid({
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-      {games.map((game) => (
-        <GameCard
-          key={game.id}
-          game={game}
-          onToggleOffered={onToggleOffered}
-          onEdit={onEdit}
-          isUpdating={isUpdating}
-        />
-      ))}
+    <div className="space-y-6">
+      {/* Tracked games section (wallet-stats-enabled) */}
+      {trackedGames.length > 0 && (
+        <div className="space-y-3">
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+            Tracked Games ({trackedGames.length})
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {trackedGames.map(g => (
+              <TrackedGameCard key={g.identifier} game={g} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Casino / other games section */}
+      {casinoGames.length > 0 && (
+        <div className="space-y-3">
+          {trackedGames.length > 0 && (
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+              Casino &amp; Other Games ({casinoGames.length})
+            </h2>
+          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {casinoGames.map(game => (
+              <GameCard
+                key={game.id}
+                game={game}
+                onToggleOffered={onToggleOffered}
+                onEdit={onEdit}
+                isUpdating={isUpdating}
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

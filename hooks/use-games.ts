@@ -3,7 +3,7 @@
 import useSWR from 'swr';
 import useSWRMutation from 'swr/mutation';
 import { fetcher } from '@/lib/fetcher';
-import { Game, GameDetail } from '@/types/games';
+import { Game, GameDetail, GameStatsSummary, GameStatsResponse } from '@/types/games';
 
 export interface GamesParams {
     search?: string;
@@ -85,4 +85,29 @@ export function useGameMutations() {
         uploadThumbnail,
         isUpdating,
     };
+}
+
+export function useTrackedGames() {
+    const { data, error, isLoading, mutate } = useSWR<GameStatsSummary[]>(
+        '/api/games/game-stats',
+        fetcher,
+        { revalidateOnFocus: false }
+    );
+    return { trackedGames: data || [], isLoading, error, refetch: mutate };
+}
+
+interface GameStatsParams {
+    game: string;
+    startDate: string;
+    endDate: string;
+}
+
+export function useGameStats({ game, startDate, endDate }: GameStatsParams) {
+    const params = new URLSearchParams({ game, start_date: startDate, end_date: endDate });
+    const { data, error, isLoading } = useSWR<GameStatsResponse>(
+        game ? `/api/games/game-stats?${params.toString()}` : null,
+        fetcher,
+        { revalidateOnFocus: false }
+    );
+    return { stats: data || null, isLoading, error };
 }

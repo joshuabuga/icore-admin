@@ -259,7 +259,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/arnoldmusandu/work/tucheze/tucheze-admin/prisma/db/generated/client",
+      "value": "/Users/mac/projects/ushindibox/icore-admin/prisma/db/generated/client",
       "fromEnvVar": null
     },
     "config": {
@@ -285,7 +285,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/Users/arnoldmusandu/work/tucheze/tucheze-admin/prisma/schema.prisma",
+    "sourceFilePath": "/Users/mac/projects/ushindibox/icore-admin/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

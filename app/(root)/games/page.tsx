@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback } from 'react';
 import { toast } from 'sonner';
 import { LayoutGrid, List, Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 
-import { useGames, useGameMutations } from '@/hooks/use-games';
+import { useGames, useGameMutations, useTrackedGames } from '@/hooks/use-games';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Game, GameDetail } from '@/types/games';
 import { DataTable } from '@/components/shared/data-table';
@@ -39,6 +39,7 @@ export default function GamesPage() {
   });
 
   const { updateGame, uploadThumbnail, isUpdating } = useGameMutations();
+  const { trackedGames } = useTrackedGames();
 
   // Calculate pagination values
   const pageCount = Math.ceil(totalRows / pageSize);
@@ -201,6 +202,7 @@ export default function GamesPage() {
             onToggleOffered={handleToggleOffered}
             onEdit={handleEdit}
             isUpdating={isUpdating}
+            trackedGames={trackedGames}
           />
 
           {/* Pagination for Grid View */}

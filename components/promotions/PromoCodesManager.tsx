@@ -307,7 +307,7 @@ export default function PromoCodesManager({ promoId }: Props) {
                                 <Input
                                     required
                                     placeholder="WELCOME50"
-                                    value={form.code}
+                                    value={form.code ?? ""}
                                     onChange={e => set('code', e.target.value.toUpperCase())}
                                     className="font-mono uppercase"
                                 />
@@ -317,7 +317,7 @@ export default function PromoCodesManager({ promoId }: Props) {
                                 <Input
                                     required
                                     placeholder="Welcome 50% bonus"
-                                    value={form.name}
+                                    value={form.name ?? ""}
                                     onChange={e => set('name', e.target.value)}
                                 />
                             </div>
@@ -327,7 +327,7 @@ export default function PromoCodesManager({ promoId }: Props) {
                             <Label>Campaign Tag</Label>
                             <Input
                                 placeholder="e.g. sms-aug-2025"
-                                value={form.campaign_tag}
+                                value={form.campaign_tag ?? ""}
                                 onChange={e => set('campaign_tag', e.target.value)}
                             />
                             <p className="text-xs text-muted-foreground">Optional label for tracking campaigns</p>
@@ -342,7 +342,7 @@ export default function PromoCodesManager({ promoId }: Props) {
                                     type="number"
                                     min={0}
                                     placeholder="Leave blank to use promo amount"
-                                    value={form.bonus_amount_override}
+                                    value={form.bonus_amount_override ?? ""}
                                     onChange={e => set('bonus_amount_override', e.target.value)}
                                 />
                             </div>
@@ -366,7 +366,7 @@ export default function PromoCodesManager({ promoId }: Props) {
                                 <Input
                                     type="number"
                                     min={0}
-                                    value={form.min_deposit}
+                                    value={form.min_deposit ?? ""}
                                     onChange={e => set('min_deposit', e.target.value)}
                                 />
                             </div>
@@ -376,7 +376,7 @@ export default function PromoCodesManager({ promoId }: Props) {
                                     type="number"
                                     min={0}
                                     placeholder="Blank = unlimited"
-                                    value={form.max_uses}
+                                    value={form.max_uses ?? ""}
                                     onChange={e => set('max_uses', e.target.value)}
                                 />
                             </div>
@@ -385,7 +385,7 @@ export default function PromoCodesManager({ promoId }: Props) {
                                 <Input
                                     type="number"
                                     min={1}
-                                    value={form.max_uses_per_user}
+                                    value={form.max_uses_per_user ?? ""}
                                     onChange={e => set('max_uses_per_user', Number(e.target.value))}
                                 />
                             </div>
@@ -430,7 +430,7 @@ export default function PromoCodesManager({ promoId }: Props) {
                                 <Label>Active From</Label>
                                 <Input
                                     type="datetime-local"
-                                    value={form.active_from}
+                                    value={form.active_from ?? ""}
                                     onChange={e => set('active_from', e.target.value)}
                                 />
                             </div>
@@ -438,7 +438,7 @@ export default function PromoCodesManager({ promoId }: Props) {
                                 <Label>Active To</Label>
                                 <Input
                                     type="datetime-local"
-                                    value={form.active_to}
+                                    value={form.active_to ?? ""}
                                     onChange={e => set('active_to', e.target.value)}
                                 />
                             </div>

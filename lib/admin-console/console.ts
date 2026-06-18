@@ -14,7 +14,7 @@ import {
 import { Payin } from "@/types/payins";
 import { Payout } from "@/types/payouts";
 import { UserDetail, UserListItem } from "@/types/users";
-import { Game,GameDetail } from "@/types/games";
+import { Game, GameDetail, GameStatsSummary, GameStatsResponse } from "@/types/games";
 import { Summary } from "@/types/summary";
 import { getEnvConfig } from "./env-config";
 
@@ -713,6 +713,39 @@ class AdminConsole {
         { method: 'GET', headers: this.getHeaders(access) }
       );
       if (!response.ok) throw new Error(`Failed to fetchDailyFTDVolume: ${response.statusText}`);
+      const result = await response.json();
+      return result.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async fetchTrackedGames(): Promise<GameStatsSummary[]> {
+    try {
+      const { access, baseURL } = await this.getAuth();
+      const response = await fetch(
+        `${baseURL}/api/v1/console/stats/boxgames/`,
+        { method: 'GET', headers: this.getHeaders(access) }
+      );
+      if (!response.ok) throw new Error(`Failed to fetchTrackedGames: ${response.statusText}`);
+      const result = await response.json();
+      return result.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async fetchGameStats(game: string, startDate: string, endDate: string): Promise<GameStatsResponse> {
+    try {
+      const { access, baseURL } = await this.getAuth();
+      const params = new URLSearchParams({ game, start_date: startDate, end_date: endDate });
+      const response = await fetch(
+        `${baseURL}/api/v1/console/stats/boxgames/stats/?${params.toString()}`,
+        { method: 'GET', headers: this.getHeaders(access) }
+      );
+      if (!response.ok) throw new Error(`Failed to fetchGameStats: ${response.statusText}`);
       const result = await response.json();
       return result.data;
     } catch (error) {
