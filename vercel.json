@@ -1,3 +1,3 @@
 {
-  "buildCommand": "bunx prisma db push --skip-generate --no-env-file && bun run build"
+  "buildCommand": "mv .env .env.bak 2>/dev/null; bunx prisma db push --skip-generate; mv .env.bak .env 2>/dev/null; bun run build"
 }
