@@ -77,6 +77,7 @@ const navigationItems: NavItem[] = [
       { title: "Financial Flow", url: "/analytics/financial", icon: DollarSign, requiredPermission: PERMISSIONS.ANALYTICS_READ },
       { title: "Growth", url: "/analytics/growth", icon: TrendingUp, requiredPermission: PERMISSIONS.ANALYTICS_READ },
       { title: "Engagement & Games", url: "/analytics/engagement", icon: Activity, requiredPermission: PERMISSIONS.ANALYTICS_READ },
+      { title: "Channel Performance", url: "/analytics/channels", icon: Share2, requiredPermission: PERMISSIONS.ANALYTICS_READ },
     ],
   },
   {

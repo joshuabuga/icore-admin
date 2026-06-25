@@ -66,9 +66,17 @@ export async function GET(request: Request) {
                 const result = await adminConsole.fetchTopGames(startDate, endDate);
                 return NextResponse.json(result);
             }
+            case 'channel-registrations': {
+                const result = await adminConsole.fetchChannelRegistrations(startDate, endDate);
+                return NextResponse.json(result);
+            }
+            case 'channel-plays': {
+                const result = await adminConsole.fetchChannelPlays(startDate, endDate);
+                return NextResponse.json(result);
+            }
             default:
                 return NextResponse.json(
-                    { error: 'Invalid type parameter. Use: hourly-registrations, hourly-active-users, daily-stakes-winnings, daily-new-users-ftd, daily-ftd-volume, top-games' },
+                    { error: 'Invalid type parameter. Use: hourly-registrations, hourly-active-users, daily-stakes-winnings, daily-new-users-ftd, daily-ftd-volume, top-games, channel-registrations, channel-plays' },
                     { status: 400 }
                 );
         }
