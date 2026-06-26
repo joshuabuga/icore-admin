@@ -914,7 +914,8 @@ class AdminConsole {
       cache: 'no-store',
     });
     if (!response.ok) throw new Error(`fetchTaxConfig: ${response.statusText}`);
-    return response.json();
+    const result = await response.json();
+    return result.data;
   }
 
   async updateTaxConfig(data: Record<string, unknown>) {
@@ -928,7 +929,8 @@ class AdminConsole {
       const err = await response.json().catch(() => ({}));
       throw err;
     }
-    return response.json();
+    const result = await response.json();
+    return result.data;
   }
 }
 
