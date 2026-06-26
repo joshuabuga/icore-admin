@@ -4,6 +4,8 @@ import prisma from '@/lib/prisma';
 import { hasPermission, PERMISSIONS } from '@/lib/permissions';
 import { adminConsole } from '@/lib/admin-console/console';
 
+export const dynamic = 'force-dynamic';
+
 export async function OPTIONS() {
     return new NextResponse(null, { status: 200 });
 }
