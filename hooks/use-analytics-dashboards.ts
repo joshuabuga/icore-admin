@@ -95,3 +95,29 @@ export function useTopGames({ startDate, endDate }: DateRange = {}) {
     );
     return { data, isLoading, error };
 }
+
+export function useChannelRegistrations({ startDate, endDate }: DateRange = {}) {
+    const defaults = getDefaultDateRange();
+    const start = startDate || defaults.startDate;
+    const end = endDate || defaults.endDate;
+
+    const { data, error, isLoading } = useSWR<any[]>(
+        `/api/analytics/dashboards?type=channel-registrations&start_date=${start}&end_date=${end}`,
+        fetcher,
+        { revalidateOnFocus: false }
+    );
+    return { data, isLoading, error };
+}
+
+export function useChannelPlays({ startDate, endDate }: DateRange = {}) {
+    const defaults = getDefaultDateRange();
+    const start = startDate || defaults.startDate;
+    const end = endDate || defaults.endDate;
+
+    const { data, error, isLoading } = useSWR<any[]>(
+        `/api/analytics/dashboards?type=channel-plays&start_date=${start}&end_date=${end}`,
+        fetcher,
+        { revalidateOnFocus: false }
+    );
+    return { data, isLoading, error };
+}

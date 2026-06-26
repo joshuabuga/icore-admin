@@ -8,6 +8,9 @@ const allowedOrigins = [
     'https://www.ushindibox.com',
     'https://bo.ushindibox.com',
     'https://operator.ushindibox.com',
+    'https://bo.ushindibox.playbatman.com',
+    'https://operator.ushindibox.playbatman.com',
+    'https://ushindibackoffice.vercel.app',
 ];
 
 const isPublicRoute = createRouteMatcher([

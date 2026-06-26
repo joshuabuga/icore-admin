@@ -932,6 +932,44 @@ class AdminConsole {
     const result = await response.json();
     return result.data;
   }
+
+  async fetchChannelRegistrations(startDate?: string, endDate?: string): Promise<any[]> {
+    try {
+      const { access, baseURL } = await this.getAuth();
+      const params = new URLSearchParams();
+      if (startDate) params.set('start_date', startDate);
+      if (endDate) params.set('end_date', endDate);
+      const response = await fetch(
+        `${baseURL}/api/v1/console/stats/channels/registrations/?${params.toString()}`,
+        { method: 'GET', headers: this.getHeaders(access) }
+      );
+      if (!response.ok) throw new Error(`Failed to fetchChannelRegistrations: ${response.statusText}`);
+      const result = await response.json();
+      return result.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async fetchChannelPlays(startDate?: string, endDate?: string): Promise<any[]> {
+    try {
+      const { access, baseURL } = await this.getAuth();
+      const params = new URLSearchParams();
+      if (startDate) params.set('start_date', startDate);
+      if (endDate) params.set('end_date', endDate);
+      const response = await fetch(
+        `${baseURL}/api/v1/console/stats/channels/plays/?${params.toString()}`,
+        { method: 'GET', headers: this.getHeaders(access) }
+      );
+      if (!response.ok) throw new Error(`Failed to fetchChannelPlays: ${response.statusText}`);
+      const result = await response.json();
+      return result.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
 }
 
 export const adminConsole = new AdminConsole();

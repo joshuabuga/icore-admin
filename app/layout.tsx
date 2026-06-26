@@ -18,9 +18,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const brandName = process.env.NEXT_PUBLIC_BRAND_NAME || "Ushindi Box";
+
 export const metadata: Metadata = {
-  title: "Ushindi Box - BO ",
-  description: "Ushindi Box Internal Backoffice for admin management of platform and players",
+  title: `${brandName} - BO`,
+  description: `${brandName} Internal Backoffice for admin management of platform and players`,
   icons: {
     icon: '/logo.png',
   },

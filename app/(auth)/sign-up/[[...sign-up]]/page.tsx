@@ -13,9 +13,10 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Icons } from '@/components/ui/icons'
-import { cn } from '@/lib/utils'
+import { cn, getBrandName } from '@/lib/utils'
 
 export default function SignUpPage() {
+    const brandName = getBrandName();
     return (
         <div className="grid w-full grow items-center px-4 mt-52 sm:justify-center">
             <SignUp.Root>
@@ -27,7 +28,7 @@ export default function SignUpPage() {
                                     <CardHeader>
                                         <CardTitle>Create your account</CardTitle>
                                         <CardDescription>
-                                            Welcome to Ushindi Box Admin! Please fill in the details to get started.
+                                            Welcome to {brandName} Admin! Please fill in the details to get started.
                                         </CardDescription>
                                     </CardHeader>
                                     <CardContent className="grid gap-y-4">

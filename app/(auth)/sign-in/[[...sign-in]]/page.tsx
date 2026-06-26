@@ -13,8 +13,10 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Icons } from '@/components/ui/icons'
+import { getBrandName } from '@/lib/utils'
 
 export default function SignInPage() {
+  const brandName = getBrandName();
   return (
     <div className="grid w-full grow items-center px-4 mt-52 sm:justify-center">
       <SignIn.Root>
@@ -24,7 +26,7 @@ export default function SignInPage() {
               <SignIn.Step name="start">
                 <Card className="w-full sm:w-96">
                   <CardHeader>
-                    <CardTitle>Sign in to Ushindi Box Utilities</CardTitle>
+                    <CardTitle>Sign in to {brandName} Utilities</CardTitle>
                     <CardDescription>Welcome back! Please sign in to continue</CardDescription>
                   </CardHeader>
                   <CardContent className="grid gap-y-4">

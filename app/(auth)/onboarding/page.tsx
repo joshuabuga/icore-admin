@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CheckCircle, UserPlus, Loader2, Sparkles, ArrowRight } from "lucide-react";
+import { getBrandName } from "@/lib/utils";
 
 interface UserData {
   id: string;
@@ -18,6 +19,7 @@ interface UserData {
 
 export default function OnboardingPage() {
   const { user } = useUser();
+  const brandName = getBrandName();
   const [isLoading, setIsLoading] = useState(true);
   const [isComplete, setIsComplete] = useState(false);
   const [step, setStep] = useState(1);
@@ -81,7 +83,7 @@ export default function OnboardingPage() {
             </div>
           </div>
           <div className="space-y-2">
-            <h1 className="text-2xl sm:text-3xl font-bold">Welcome to Ushindi Box BackOffice</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold">Welcome to {brandName} BackOffice</h1>
             <p className="text-sm sm:text-base text-muted-foreground">
               Setting up your account. This will only take a moment.
             </p>
@@ -102,9 +104,9 @@ export default function OnboardingPage() {
               {isLoading ? "Setting up your account" : "Account ready!"}
             </CardTitle>
             <CardDescription className="text-sm sm:text-base">
-              {isLoading 
+              {isLoading
                 ? "Please wait while we prepare everything for you"
-                : "You're all set to start using Ushindi Box BackOffice"
+                : `You're all set to start using ${brandName} BackOffice`
               }
             </CardDescription>
           </CardHeader>

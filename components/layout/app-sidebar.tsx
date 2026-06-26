@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { UserButton, useUser } from "@clerk/nextjs"
+import { getBrandName } from "@/lib/utils"
 import {
   Users,
   Wallet,
@@ -77,6 +78,7 @@ const navigationItems: NavItem[] = [
       { title: "Financial Flow", url: "/analytics/financial", icon: DollarSign, requiredPermission: PERMISSIONS.ANALYTICS_READ },
       { title: "Growth", url: "/analytics/growth", icon: TrendingUp, requiredPermission: PERMISSIONS.ANALYTICS_READ },
       { title: "Engagement & Games", url: "/analytics/engagement", icon: Activity, requiredPermission: PERMISSIONS.ANALYTICS_READ },
+      { title: "Channel Performance", url: "/analytics/channels", icon: Share2, requiredPermission: PERMISSIONS.ANALYTICS_READ },
     ],
   },
   {
@@ -195,10 +197,10 @@ export function AppSidebar() {
             <SidebarMenuButton size="lg" asChild>
               <Link href="/summary">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg  text-sidebar-primary-foreground">
-                  <Image src="/logo.png" alt="Ushindi Box Logo" width={24} height={24} />
+                  <Image src="/logo.png" alt={`${getBrandName()} Logo`} width={24} height={24} />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">Ushindi Box</span>
+                  <span className="truncate font-semibold">{getBrandName()}</span>
                   <span className="truncate text-xs">Admin Console</span>
                 </div>
               </Link>
