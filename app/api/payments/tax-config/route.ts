@@ -4,6 +4,8 @@ import prisma from '@/lib/prisma';
 import { hasPermission, PERMISSIONS } from '@/lib/permissions';
 import { adminConsole } from '@/lib/admin-console/console';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
     try {
         const { userId } = await auth();
