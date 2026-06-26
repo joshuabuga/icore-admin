@@ -3,8 +3,10 @@
 import { SignOutButton } from '@clerk/nextjs';
 import { ShieldX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { getBrandName } from '@/lib/utils';
 
 export default function UnauthorizedPage() {
+  const brandName = getBrandName();
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
       <div className="max-w-sm w-full text-center space-y-6">
@@ -16,7 +18,7 @@ export default function UnauthorizedPage() {
         <div className="space-y-2">
           <h1 className="text-2xl font-bold">Access Denied</h1>
           <p className="text-muted-foreground text-sm leading-relaxed">
-            Your account is not authorised to access the Ushindi Box BackOffice.
+            Your account is not authorised to access the {brandName} BackOffice.
             Contact your administrator to request access.
           </p>
         </div>
