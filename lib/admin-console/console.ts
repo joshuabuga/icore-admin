@@ -911,6 +911,7 @@ class AdminConsole {
     const response = await fetch(`${baseURL}/api/v1/console/payments/tax-config/`, {
       method: 'GET',
       headers: this.getHeaders(access),
+      cache: 'no-store',
     });
     if (!response.ok) throw new Error(`fetchTaxConfig: ${response.statusText}`);
     return response.json();
