@@ -130,7 +130,7 @@ export default function EngagementPage() {
                                     <LineChart data={hourlyActiveChartData} margin={{ top: 20 }} accessibilityLayer>
                                         <CartesianGrid vertical={false} />
                                         <XAxis dataKey="label" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
-                                        <YAxis tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
+                                        <YAxis tickLine={false} axisLine={false} tickMargin={8} fontSize={12} allowDecimals={false} />
                                         <ChartTooltip content={<ChartTooltipContent formatter={(value) => `${Number(value).toLocaleString()} users`} />} />
                                         <Line type="monotone" dataKey="active_users" stroke="hsl(262, 83%, 58%)" strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />
                                     </LineChart>
